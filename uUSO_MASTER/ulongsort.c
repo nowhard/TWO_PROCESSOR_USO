@@ -7,11 +7,12 @@ volatile unsigned long  temp;
 //volatile unsigned char cycle_count=0;
 //volatile unsigned char contin=1;
 
-unsigned char SORT=0;//флаг начала сортировки
+//unsigned char SORT=0;//флаг начала сортировки
 
  sbit LED=P2^6;
 //sbit LED2=P3^6;
 //------------------------------------------------
+#pragma OT(0,Speed) 
  PT_THREAD(ulongsort_process(struct pt *pt))
  {
    static volatile  unsigned char counter=0,i=0,j=0;

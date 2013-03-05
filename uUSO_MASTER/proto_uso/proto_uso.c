@@ -68,7 +68,7 @@ volatile unsigned char xdata 			*TransferBuf;
 volatile unsigned char xdata  STATE_BYTE=0xC0;//байт состояния устройства
 volatile unsigned char idata symbol=0xFF;//принятый символ
 
-struct pt pt_proto;
+volatile struct pt pt_proto;
 //-----------------------------------------------------------------------------------
 union //объединение для конвертирования char->long
 {
@@ -78,7 +78,7 @@ union //объединение для конвертирования char->long
 sym_8_to_float;
 extern unsigned char idata i2c_buffer[6];
 //-----------------------------------------------------------------------------------
-
+#pragma OT(0,Speed)
 void UART_ISR(void) interrupt 4 //using 1
 {	
 	EA=0;	//запрет прерывания
@@ -197,10 +197,8 @@ void UART_ISR(void) interrupt 4 //using 1
 		else
 		{
 			transf_count=0;		//обнуляем счетчик
-			PT_RESTART_OUT(pt_proto);  //внепроцессный рестарт
 			CUT_OUT_NULL=0;
-			DE_RE=0;//линия на прием
-			
+			PT_RESTART_OUT(pt_proto);  //внепроцессный рестарт			
 		}					   
 	}			
 	EA=1;
@@ -721,9 +719,10 @@ void ProtoBufHandling(void) //using 0 //процесс обработки принятого запроса
 //-----------------------------------------------------------------------------------
 
 //--------------------------------------------------------------------------------------
+#pragma OT(0,Speed) 
 PT_THREAD(ProtoProcess(struct pt *pt))
  {
- unsigned char i=0;
+ //unsigned char i=0;
  unsigned char  CRC=0x0;
   PT_BEGIN(pt);
 
@@ -741,9 +740,7 @@ PT_THREAD(ProtoProcess(struct pt *pt))
 		if(RecieveBuf[3]!=ADRESS_DEV)//если адрес совпал	  
 		{
 			PT_RESTART(pt);//если адрес не сошолся-перезапустим протокол			
-		}
-		//PT_YIELD(pt);//дадим другим процессам время
-		
+		}	
 				
 	    CRC=RecieveBuf[recieve_count-1];
 				
@@ -768,37 +765,15 @@ PT_THREAD(ProtoProcess(struct pt *pt))
 			SBUF=TransferBuf[transf_count];//передача байта, остальным займется автомат
 			transf_count++;//инкрементируем счетчик переданных
 			ES=1; //включим прерывание уарт	
-			PT_RESTART(pt);//перезапустим протокол	
-			
-				
-		}
 
+			PT_DELAY(pt,100);			
+		}
   //-----------------------------
   }
 
  PT_END(pt);
 }
 //-----------------------CRC------------------------------------------------------------
-/*static unsigned char  CRC_Check( unsigned char xdata *Spool_pr,unsigned char Count_pr )  //проверить
-{
-    unsigned char   xdata CRC = 0;
-	 	unsigned char xdata *Spool; 
-	 	unsigned char xdata Count ;
-	
-	Spool=Spool_pr;
-	Count=Count_pr;
-
-  		while(Count!=0x0)
-        {
-	        CRC = CRC ^ (*Spool++);//
-	        // циклический сдвиг вправо
-	        CRC = ((CRC & 0x01) ? (unsigned char)0x80: (unsigned char)0x00) | (unsigned char)(CRC >> 1);
-	        // инверсия битов с 2 по 5, если бит 7 равен 1
-	        if (CRC & (unsigned char)0x80) CRC = CRC ^ (unsigned char)0x3C;
-			Count--;
-        }
-    return CRC;
-}  */
   unsigned char CRC_Check( unsigned char xdata *Spool_pr,unsigned char Count_pr ) 
  {
 

@@ -156,8 +156,8 @@ struct pt {
 
 //------------------------------------------------
 #define PT_DELAY(pt, time)						\
-		PT_WAIT_UNTIL((pt),((pt)->pt_time)>=(time));	        \
-		(pt)->pt_time=0
+		(pt)->pt_time=0	;	        			\		  
+		PT_WAIT_UNTIL((pt),((pt)->pt_time)>=(time))
 /**
  * Block and wait while condition is true.
  *

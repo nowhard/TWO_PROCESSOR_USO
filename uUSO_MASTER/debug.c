@@ -24,7 +24,7 @@ extern unsigned char idata i2c_buffer[6];
 
 extern struct I2C_Channel xdata i2c_channels;
 extern struct pt pt_proto;
-struct pt pt_i2c_read, pt_freq_measure,pt_sort,pt_i2c_process;
+volatile struct pt pt_i2c_read, pt_freq_measure,pt_sort,pt_i2c_process;
 
 
 //-----------------------------------------
@@ -47,7 +47,7 @@ void main(void) //using 0
 	UART_Init();
 	Frequency_Init();
 
-//	WDT_Init(WDT_2000);//включить сторожевой таймер
+	WDT_Init(WDT_2000);//включить сторожевой таймер
 	I2C_Init();
 
 
@@ -68,15 +68,16 @@ void main(void) //using 0
 	{	
 		ProtoProcess(&pt_proto);
 		I2C_RepeatRead(&pt_i2c_read);
-		Frequency_Measure_Process(&pt_freq_measure);	
+		Frequency_Measure_Process(&pt_freq_measure);
+		//ProtoProcess(&pt_proto);	
 		ulongsort_process(&pt_sort);
 		I2C_Process(&pt_i2c_process);
 		
-	    //WDT_Clear();
+	    WDT_Clear();
 	}
 }
 //-----------------------------------------------------------------------------
-
+#pragma OT(0,Speed)
  //---------------------------------
  PT_THREAD(I2C_RepeatRead(struct pt *pt))//поток чтения I2C
  {  
@@ -101,5 +102,6 @@ void Timer1_Interrupt(void) interrupt 3  //таймер шедулера
 	pt_i2c_read.pt_time++;
 	pt_freq_measure.pt_time++;
 	pt_sort.pt_time++;
+	pt_proto.pt_time++;
 	return;	
 }
