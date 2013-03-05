@@ -24,6 +24,7 @@ volatile struct Frequency xdata frequency[FREQ_CHANNELS] ; //структура частотных
 #define FRQ_CHNL_2 1
 #define FRQ_CHNL_3 2
 //--------------------------------------------------------
+#pragma OT(6,Speed)
 void Frequency_Init(void) //инициализация частотных каналов
 {
 	Timer0_Initialize();
@@ -168,6 +169,7 @@ void Timer2_ISR(void) interrupt 5 //using 3//обработчик прерывания счетного тайм
 	return;
 }
 //------------------------------------------------------------
+#pragma OT(0,Speed)
   PT_THREAD(Frequency_Measure_Process(struct pt *pt))
  { 
  	static unsigned char frq_chnl=0;

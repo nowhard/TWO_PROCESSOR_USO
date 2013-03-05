@@ -19,11 +19,10 @@ unsigned char idata i2c_buffer[6]={0};
 
 extern volatile unsigned char xdata  STATE_BYTE;
 
-sbit PIN1=P2^0;
-sbit PIN2=P2^1;
+
 //-------------------------------------------------------------
 volatile unsigned char START_I2C=0;
-//volatile unsigned char READ_I2C=0,WRITE_I2C=0,WRITE_READ_I2C=0;
+
 volatile unsigned char ERROR_I2C=0;
 
 struct pt pt_i2c_read_buf, pt_i2c_write_buf,pt_i2c_read_complete;

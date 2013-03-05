@@ -36,7 +36,7 @@
 									 0x78, 0xC4, 0x79, 0xC5, 0x7A, 0xC6, 0x7B, 0xC7, 
 									 0x7C, 0xC0, 0x7D, 0xC1, 0x7E, 0xC2, 0x7F, 0xC3};
 sbit DE_RE=P3^5;
-// sbit LED=P2^6;
+
 //-----------------------------------------------------------------------------------
 volatile unsigned char xdata DEV_NAME[DEVICE_NAME_LENGTH_SYM] ="<<uUSO_2>>"; //имя устройства
 volatile unsigned char xdata NOTICE[DEVICE_DESC_MAX_LENGTH_SYM]="<-- GEOSPHERA_2012 -->";//примечание 	
@@ -53,10 +53,10 @@ volatile unsigned char xdata	transf_count;//счетчик передаваемых байтов
 volatile unsigned char xdata	buf_len;//длина передаваемого буфера
 
 //------------------------флаги ошибок--------------------------------
-volatile unsigned char xdata CRC_ERR;	//ошибка сrc
-volatile unsigned char xdata COMMAND_ERR;//неподдерживаемая команда
+//volatile unsigned char xdata CRC_ERR;	//ошибка сrc
+//volatile unsigned char xdata COMMAND_ERR;//неподдерживаемая команда
 
-volatile unsigned char xdata TIMEOUT;//таймаут 
+//volatile unsigned char xdata TIMEOUT;//таймаут 
 
 volatile unsigned char idata  CUT_OUT_NULL;//флаг-вырезаем 0 после 0xD7
 volatile unsigned char xdata frame_len=0;//длина кадра, которую вытаскиваем из шестого байта кадра
@@ -205,14 +205,15 @@ void UART_ISR(void) interrupt 4 //using 1
 	return;
 }
 //------------------------------------------------------------------------------
+#pragma OT(6,Speed)
 void Protocol_Init(void) //using 0
 {
 	TI=0;
 	RI=0;
 	//------------------------флаги ошибок--------------------------------
 	
-	CRC_ERR=0x0;	//ошибка crc
-	COMMAND_ERR=0x0;//неподдерживаемая команда
+//	CRC_ERR=0x0;	//ошибка crc
+//	COMMAND_ERR=0x0;//неподдерживаемая команда
 	
 	TransferBuf=&RecieveBuf[0];	 //буфер ответа =буфер запроса
 
@@ -376,6 +377,7 @@ unsigned char Channel_Set_Reset_State_Flags(void) //using 0 //	Установка/Сброс ф
 	return	Request_Error(FR_SUCCESFUL);//ошибки нет, подтверждение
 }
 //-----------------------------------------------------------------------------
+
 unsigned char Channel_All_Get_Data(void) //using 0 //Выдать информацию по всем каналам узла (расширенный режим);
 {
    unsigned char data index=0,i=0;
@@ -708,7 +710,7 @@ void ProtoBufHandling(void) //using 0 //процесс обработки принятого запроса
 //------------------------------------------
     default:
 	{
-       COMMAND_ERR=0x1;//несуществующая команда
+//       COMMAND_ERR=0x1;//несуществующая команда
 	   buf_len=Request_Error(FR_COMMAND_NOT_EXIST);
 //	   PROTO_STATE=PROTO_ERR_HANDLING;//на обработчик ошибки
     }								   
@@ -766,7 +768,7 @@ PT_THREAD(ProtoProcess(struct pt *pt))
 			transf_count++;//инкрементируем счетчик переданных
 			ES=1; //включим прерывание уарт	
 
-			PT_DELAY(pt,100);			
+			PT_DELAY(pt,10);			
 		}
   //-----------------------------
   }
@@ -774,16 +776,15 @@ PT_THREAD(ProtoProcess(struct pt *pt))
  PT_END(pt);
 }
 //-----------------------CRC------------------------------------------------------------
+#pragma OT(6,Speed)
   unsigned char CRC_Check( unsigned char xdata *Spool_pr,unsigned char Count_pr ) 
  {
-
      unsigned char crc = 0x0;
 
      while (Count_pr--)
          crc = Crc8Table[crc ^ *Spool_pr++];
 
      return crc;
-
  }
 //-----------------------------------------------------------------------------------------------
 void Store_Dev_Address_Desc(unsigned char addr,void* name,void* ver,void* desc,unsigned char desc_len)//сохранить в ППЗУ новый адрес устройства, имя, версию, описание
@@ -791,7 +792,7 @@ void Store_Dev_Address_Desc(unsigned char addr,void* name,void* ver,void* desc,u
 //небезопасная
 	
 	unsigned int blocks=0;//здесь будет количество блоков, нужных дя сохранения комментария
-//LED=1;	
+	
 	EEPROM_Write(&addr,1,DEVICE_ADDR_EEPROM);	 //1 блок
 	EEPROM_Write(name,DEVICE_NAME_LENGTH,DEVICE_NAME_EEPROM); //5 блоков
 	memcpy(DEV_NAME,name,DEVICE_NAME_LENGTH_SYM);//копируем полученное имя в буфер
@@ -811,7 +812,7 @@ void Store_Dev_Address_Desc(unsigned char addr,void* name,void* ver,void* desc,u
 	EEPROM_Write(&desc_len,1,DEVICE_DESC_LEN_EEPROM);//сохраним длину комментария
 	
 	memcpy(NOTICE,desc,desc_len);//копируем описание в буфер
-//LED=0;	
+	
 	return;
 }
 //-----------------------------------------------------------------------------------------------

@@ -19,7 +19,7 @@
 #include "pt/pt.h"
 
 #define I2C_ADDR 0x58//0xD0	
- //bit f=0;
+
 extern unsigned char idata i2c_buffer[6];
 
 extern struct I2C_Channel xdata i2c_channels;
@@ -68,12 +68,9 @@ void main(void) //using 0
 	{	
 		ProtoProcess(&pt_proto);
 		I2C_RepeatRead(&pt_i2c_read);
-		Frequency_Measure_Process(&pt_freq_measure);
-		//ProtoProcess(&pt_proto);	
+		Frequency_Measure_Process(&pt_freq_measure);	
 		ulongsort_process(&pt_sort);
-		I2C_Process(&pt_i2c_process);
-		
-	    WDT_Clear();
+		I2C_Process(&pt_i2c_process);	    
 	}
 }
 //-----------------------------------------------------------------------------
@@ -88,7 +85,7 @@ void main(void) //using 0
 			PT_DELAY(pt,15);
 			//buf[0]=0x0;  	//номер канала, который читаем с I2C устройства
 			I2C_Repeat_Start_Read(I2C_ADDR,&i2c_buffer,1,i2c_channels.I2C_CHNL.i2c_buf,10);	//исправить сдвиг адресации
-	
+			WDT_Clear();
 	  }
 	  PT_END(pt);
 

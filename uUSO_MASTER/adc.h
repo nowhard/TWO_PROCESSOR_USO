@@ -85,13 +85,8 @@ void ADC_Set_Mode(unsigned char mode);	   //
 void ADC_Set_Input(unsigned char input);   //diff out
 void ADC_Out_Freq(unsigned int freq);	   //DECIMATION
 void ADC_Calibrate(char mode);//калибровка ацп
-//void ADC_Set_Settings(unsigned char settings[]);
-
-//float GetVoltage(long result, unsigned char divider);
 
 void ADC_Restore_Settings(void);//восстановление настроек ацп
-
-unsigned long Meaning(unsigned long mas[],unsigned char size);//находим матожидание по циклическому массиву усреднения
 
 unsigned char Meaning_Process(void);//циклический процесс, получающий среднее значение массивов
 unsigned char Out_Task(void);//вывод данных

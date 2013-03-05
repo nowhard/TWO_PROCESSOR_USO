@@ -1,25 +1,7 @@
 #include "adc.h"
 //-------------------global variables-----------------------------------
-
-sbit LED1=P3^7;
-sbit LED2=P3^6;
 volatile struct ADC_Channels xdata adc_channels[ADC_CHANNELS_NUM];
-
-volatile unsigned char xdata mean_counter=0;
-
-unsigned long tst=12345678;
-//----------------------------------------------------------------------
-/*void ADC_Calibrate(char mode) //using 0
-{	
-	volatile unsigned char xdata adc_mode=mode;
-	ADC_Stop();
-	ADCMODE &= 0xF8; // 1111 1000
-	ADCMODE |= adc_mode;
-	ADC_Run();
-	while(!CAL) 
-	{}
-	ADC_Stop();
-} */
+#pragma OT(6,Speed)
 //-------------------------------------------
 void ADC_Initialize() //using 0
 {	
@@ -50,33 +32,15 @@ void ADC_Initialize() //using 0
 	return;
 }
 //-------------------------------------------
-/*void ADC_Run()	//using 0
-{
-	ADCMODE |= 0x20; //0010 0000 //ENABLE
-	return;
-}
-//-------------------------------------------
-void ADC_Stop()	 // using 0
-{
-	ADCMODE &= 0xDF; // 1101 1111
-	return;
-}*/
-//-------------------------------------------
 void ADC_ISR(void) interrupt 6 //using 1
 {
-
-//	EA=0;
-	
 	adc_channels[ADC0CON2&0x7].ADC_BUF_UN[adc_channels[ADC0CON2&0x7].adc_buf_counter].ADC_CHAR[0]=0x0;//получим результат
 	adc_channels[ADC0CON2&0x7].ADC_BUF_UN[adc_channels[ADC0CON2&0x7].adc_buf_counter].ADC_CHAR[1]=ADC0H;
 	adc_channels[ADC0CON2&0x7].ADC_BUF_UN[adc_channels[ADC0CON2&0x7].adc_buf_counter].ADC_CHAR[2]=ADC0M;
 	adc_channels[ADC0CON2&0x7].ADC_BUF_UN[adc_channels[ADC0CON2&0x7].adc_buf_counter].ADC_CHAR[3]=ADC0L; 
-	
-	//adc_channels[ADC0CON2&0x7].ADC_BUF_UN[adc_channels[ADC0CON2&0x7].adc_buf_counter].ADC_LONG=tst--;	//debug
 
 	adc_channels[ADC0CON2&0x7].adc_buf_counter=(adc_channels[ADC0CON2&0x7].adc_buf_counter+1)&(ADC_BUF_SIZE-1);	//инкрементируем указатель усредняющего буфера текущего канала
 	adc_channels[ADC0CON2&0x7].new_measuring=1;	 //новое измерение было
-
 		
 	ADCMODE &= 0xDF; // 1101 1111
 	ADC0CON2=((ADC0CON2+1)&0x7)|(ADC0CON2&0xF0); //инкремент аналогового входа 	
@@ -85,20 +49,8 @@ void ADC_ISR(void) interrupt 6 //using 1
 	ADCMODE |= 0x20; //0010 0000 //ENABLE
 
 	RDY0=0;
-
-
-//	EA=1;
-	return;
+//	return;
 }
-
-//--------------------------------------------------
-/*void ADC_Set_Range(unsigned char range)	 //using 0
-{
-	ADC0CON1&=~0x7;
-
-	ADC0CON1|=(range&0x7);
-	return;
-} */
 //--------------------------------------------------
 void ADC_Set_Mode(unsigned char mode)	//using 0
 {
@@ -106,13 +58,6 @@ void ADC_Set_Mode(unsigned char mode)	//using 0
 	ADCMODE|=mode;
 	return;
 }
-//--------------------------------------------------
-/*void ADC_Set_Input(unsigned char input)	 //using 0
-{
-	ADC0CON2&=~0xF;		
-	ADC0CON2 |=input;
-	return;
-}*/
 //--------------------------------------------------
 void ADC_Out_Freq(unsigned int freq)  // using 0
 {

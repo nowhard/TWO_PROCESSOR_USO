@@ -1,16 +1,9 @@
 #include "ulongsort.h"
 
-//volatile unsigned char sort_auto=WAIT_STATE;//счетчик автомата сортировки(кооперативная многозадачность)
 volatile unsigned long mas_copy[ADC_BUF_SIZE];
-volatile unsigned char xdata mid_cycle_counter=0, sort_cycle_counter=0;
+volatile unsigned char xdata mid_cycle_counter=0;
 volatile unsigned long  temp;
-//volatile unsigned char cycle_count=0;
-//volatile unsigned char contin=1;
 
-//unsigned char SORT=0;//флаг начала сортировки
-
- sbit LED=P2^6;
-//sbit LED2=P3^6;
 //------------------------------------------------
 #pragma OT(0,Speed) 
  PT_THREAD(ulongsort_process(struct pt *pt))
@@ -21,8 +14,6 @@ volatile unsigned long  temp;
 
   while(1) 
   {
-	   //PT_WAIT_UNTIL(pt,SORT); //ждем команды на старт
-	   //SORT=0;
 	   PT_DELAY(pt,10);
 	  //------------ищем новое измерение-----------------
 
