@@ -53,10 +53,10 @@ volatile unsigned char xdata	transf_count;//счетчик передаваемых байтов
 volatile unsigned char xdata	buf_len;//длина передаваемого буфера
 
 //------------------------флаги ошибок--------------------------------
-//volatile unsigned char xdata CRC_ERR;	//ошибка сrc
-//volatile unsigned char xdata COMMAND_ERR;//неподдерживаемая команда
+volatile unsigned char xdata CRC_ERR=0;	//ошибка сrc
+volatile unsigned char xdata COMMAND_ERR=0;//неподдерживаемая команда
 
-//volatile unsigned char xdata TIMEOUT;//таймаут 
+volatile unsigned char xdata TIMEOUT=0;//таймаут 
 
 volatile unsigned char idata  CUT_OUT_NULL;//флаг-вырезаем 0 после 0xD7
 volatile unsigned char xdata frame_len=0;//длина кадра, которую вытаскиваем из шестого байта кадра
@@ -277,6 +277,10 @@ unsigned char Send_Info(void) //using 0    //посылка информации об устройстве
 			
 	   TransferBuf[5]=28+CHANNEL_NUMBER*2+dev_desc_len;			// подсчет длины данных 
 	   TransferBuf[33+CHANNEL_NUMBER*2+dev_desc_len]=CRC_Check(&TransferBuf[1],32+CHANNEL_NUMBER*2+dev_desc_len); // подсчет контрольной суммы
+
+	//------debug--------
+		COMMAND_ERR=1;
+	//------debug--------
 
 	return (34+CHANNEL_NUMBER*2+dev_desc_len);
 }
@@ -710,7 +714,7 @@ void ProtoBufHandling(void) //using 0 //процесс обработки принятого запроса
 //------------------------------------------
     default:
 	{
-//       COMMAND_ERR=0x1;//несуществующая команда
+      COMMAND_ERR++;//несуществующая команда
 	   buf_len=Request_Error(FR_COMMAND_NOT_EXIST);
 //	   PROTO_STATE=PROTO_ERR_HANDLING;//на обработчик ошибки
     }								   
@@ -748,11 +752,17 @@ PT_THREAD(ProtoProcess(struct pt *pt))
 				
 		if(CRC_Check(&RecieveBuf,(recieve_count-CRC_LEN))!=CRC)
 		{
+			CRC_ERR++;
 			PT_RESTART(pt);//если CRC не сошлось-перезапустим протокол	 
 		}
 		PT_YIELD(pt);//дадим другим процессам время
   //-----------------------------
   		ProtoBufHandling();//процедура обработки сообщения	
+		//---------------------debug--------------------------
+		channels[8].channel_data=CRC_ERR;
+		channels[9].channel_data=TIMEOUT;
+		channels[10].channel_data=COMMAND_ERR;
+		//---------------------debug--------------------------
 		if(buf_len==0)//если в буфере пусто
 		{
 			PT_RESTART(pt);//перезапустим протокол	
@@ -768,7 +778,8 @@ PT_THREAD(ProtoProcess(struct pt *pt))
 			transf_count++;//инкрементируем счетчик переданных
 			ES=1; //включим прерывание уарт	
 
-			PT_DELAY(pt,10);			
+			PT_DELAY(pt,10);
+			TIMEOUT++;			
 		}
   //-----------------------------
   }

@@ -68,7 +68,7 @@ void main(void) //using 0
 	{	
 		ProtoProcess(&pt_proto);
 		I2C_RepeatRead(&pt_i2c_read);
-		Frequency_Measure_Process(&pt_freq_measure);	
+		//Frequency_Measure_Process(&pt_freq_measure);	
 		ulongsort_process(&pt_sort);
 		I2C_Process(&pt_i2c_process);	    
 	}
