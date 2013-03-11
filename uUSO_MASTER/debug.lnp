@@ -8,11 +8,11 @@
 "START_AD.obj",
 "frequency.obj",
 "timer0.obj",
-"timer1.obj",
 "timer2.obj",
 "i2c.obj",
 "calibrate.obj",
-"ulongsort.obj" 
+"ulongsort.obj",
+"timer1.obj" 
 TO "debug" 
 RAMSIZE(256) 
 XDATA( 0X0000-0X07FF )
