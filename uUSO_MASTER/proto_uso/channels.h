@@ -4,7 +4,21 @@
 #include "preferences.h"
 //---------------------------------------
 #define CHANNEL_NUMBER	14//количество каналов
-//---------------------------------------
+//---------------------------каналы---------------------------------
+#define CHNL_ADC	0//канал ацп
+	#define CHNL_ADC_FIX_16	0
+	#define CHNL_ADC_SW_16	1
+	#define CHNL_ADC_FIX_24	3
+	#define CHNL_ADC_SW_24	2
+#define CHNL_DOL	1 //канал дол
+	#define CHNL_DOL_ENC	0
+	#define CHNL_DOL_FLOAT	1
+#define CHNL_FREQ	2//частотный/счетчик
+	#define	 CHNL_FREQ_COUNT_T	0
+	#define	 CHNL_FREQ_256		1
+	#define  CHNL_FREQ_PERIOD	3
+	#define	 CHNL_FREQ_COUNT	4
+//------------------------------------------------------------------
 struct Channel
 {
 	unsigned char number ;	  	// номер канала 

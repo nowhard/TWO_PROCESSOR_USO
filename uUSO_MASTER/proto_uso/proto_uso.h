@@ -17,10 +17,10 @@
 
 
 //--------------------------------------------------------------------------------
-#define MAX_LENGTH_REC_BUF 	256 //максимальная длина принимаемого кадра
+#define MAX_LENGTH_REC_BUF 	270 //максимальная длина принимаемого кадра
 #define MIN_LENGTH_REC_BUF	5 //минимальная длина принимаемого кадра
 
-#define MAX_LENGTH_TR_BUF  	256 //максимальная длина передаваемого кадра
+#define MAX_LENGTH_TR_BUF  	270 //максимальная длина передаваемого кадра
 #define CRC_LEN				1 //длина поля CRC
 //-------------------------код операции-------------------------------------------
 #define  GET_DEV_INFO_REQ 				0x1 //получить информацию об устройстве	(код запроса)
@@ -86,11 +86,8 @@
 #define	PROTO_BUF_HANDLING	5	//обработка команды
 #define PROTO_BUF_TRANSFER	6	//передача ответа ведущему
 #define	PROTO_ERR_HANDLING	7	//обработка ошибок
-//--------------------------------------------------------------------
 //--------------------------------прототипы---------------------------
 void UART_ISR(void); //обработчик прерывания уарт
-//void TIC_ISR(void);//обработчик прерывания TIC для измерения интервала таймаута 
-
 void Protocol_Init(void); //инициализация протокола
 
 unsigned char Send_Info(void);     //посылка информации об устройстве
@@ -110,8 +107,7 @@ unsigned char Request_Error(unsigned char error_code);//	Ошибочный запрос/ответ;
 
 
 void ProtoBufHandling(void); //процесс обработки принятого запроса
-//void ProtoProcess(void);//главный процесс протокола 
-PT_THREAD(ProtoProcess(struct pt *pt));
+PT_THREAD(ProtoProcess(struct pt *pt));//главный процесс протокола
 
 static unsigned char  CRC_Check( unsigned char xdata *Spool,unsigned char Count);//расчет CRC
 

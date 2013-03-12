@@ -454,11 +454,6 @@
               <FilePath>.\timer0.c</FilePath>
             </File>
             <File>
-              <FileName>timer1.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\rtos\timer1.c</FilePath>
-            </File>
-            <File>
               <FileName>timer2.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\timer2.c</FilePath>
@@ -492,6 +487,11 @@
               <FileName>lc-switch.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\pt\lc-switch.h</FilePath>
+            </File>
+            <File>
+              <FileName>timer1.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\timer1.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -210,10 +210,6 @@ void Protocol_Init(void) //using 0
 {
 	TI=0;
 	RI=0;
-	//------------------------флаги ошибок--------------------------------
-	
-//	CRC_ERR=0x0;	//ошибка crc
-//	COMMAND_ERR=0x0;//неподдерживаемая команда
 	
 	TransferBuf=&RecieveBuf[0];	 //буфер ответа =буфер запроса
 
@@ -306,7 +302,7 @@ unsigned char  Channel_Set_Parameters(void) //using 0 //Установить параметры по 
 			    {
 					switch((RecieveBuf[6+index+1]>>4)&0xF)
 					{
-					 		case 0x0://АЦП
+					 		case CHNL_ADC://АЦП
 							{
 								if((channels[RecieveBuf[6+index]].settings.set.modific!=RecieveBuf[6+index+1])||(channels[RecieveBuf[6+index]].settings.set.state_byte_1!=RecieveBuf[6+index+2]) || (channels[RecieveBuf[6+index]].settings.set.state_byte_2!=RecieveBuf[6+index+3]))
 								{  
@@ -316,19 +312,11 @@ unsigned char  Channel_Set_Parameters(void) //using 0 //Установить параметры по 
 									store_data=1;
 									
 								}
-								index=index+1;
+								index++;
 							}
 							break;
 
-						/*	case 0x2://частотомер
-							{
-							   if(channels[RecieveBuf[6+index]].settings.set.state_byte_1!=RecieveBuf[6+index+2])
-							   {
-							   		channels[RecieveBuf[6+index]].settings.set.state_byte_1=RecieveBuf[6+index+2];
-									store_data=1;
-							   }
-							}
-							break;*/
+
 							default :
 							{
 								_nop_();
@@ -344,7 +332,6 @@ unsigned char  Channel_Set_Parameters(void) //using 0 //Установить параметры по 
 	   if(store_data)
 	   {
 	   		Store_Channels_Data();	//сохраним настройки каналов в ППЗУ
-		//	LED=!LED;
 	   }
 
 	   return Request_Error(FR_SUCCESFUL);
@@ -387,148 +374,96 @@ unsigned char Channel_All_Get_Data(void) //using 0 //Выдать информацию по всем к
    TransferBuf[3]=ADRESS_DEV;  // адрес узла
    TransferBuf[4]=CHANNEL_ALL_GET_DATA_RESP;  // код операции
    TransferBuf[6]=STATE_BYTE;
+
+   index=7;//длина заголовка
+ 
     for(i=0;i<CHANNEL_NUMBER;i++)				   // данные по каналам
     {
-		  TransferBuf[index+7]=i;
-		  index++;
-		  TransferBuf[index+7]=((channels[i].settings.set.type)<<4)|channels[i].settings.set.modific; // тип и модификация канала
-		  index++;
+		  TransferBuf[index++]=i;
+		  TransferBuf[index++]=((channels[i].settings.set.type)<<4)|channels[i].settings.set.modific; // тип и модификация канала
 		  switch(channels[i].settings.set.type)
 		    {
-				 case 0:  //аналоговый канал
+				 case CHNL_ADC:  //аналоговый канал
 				 {
 					 switch(channels[i].settings.set.modific)
 	                 {
-						  case 0:
+						  case CHNL_ADC_FIX_16:
 						  {
 						  		if(channels[i].calibrate.cal.calibrate==1)//калиброванный
 								{			 			 
-								//	 if(channels[i].settings.set.modific==0x00 || channels[i].settings.set.modific==0x01)
-								//	 {
-									 	TransferBuf[index+7]=((channels[i].channel_data_calibrate)&0x0000FF00)>>8;
-									  	index++;
-			    					  	TransferBuf[index+7]=((channels[i].channel_data_calibrate)&0x00FF0000)>>16;
-									  	index++;
-								//	 } 
+									 	TransferBuf[index++]=((channels[i].channel_data_calibrate)&0x0000FF00)>>8;
+			    					  	TransferBuf[index++]=((channels[i].channel_data_calibrate)&0x00FF0000)>>16;
 								}
 								else
 								{
-									// if(channels[i].settings.set.modific==0x00 || channels[i].settings.set.modific==0x01)		   // если модифи-я 2 и 3 т.е. 24-разрядные значения то 3 байта на значение 
-								//	 {
-										TransferBuf[index+7]=((channels[i].channel_data)&0x0000FF00)>>8;
-									  	index++;
-			    					  	TransferBuf[index+7]=((channels[i].channel_data)&0x00FF0000)>>16;
-									  	index++;
-									// }	
+										TransferBuf[index++]=((channels[i].channel_data)&0x0000FF00)>>8;
+			    					  	TransferBuf[index++]=((channels[i].channel_data)&0x00FF0000)>>16;	
 								} 
 
 								  
-								  TransferBuf[index+7]=channels[i].settings.set.state_byte_1;	 // первый байт состояния канала
-		                          index++;
-		                          TransferBuf[index+7]=channels[i].settings.set.state_byte_2;	 // второй байт состояния канала
-			                      index++;
+								  TransferBuf[index++]=channels[i].settings.set.state_byte_1;	 // первый байт состояния канала
+		                          TransferBuf[index++]=channels[i].settings.set.state_byte_2;	 // второй байт состояния канала
 						  }
 						  break; 
 
-						  case 1:
-						  {
-						  }
-						  break;
-
-			        	  case 2: 
-						  {
-						  }
-						  break;
-
-						  case 3:
+						  case CHNL_ADC_FIX_24:
 						  {
 						        if(channels[i].calibrate.cal.calibrate==1)//калиброванный
-								{			 
-						 			// if(channels[i].settings.set.modific==0x02 || channels[i].settings.set.modific==0x03)		   // если модифи-я 2 и 3 т.е. 24-разрядные значения то 3 байта на значение 
-								//	 {									  
-									  	TransferBuf[index+7]=((channels[i].channel_data_calibrate)&0x000000FF); // данные с АЦП
-							          	index++;
-									  	TransferBuf[index+7]=((channels[i].channel_data_calibrate)&0x0000FF00)>>8;
-									  	index++;
-			    					  	TransferBuf[index+7]=((channels[i].channel_data_calibrate)&0x00FF0000)>>16;
-									  	index++;
-		  						  	// }
+								{			 									  
+									  	TransferBuf[index++]=((channels[i].channel_data_calibrate)&0x000000FF); // данные с АЦП
+									  	TransferBuf[index++]=((channels[i].channel_data_calibrate)&0x0000FF00)>>8;
+			    					  	TransferBuf[index++]=((channels[i].channel_data_calibrate)&0x00FF0000)>>16;
 								}
 								else
-								{
-								//	 if(channels[i].settings.set.modific==0x02 || channels[i].settings.set.modific==0x03)		   // если модифи-я 2 и 3 т.е. 24-разрядные значения то 3 байта на значение 
-									// {									 
-									  	TransferBuf[index+7]=((channels[i].channel_data)&0x000000FF); // данные с АЦП
-							          	index++;
-									  	TransferBuf[index+7]=((channels[i].channel_data)&0x0000FF00)>>8;
-									  	index++;
-			    					  	TransferBuf[index+7]=((channels[i].channel_data)&0x00FF0000)>>16;
-									  	index++;
-								//	 }	
+								{									 
+									  	TransferBuf[index++]=((channels[i].channel_data)&0x000000FF); // данные с АЦП
+									  	TransferBuf[index++]=((channels[i].channel_data)&0x0000FF00)>>8;
+			    					  	TransferBuf[index++]=((channels[i].channel_data)&0x00FF0000)>>16;	
 								} 
-
-								  
-								  TransferBuf[index+7]=channels[i].settings.set.state_byte_1;	 // первый байт состояния канала
-		                          index++;
-		                          TransferBuf[index+7]=channels[i].settings.set.state_byte_2;	 // второй байт состояния канала
-			                      index++;
+		  
+								  TransferBuf[index++]=channels[i].settings.set.state_byte_1;	 // первый байт состояния канала
+		                          TransferBuf[index++]=channels[i].settings.set.state_byte_2;	 // второй байт состояния канала
 						  }
 						  break;
 					  }
 				  }
 				  break;
 
-			 	case 1:	 //ДОЛ
+			 	case CHNL_DOL:	 //ДОЛ
 				{
 					  switch(channels[i].settings.set.modific)
 				      {	  
-							  case 0:
+							  case CHNL_DOL_ENC:
 							  {
-							          TransferBuf[index+7]=((channels[i].channel_data)&0x000000FF); // 
-							          index++;
-
-									  TransferBuf[index+7]=((channels[i].channel_data)&0x0000FF00)>>8;
-									  index++;
-
-							          TransferBuf[index+7]=((channels[i].channel_data)&0x00FF0000)>>16; // 
-							          index++;
-
-									  TransferBuf[index+7]=((channels[i].channel_data)&0xFF000000)>>24;
-									  index++;
-
-
-									  TransferBuf[index+7]=channels[i].settings.set.state_byte_1;	 // первый байт состояния канала
-			                          index++;
+							          TransferBuf[index++]=((channels[i].channel_data)&0x000000FF); // 
+									  TransferBuf[index++]=((channels[i].channel_data)&0x0000FF00)>>8;
+							          TransferBuf[index++]=((channels[i].channel_data)&0x00FF0000)>>16; // 
+									  TransferBuf[index++]=((channels[i].channel_data)&0xFF000000)>>24;
+									  TransferBuf[index++]=channels[i].settings.set.state_byte_1;	 // первый байт состояния канала
 							  }
 							  break; 
 					   }
 				}
 				break;
 
-				 case 2: //частотный
+				 case CHNL_FREQ: //частотный
 				 { 
 					  switch(channels[i].settings.set.modific)
 				      {	  
 							  
-							  case 0:
+							  case CHNL_FREQ_COUNT_T:
 							  {
-							          TransferBuf[index+7]=((channels[i].channel_data)&0x000000FF); // данные с АЦП
-							          index++;
-									  TransferBuf[index+7]=((channels[i].channel_data)&0x0000FF00)>>8;
-									  index++;
-									  TransferBuf[index+7]=channels[i].settings.set.state_byte_1;	 // первый байт состояния канала
-			                          index++;
+							          TransferBuf[index++]=((channels[i].channel_data)&0x000000FF); // данные с АЦП
+									  TransferBuf[index++]=((channels[i].channel_data)&0x0000FF00)>>8;
+									  TransferBuf[index++]=channels[i].settings.set.state_byte_1;	 // первый байт состояния канала
 							  }
 							  break;
 
-							  case 1:
+							  case CHNL_FREQ_256:
 							  {
-							          TransferBuf[index+7]=((channels[i].channel_data)&0x000000FF); // данные с АЦП
-							          index++;
-									  TransferBuf[index+7]=((channels[i].channel_data)&0x0000FF00)>>8;
-									  index++;
-									  TransferBuf[index+7]=channels[i].settings.set.state_byte_1;	 // первый байт состояния канала
-			                          index++;
+							          TransferBuf[index++]=((channels[i].channel_data)&0x000000FF); // данные с АЦП
+									  TransferBuf[index++]=((channels[i].channel_data)&0x0000FF00)>>8;
+									  TransferBuf[index++]=channels[i].settings.set.state_byte_1;	 // первый байт состояния канала
 							  }
 							  break; 
 					   }
@@ -537,9 +472,9 @@ unsigned char Channel_All_Get_Data(void) //using 0 //Выдать информацию по всем к
 		  }
 	   }
 
-	  TransferBuf[5]=index+2; 						 // подсчет длины данных двойка это 1(байт статуса)+1(контрольная сумма)
-	  TransferBuf[index+7]=CRC_Check(&TransferBuf[1],(unsigned int)(index+7)-1); // подсчет кс
-	  return (unsigned char)(7+index+1);
+	  TransferBuf[5]=index+2-7; 						 // подсчет длины данных двойка это 1(байт статуса)+1(контрольная сумма)
+	  TransferBuf[index]=CRC_Check(&TransferBuf[1],(unsigned int)(index)-1); // подсчет кс
+	  return (unsigned char)(index+1);
 }
 //-----------------------------------------------------------------------------
 unsigned char Channel_Set_Calibrate(void)//установить верхнюю или нижнюю точку калибровки
@@ -565,7 +500,6 @@ unsigned char Channel_Set_Calibrate(void)//установить верхнюю или нижнюю точку к
 	{
 		case 0:
 		{
-			//SetFirstPoint(RecieveBuf[6],channels[RecieveBuf[6]].channel_data,sym_8_to_long.result_long);
 			Calibrate(RecieveBuf[6],K,C);	
 		}
 		break;
@@ -586,6 +520,7 @@ unsigned char Channel_Set_Calibrate(void)//установить верхнюю или нижнюю точку к
 
 		default :
 		{
+			_nop_();
 		}
 		break;
 	}
