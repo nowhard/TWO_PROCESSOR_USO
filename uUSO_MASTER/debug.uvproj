@@ -370,7 +370,7 @@
                 <uAregs>1</uAregs>
                 <UseInterruptVector>2</UseInterruptVector>
                 <Fuzzy>3</Fuzzy>
-                <Optimize>9</Optimize>
+                <Optimize>0</Optimize>
                 <WarningLevel>3</WarningLevel>
                 <SizeSpeed>1</SizeSpeed>
                 <ObjectExtend>2</ObjectExtend>

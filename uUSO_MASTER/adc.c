@@ -13,7 +13,11 @@ void ADC_Initialize() //using 0
 
 //	ADCMODE|=0x8;//CHOP DISABLE
 
-    ADC0CON1|=BUF_BYPASS;
+	OF0L=0xFF;
+	OF0M=0xFF;
+	OF0H=0x1;    
+	
+	ADC0CON1|=BUF_BYPASS;
 	ADC0CON1|=ADC_UNIPOLAR;
 	ADC0CON1|=RN_2560;
 
@@ -28,6 +32,8 @@ void ADC_Initialize() //using 0
 	EADC = 1;
 
 	ADCMODE |= 0x20; //0010 0000 //ENABLE
+
+
 
 	return;
 }
