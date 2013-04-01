@@ -52,12 +52,6 @@ volatile unsigned char xdata    recieve_count;//счетчик приемного буфера
 volatile unsigned char xdata	transf_count;//счетчик передаваемых байтов	   
 volatile unsigned char xdata	buf_len;//длина передаваемого буфера
 
-//------------------------флаги ошибок--------------------------------
-//volatile unsigned char xdata CRC_ERR;	//ошибка сrc
-//volatile unsigned char xdata COMMAND_ERR;//неподдерживаемая команда
-
-//volatile unsigned char xdata TIMEOUT;//таймаут 
-
 volatile unsigned char idata  CUT_OUT_NULL;//флаг-вырезаем 0 после 0xD7
 volatile unsigned char xdata frame_len=0;//длина кадра, которую вытаскиваем из шестого байта кадра
 //--------------------------------------------------------------------
@@ -67,6 +61,8 @@ volatile unsigned char xdata 			*TransferBuf;
 //--------------------------------------------------------------------
 volatile unsigned char xdata  STATE_BYTE=0xC0;//байт состояния устройства
 volatile unsigned char idata symbol=0xFF;//принятый символ
+
+volatile unsigned char xdata avaible_channels=0;
 
 volatile struct pt pt_proto;
 //-----------------------------------------------------------------------------------
@@ -208,6 +204,8 @@ void UART_ISR(void) interrupt 4 //using 1
 #pragma OT(6,Speed)
 void Protocol_Init(void) //using 0
 {
+	unsigned char i=0;	
+
 	TI=0;
 	RI=0;
 	
@@ -222,13 +220,23 @@ void Protocol_Init(void) //using 0
 	DE_RE=0;//линия на прием
 	CUT_OUT_NULL=0;
 	STATE_BYTE=0xC0;
+//-----------------------------//просмотр доступных каналов
+   for(i=0;i<CHANNEL_NUMBER;i++)
+   {
+   		if(channels[i].number!=0xFF)
+		{
+			avaible_channels++;	
+		}		
+   }
+//-----------------------------
+
 	PT_INIT(&pt_proto);
 	return;
 }
 //-----------------------------------------------------------------------------
 unsigned char Send_Info(void) //using 0    //посылка информации об устройстве
 {
-	    unsigned char   idata i=0;
+	    volatile unsigned char    i=0;
 	   									
 	   //заголовок кадра---
 	   TransferBuf[0]=0x00;
@@ -259,22 +267,26 @@ unsigned char Send_Info(void) //using 0    //посылка информации об устройстве
 		   }
 	   }
 
-	   TransferBuf[32]=CHANNEL_NUMBER;		   // количество каналов
+	   TransferBuf[32]=avaible_channels;		   // количество каналов
 
 	   for(i=0;i<CHANNEL_NUMBER;i++)				   // данные по каналу
        {
-		  	TransferBuf[i*2+33]=((channels[i].settings.set.type)<<4)|channels[i].settings.set.modific; // байт данных
-		  	TransferBuf[i*2+33+1]=0x00;							// резерв байт
-	   }	
+		  	if(channels[i].number!=0xFF)
+			{
+				TransferBuf[channels[i].number*2+33]=((channels[i].settings.set.type)<<4)|channels[i].settings.set.modific; // байт данных
+			  	TransferBuf[channels[i].number*2+33+1]=0x00;	
+			}						// резерв байт
+	   }
+	   	
 	   for(i=0;i<dev_desc_len;i++)					// записываем примечание
 	   {
-			 TransferBuf[i+33+CHANNEL_NUMBER*2]=NOTICE[i];
+			 TransferBuf[i+33+avaible_channels*2]=NOTICE[i];
 	   }
 			
-	   TransferBuf[5]=28+CHANNEL_NUMBER*2+dev_desc_len;			// подсчет длины данных 
-	   TransferBuf[33+CHANNEL_NUMBER*2+dev_desc_len]=CRC_Check(&TransferBuf[1],32+CHANNEL_NUMBER*2+dev_desc_len); // подсчет контрольной суммы
+	   TransferBuf[5]=28+avaible_channels*2+dev_desc_len;			// подсчет длины данных 
+	   TransferBuf[33+avaible_channels*2+dev_desc_len]=CRC_Check(&TransferBuf[1],32+avaible_channels*2+dev_desc_len); // подсчет контрольной суммы
 
-	return (34+CHANNEL_NUMBER*2+dev_desc_len);
+	return (34+avaible_channels*2+dev_desc_len);
 }
 //-----------------------------------------------------------------------------
 unsigned char Node_Full_Init(void) //using 0 //полная инициализация узла
@@ -294,21 +306,31 @@ unsigned char Channel_Get_Data(void) //using 0 //Выдать данные по каналам, согла
 //-----------------------------------------------------------------------------
 unsigned char  Channel_Set_Parameters(void) //using 0 //Установить параметры по каналам, согласно абсолютной нумерации;
 {
-       unsigned char xdata index=0, store_data=0;//i=0;
+       unsigned char xdata index=0, store_data=0,i=0, chn_index=0;
 	 
 	   while(index<RecieveBuf[5]-1)				   // данные по каналам
 	      {
-			  	if(RecieveBuf[6+index]<CHANNEL_NUMBER)
+			  	if(RecieveBuf[6+index]<avaible_channels)
 			    {
 					switch((RecieveBuf[6+index+1]>>4)&0xF)
 					{
 					 		case CHNL_ADC://АЦП
 							{
-								if((channels[RecieveBuf[6+index]].settings.set.modific!=RecieveBuf[6+index+1])||(channels[RecieveBuf[6+index]].settings.set.state_byte_1!=RecieveBuf[6+index+2]) || (channels[RecieveBuf[6+index]].settings.set.state_byte_2!=RecieveBuf[6+index+3]))
+								
+								for(i=0;i<CHANNEL_NUMBER;i++)	//поиск соответствующего канала
+								{
+									if(channels[i].number==RecieveBuf[6+index])	
+									{
+										chn_index=i;
+										break;
+									}
+								}
+								
+								if((channels[chn_index].settings.set.modific!=RecieveBuf[6+index+1])||(channels[chn_index].settings.set.state_byte_1!=RecieveBuf[6+index+2]) || (channels[chn_index].settings.set.state_byte_2!=RecieveBuf[6+index+3]))
 								{  
-									channels[RecieveBuf[6+index]].settings.set.state_byte_1=RecieveBuf[6+index+2];
-									channels[RecieveBuf[6+index]].settings.set.state_byte_2=RecieveBuf[6+index+3];
-									channels[RecieveBuf[6+index]].settings.set.modific	   =RecieveBuf[6+index+1]&0xF;
+									channels[chn_index].settings.set.state_byte_1=RecieveBuf[6+index+2];
+									channels[chn_index].settings.set.state_byte_2=RecieveBuf[6+index+3];
+									channels[chn_index].settings.set.modific	 =RecieveBuf[6+index+1]&0xF;
 									store_data=1;
 									
 								}
@@ -379,8 +401,15 @@ unsigned char Channel_All_Get_Data(void) //using 0 //Выдать информацию по всем к
  
     for(i=0;i<CHANNEL_NUMBER;i++)				   // данные по каналам
     {
-		  TransferBuf[index++]=i;
+
+		if(channels[i].number==0xFF)  //если канал отключен, пропустим
+		{
+			continue;
+		}		  
+
+		  TransferBuf[index++]=channels[i].number;
 		  TransferBuf[index++]=((channels[i].settings.set.type)<<4)|channels[i].settings.set.modific; // тип и модификация канала
+		  
 		  switch(channels[i].settings.set.type)
 		    {
 				 case CHNL_ADC:  //аналоговый канал
@@ -455,7 +484,7 @@ unsigned char Channel_All_Get_Data(void) //using 0 //Выдать информацию по всем к
 							  {
 									 	TransferBuf[index++]=((unsigned char*)(&channels[i].channel_data))[3];
 									 	TransferBuf[index++]=((unsigned char*)(&channels[i].channel_data))[2];
-									  TransferBuf[index++]=channels[i].settings.set.state_byte_1;	 // первый байт состояния канала
+									    TransferBuf[index++]=channels[i].settings.set.state_byte_1;	 // первый байт состояния канала
 							  }
 							  break;
 
