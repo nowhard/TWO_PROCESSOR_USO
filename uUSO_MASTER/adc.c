@@ -43,7 +43,14 @@ void ADC_ISR(void) interrupt 6 //using 1
 	adc_channels[ADC0CON2&0x7].new_measuring=1;	 //новое измерение было
 		
 	ADCMODE &= 0xDF; // 1101 1111
-	ADC0CON2=((ADC0CON2+1)&0x7)|(ADC0CON2&0xF0); //инкремент аналогового входа 	
+
+	ADC0CON2=((ADC0CON2+1)&0x7)|(ADC0CON2&0xF0); //инкремент аналогового входа 
+
+	while(channels[ADC0CON2&0x7].number==0xFF)	//если канал не используется
+	{
+		ADC0CON2=((ADC0CON2+1)&0x7)|(ADC0CON2&0xF0); //инкремент аналогового входа 	
+	}
+
 	ADC0CON1=(ADC0CON1&0xF8)|((channels[ADC0CON2&0x7].settings.set.state_byte_1^0x7)&0x7);//восстанавливаем усиление следующего канала
 	SF=channels[(ADC0CON2/*+1*/)&0x7].settings.set.state_byte_2;						 
 	ADCMODE |= 0x20; //0010 0000 //ENABLE

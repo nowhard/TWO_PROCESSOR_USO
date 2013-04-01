@@ -20,7 +20,7 @@ volatile unsigned long  temp;
 		if(!adc_channels[mid_cycle_counter].new_measuring)
 		{
 			counter=0;
-			while(!adc_channels[mid_cycle_counter].new_measuring && counter!=ADC_CHANNELS_NUM)
+			while((!adc_channels[mid_cycle_counter].new_measuring) && (counter!=ADC_CHANNELS_NUM))
 			{
 				mid_cycle_counter= (mid_cycle_counter+1)&0x7;
 				counter++;
