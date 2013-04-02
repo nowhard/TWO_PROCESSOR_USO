@@ -1,7 +1,6 @@
 #include "adc.h"
 //-------------------global variables-----------------------------------
 volatile struct ADC_Channels xdata adc_channels[ADC_CHANNELS_NUM];
-#pragma OT(6,Speed)
 //-------------------------------------------
 void ADC_Initialize() //using 0
 {	

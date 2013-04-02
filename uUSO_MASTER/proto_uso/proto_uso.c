@@ -38,31 +38,31 @@
 sbit DE_RE=P3^5;
 
 //-----------------------------------------------------------------------------------
-volatile unsigned char xdata DEV_NAME[DEVICE_NAME_LENGTH_SYM] ="<<uUSO_2>>"; //имя устройства
-volatile unsigned char xdata NOTICE[DEVICE_DESC_MAX_LENGTH_SYM]="<-- GEOSPHERA_2012 -->";//примечание 	
-volatile unsigned char xdata VERSION[DEVICE_VER_LENGTH_SYM] ="\x30\x30\x30\x30\x31";	// версия программы ПЗУ	не больше 5 байт
+volatile unsigned char  DEV_NAME[DEVICE_NAME_LENGTH_SYM] ="<<uUSO_2>>"; //имя устройства
+volatile unsigned char  NOTICE[DEVICE_DESC_MAX_LENGTH_SYM]="<-- GEOSPHERA_2012 -->";//примечание 	
+volatile unsigned char  VERSION[DEVICE_VER_LENGTH_SYM] ="\x30\x30\x30\x30\x31";	// версия программы ПЗУ	не больше 5 байт
 
-volatile unsigned char xdata ADRESS_DEV=0x1;
+volatile unsigned char  ADRESS_DEV=0x1;
 
-volatile unsigned char xdata dev_desc_len=20;//длина описания устройства
+volatile unsigned char  dev_desc_len=20;//длина описания устройства
 //--------------------------------global variable------------------------------------
 //volatile unsigned char xdata	PROTO_STATE;//счетчик состояний
-volatile unsigned char idata	RECIEVED=0;//принято
-volatile unsigned char xdata    recieve_count;//счетчик приемного буфера
-volatile unsigned char xdata	transf_count;//счетчик передаваемых байтов	   
-volatile unsigned char xdata	buf_len;//длина передаваемого буфера
+volatile unsigned char 	RECIEVED=0;//принято
+volatile unsigned char  recieve_count;//счетчик приемного буфера
+volatile unsigned char 	transf_count;//счетчик передаваемых байтов	   
+volatile unsigned char 	buf_len;//длина передаваемого буфера
 
-volatile unsigned char idata  CUT_OUT_NULL;//флаг-вырезаем 0 после 0xD7
-volatile unsigned char xdata frame_len=0;//длина кадра, которую вытаскиваем из шестого байта кадра
+volatile unsigned char  CUT_OUT_NULL;//флаг-вырезаем 0 после 0xD7
+volatile unsigned char  frame_len=0;//длина кадра, которую вытаскиваем из шестого байта кадра
 //--------------------------------------------------------------------
-volatile unsigned char xdata  RecieveBuf[MAX_LENGTH_REC_BUF]={0} ; //буфер принимаемых данных
-volatile unsigned char xdata 			*TransferBuf;
-//static unsigned char /*data*/ volatile  TransferBuf[MAX_LENGTH_TR_BUF] ; //буфер передаваемых данных
+volatile unsigned char   RecieveBuf[MAX_LENGTH_REC_BUF]={0} ; //буфер принимаемых данных
+//volatile unsigned char  		*TransferBuf;
+unsigned char 		     TransferBuf[MAX_LENGTH_TR_BUF] ; //буфер передаваемых данных
 //--------------------------------------------------------------------
-volatile unsigned char xdata  STATE_BYTE=0xC0;//байт состояния устройства
-volatile unsigned char idata symbol=0xFF;//принятый символ
+volatile unsigned char  STATE_BYTE=0xC0;//байт состояния устройства
+volatile unsigned char  symbol=0xFF;//принятый символ
 
-volatile unsigned char xdata avaible_channels=0;
+volatile unsigned char  avaible_channels=0;
 
 volatile struct pt pt_proto;
 //-----------------------------------------------------------------------------------
@@ -74,7 +74,6 @@ union //объединение для конвертирования char->long
 sym_8_to_float;
 extern unsigned char idata i2c_buffer[6];
 //-----------------------------------------------------------------------------------
-#pragma OT(0,Speed)
 void UART_ISR(void) interrupt 4 //using 1
 {	
 	EA=0;	//запрет прерывания
@@ -201,7 +200,6 @@ void UART_ISR(void) interrupt 4 //using 1
 	return;
 }
 //------------------------------------------------------------------------------
-#pragma OT(6,Speed)
 void Protocol_Init(void) //using 0
 {
 	unsigned char i=0;	
@@ -209,7 +207,7 @@ void Protocol_Init(void) //using 0
 	TI=0;
 	RI=0;
 	
-	TransferBuf=&RecieveBuf[0];	 //буфер ответа =буфер запроса
+	//TransferBuf=&RecieveBuf[0];	 //буфер ответа =буфер запроса
 
 	Restore_Dev_Address_Desc();
 
@@ -221,10 +219,12 @@ void Protocol_Init(void) //using 0
 	CUT_OUT_NULL=0;
 	STATE_BYTE=0xC0;
 //-----------------------------//просмотр доступных каналов
+   avaible_channels=0;
    for(i=0;i<CHANNEL_NUMBER;i++)
    {
    		if(channels[i].number!=0xFF)
 		{
+			channels[i].number=avaible_channels;//автоматическая ренумерация каналов
 			avaible_channels++;	
 		}		
    }
@@ -684,8 +684,7 @@ void ProtoBufHandling(void) //using 0 //процесс обработки принятого запроса
 }
 //-----------------------------------------------------------------------------------
 
-//--------------------------------------------------------------------------------------
-#pragma OT(0,Speed) 
+//-------------------------------------------------------------------------------------- 
 PT_THREAD(ProtoProcess(struct pt *pt))
  {
  //unsigned char i=0;

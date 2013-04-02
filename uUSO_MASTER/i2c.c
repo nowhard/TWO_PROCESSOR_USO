@@ -46,10 +46,7 @@ void I2C_Init(void)
 //--------------------------------------------------------------
 void I2C_Repeat_Start_Read(unsigned char addr,unsigned char *par_buf,unsigned char par_buf_len,unsigned char *buf,unsigned char buf_len)//запрос с двумя стартами
 {
-
-
 	DEV_ADDR=(addr<<1)&0xFE;
-
 	
 	byte_num_write=par_buf_len;
 	byte_num_read=buf_len;
@@ -61,7 +58,6 @@ void I2C_Repeat_Start_Read(unsigned char addr,unsigned char *par_buf,unsigned ch
 	return;
 }
 //-------------------------------------------------------------
-#pragma OT(0,Speed) 
  PT_THREAD(I2C_Process(struct pt *pt))//поток  I2C
  {  
    PT_BEGIN(pt);
@@ -180,7 +176,6 @@ void I2C_Repeat_Start_Read(unsigned char addr,unsigned char *par_buf,unsigned ch
 
  }
 //-------------------------------------------------------------
-#pragma OT(0,Speed)
  static PT_THREAD(I2C_Read_Buf(struct pt *pt,unsigned char *buf,unsigned char len))//дочерний поток чтения буфера I2C
  {  
 	    static volatile unsigned char read_byte_counter,bit_counter,recieve_byte;
@@ -233,7 +228,6 @@ void I2C_Repeat_Start_Read(unsigned char addr,unsigned char *par_buf,unsigned ch
 	  PT_END(pt);
 }
 //-------------------------------------------------------------
-#pragma OT(0,Speed)
 static PT_THREAD(I2C_Write_Buf(struct pt *pt,unsigned char *buf,unsigned char len))//дочерний поток записи буфера I2C
  {  
 	   static volatile unsigned char write_byte_counter,bit_counter,write_byte;
@@ -277,7 +271,6 @@ static PT_THREAD(I2C_Write_Buf(struct pt *pt,unsigned char *buf,unsigned char le
 	  PT_END(pt);
 }
 //-------------------------------------------------------------
-#pragma OT(0,Speed)
 static PT_THREAD(I2C_Read_Complete(struct pt *pt))//постобработка пакета
 {
 	PT_BEGIN(pt);
