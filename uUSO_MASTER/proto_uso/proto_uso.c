@@ -674,9 +674,7 @@ void ProtoBufHandling(void) //using 0 //процесс обработки принятого запроса
 //------------------------------------------
     default:
 	{
-//       COMMAND_ERR=0x1;//несуществующая команда
 	   buf_len=Request_Error(FR_COMMAND_NOT_EXIST);
-//	   PROTO_STATE=PROTO_ERR_HANDLING;//на обработчик ошибки
     }								   
   }
 
@@ -687,7 +685,6 @@ void ProtoBufHandling(void) //using 0 //процесс обработки принятого запроса
 //-------------------------------------------------------------------------------------- 
 PT_THREAD(ProtoProcess(struct pt *pt))
  {
- //unsigned char i=0;
  static unsigned char  CRC=0x0;
   PT_BEGIN(pt);
 

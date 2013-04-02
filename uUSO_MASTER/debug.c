@@ -27,7 +27,6 @@ volatile struct pt pt_i2c_read, pt_freq_measure,pt_sort,pt_i2c_process;
 
 
 //-----------------------------------------
-void Set_Handlers(void);//установить обработчики событий
 PT_THREAD(I2C_RepeatRead(struct pt *pt));
  //---------------------------------------
 
@@ -60,7 +59,6 @@ void main(void) //using 0
 	EA=1;
 
 	i2c_buffer[0]=0x0;//сброс флага инициализации
-//	I2C_Write_Buf(I2C_ADDR,&buf,1);
 
 	I2C_Repeat_Start_Read(I2C_ADDR,&i2c_buffer,1,i2c_channels.I2C_CHNL.i2c_buf,10);	  //производим первое чтение заранее
 	while(1)
@@ -81,7 +79,6 @@ void main(void) //using 0
 	  while(1) 
 	  {
 			PT_DELAY(pt,15);
-			//buf[0]=0x0;  	//номер канала, который читаем с I2C устройства
 			I2C_Repeat_Start_Read(I2C_ADDR,&i2c_buffer,1,i2c_channels.I2C_CHNL.i2c_buf,10);	//исправить сдвиг адресации			
 	  }
 	  PT_END(pt);
