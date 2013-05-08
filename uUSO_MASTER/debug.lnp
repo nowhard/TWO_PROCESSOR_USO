@@ -12,7 +12,8 @@
 "i2c.obj",
 "calibrate.obj",
 "ulongsort.obj",
-"timer1.obj" 
+"timer1.obj",
+"crc_table.obj" 
 TO "debug" 
 RAMSIZE(256) 
 XDATA( 0X0000-0X07FF )

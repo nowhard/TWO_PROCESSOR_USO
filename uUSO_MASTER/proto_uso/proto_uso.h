@@ -2,7 +2,7 @@
 #define PROTO_USO_H
 
 #include <ADuC845.h>
-#include "channels.h"
+
 #include "adc.h"
 #include "calibrate/calibrate.h"
 #include "ulongsort.h"
