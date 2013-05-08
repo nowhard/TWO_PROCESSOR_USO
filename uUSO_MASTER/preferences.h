@@ -106,6 +106,11 @@
 #define DEVICE_DESC_LEN_EEPROM	0x32//адрес значения длины строки описания в ППЗУ
 
 #define ADC_CALIBRATE_ADDR		0x50
+
+
+#define SETTINGS_DEVICE_CRC_ADDR	0xA0//адрес рассчитанной контрольной суммы настроек устройства
+
+
 //----------------------------interfaces--------------------------------
 #define RS_232
 //#define RS_485

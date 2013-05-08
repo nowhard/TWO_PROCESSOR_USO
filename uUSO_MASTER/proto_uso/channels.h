@@ -56,5 +56,6 @@ void ChannelsInit(void);//инициализация структуры каналов
 void Store_Channels_Data(void);//Сохраним данные каналов в ППЗУ
 void Restore_Channels_Data(void);//Восстановим данные каналов из ППЗУ
 void Channels_Set_Default(void);//сбросить значения каналов по умолчанию
+unsigned char Channels_Get_Settings_CRC(void);//расчет crc настроек в eerprom
 //---------------------------------------
 #endif
