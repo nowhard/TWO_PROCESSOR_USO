@@ -477,15 +477,17 @@ unsigned char Channel_Set_Calibrate(void)//установить верхнюю или нижнюю точку к
 
 		case 1:
 		{
-			channels[RecieveBuf[6]].calibrate.cal.calibrate=0;//установим/снимем флаг калибровки
-			EEPROM_Write(&channels[RecieveBuf[6]].calibrate.serialize,3,ADC_CALIBRATE_ADDR+RecieveBuf[6]*3);
+			//channels[RecieveBuf[6]].calibrate.cal.calibrate=0;//установим/снимем флаг калибровки
+			//EEPROM_Write(&channels[RecieveBuf[6]].calibrate.serialize,3,ADC_CALIBRATE_ADDR+RecieveBuf[6]*3);
+			Calibrate_Set_Flag(RecieveBuf[6],RESET);
 		}
 		break;
 
 		case 2:
 		{
-			channels[RecieveBuf[6]].calibrate.cal.calibrate=1;//установим/снимем флаг калибровки
-			EEPROM_Write(&channels[RecieveBuf[6]].calibrate.serialize,3,ADC_CALIBRATE_ADDR+RecieveBuf[6]*3);	
+			//channels[RecieveBuf[6]].calibrate.cal.calibrate=1;//установим/снимем флаг калибровки
+			//EEPROM_Write(&channels[RecieveBuf[6]].calibrate.serialize,3,ADC_CALIBRATE_ADDR+RecieveBuf[6]*3);
+			Calibrate_Set_Flag(RecieveBuf[6],SET);	
 		}
 		break;
 

@@ -39,6 +39,8 @@ void main(void) //using 0
 	
 	PLLCON&=PLLCON_VAL;//настройка частоты процессора
 	
+	RestoreCalibrate();
+	
 	ChannelsInit();//инициализаци€ настроек каналов
 	Protocol_Init();	
 	Timer1_Initialize(); //таймер шедулера 200√ц	
@@ -50,8 +52,7 @@ void main(void) //using 0
 	I2C_Init();
 
 
-	RestoreCalibrate();
-
+	
 	PT_INIT(&pt_i2c_read);
 	PT_INIT(&pt_freq_measure);
 	PT_INIT(&pt_sort);

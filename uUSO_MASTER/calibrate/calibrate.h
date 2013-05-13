@@ -3,29 +3,20 @@
 #include "eeprom/eeprom.h"
 #include "proto_uso/channels.h"
 #include "adc.h"
+#include "crc_table.h"
 
-//функции калибровки по двум точкам
-//
-//
-//------------------------------------------------------------
-/*#define FIRST_POINT_X_ADRESS 	0x1
-#define FIRST_POINT_Y_ADRESS	0x2
-#define SECOND_POINT_X_ADRESS	0x3
-#define SECOND_POINT_Y_ADRESS	0x4*/
+enum 
+{
+	RESET=0,
+	SET=1
+} ;
 
 
 //------------------------------------------------------------
-void SetFirstPoint(unsigned char channel_num,long ADC_Code,unsigned long val);	 //установка первой точки -воздух плотность = 0
-void SetSecondPoint(unsigned char channel_num,long ADC_Code,unsigned long val); //установка второй точки -вода	  плотность = 1
-
-//float GetFirstDensityPoint(void);
-//float GetSecondDensityPoint(void);
-
 void Calibrate(unsigned char channel_num,float K,float C); //общая функция калибровки
 void RestoreCalibrate(void);		 //восстановление точек калибровки из EEPROM
 unsigned long GetCalibrateVal(unsigned char channel_num,unsigned long ADC_Code);   //преобразование значения АЦП в значение плотности в кг\м^3
-
-//float GetCompensedDensity(float pressure,float temp);   //преобразование значения АЦП в значение плотности в кг\м^3
- 
+unsigned char Calibrate_Get_CRC(void);//расчет crc  в eerprom 
+void Calibrate_Set_Flag(unsigned char channel,unsigned char flag);//установить/снять флаг калиброванности канала
 //------------------------------------------------------------
 #endif

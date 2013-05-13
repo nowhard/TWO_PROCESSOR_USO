@@ -493,6 +493,16 @@
               <FileType>1</FileType>
               <FilePath>.\timer1.c</FilePath>
             </File>
+            <File>
+              <FileName>crc_table.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\crc_table.h</FilePath>
+            </File>
+            <File>
+              <FileName>crc_table.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\crc_table.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>
