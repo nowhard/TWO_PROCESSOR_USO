@@ -8,13 +8,8 @@
 #include "ulongsort.h"
 #include <string.h>
 
-#define HI(x) ((x)>>8)
-#define LO(x) ((x)&0xFF)
 
 #include "pt/pt.h"
-//#define ADRESS_DEV 			0x1 //адрес устройства
-//#define CHANNEL_NUMBER	8//количество каналов
-
 
 //--------------------------------------------------------------------------------
 #define MAX_LENGTH_REC_BUF 	270 //максимальная длина принимаемого кадра
@@ -60,6 +55,8 @@
 
 #define  CHANNEL_SET_CALIBRATE			0xCA//установить верхнюю или нижнюю точку двухточечной калибровки
 
+#define  CHANNEL_SET_ALL_DEFAULT		0xDF //установить все значения по умолчанию
+
 #define  REQUEST_ERROR					0xFF//Ошибочный запрос/ответ;
 
 //-------------------------коды сбойных ситуаций-------------------------------------------
@@ -77,15 +74,6 @@
 #define	FR_CHANNEL_NUM_TOO_MUCH						0xC//слишком много каналов в кадре.
 #define	FR_CHNL_TYPE_ERROR							0xD//Несоответствие типа канала
 #define	FR_CHNL_NOT_EXIST							0xF//Отсутствующий канал
-//--------------------------состояния цифрового автомата--------------
-#define PROTO_RESTART		0	//рестарт цикла и обнуление
-#define PROTO_WAIT 			1	//ожидание данных
-#define	PROTO_PLACE_BUF		2	//прием данных в буфер
-#define	PROTO_ADDR_CHECK	3	//проверка адреса
-#define	PROTO_CRC_CHECK		4	//проверка контрольной суммы	
-#define	PROTO_BUF_HANDLING	5	//обработка команды
-#define PROTO_BUF_TRANSFER	6	//передача ответа ведущему
-#define	PROTO_ERR_HANDLING	7	//обработка ошибок
 //--------------------------------прототипы---------------------------
 void UART_ISR(void); //обработчик прерывания уарт
 void Protocol_Init(void); //инициализация протокола
@@ -103,6 +91,7 @@ unsigned char Channel_Set_Reset_State_Flags(void);//	Установка/Сброс флагов сост
 unsigned char Channel_All_Get_Data(void);//Выдать информацию по всем каналам узла (расширенный режим);
 unsigned char Channel_Set_Address_Desc(void);//установить новый адрес устройства, имя, описание, версию прошивки и комментарий
 unsigned char Channel_Set_Calibrate(void);//установить верхнюю или нижнюю точку калибровки
+unsigned char Channel_Set_All_Default(void);//установить настройки и калибровки каналов по умолчанию
 unsigned char Request_Error(unsigned char error_code);//	Ошибочный запрос/ответ;
 
 
@@ -117,6 +106,4 @@ void Restore_Dev_Address_Desc(void);//восстановить из ппзу адрес и информацию об
  extern struct Channel xdata channels[CHANNEL_NUMBER];//обобщенная структура каналов
  extern struct ADC_Channels xdata adc_channels[ADC_CHANNELS_NUM]; //каналы ацп
 //--------------------------------------------------------------------
-
-//---------------------------------------------------------------------
 #endif

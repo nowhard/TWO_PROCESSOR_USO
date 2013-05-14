@@ -18,5 +18,6 @@ void RestoreCalibrate(void);		 //восстановление точек калибровки из EEPROM
 unsigned long GetCalibrateVal(unsigned char channel_num,unsigned long ADC_Code);   //преобразование значения АЦП в значение плотности в кг\м^3
 unsigned char Calibrate_Get_CRC(void);//расчет crc  в eerprom 
 void Calibrate_Set_Flag(unsigned char channel,unsigned char flag);//установить/снять флаг калиброванности канала
+void Calibrate_Set_Default(void);//установка калибровки по умолчанию(отключена)
 //------------------------------------------------------------
 #endif

@@ -5,8 +5,20 @@ unsigned long GetCalibrateVal(unsigned char channel_num,unsigned long ADC_Code) 
 {
 //	if(ADC_Code==0)
 //		return 0;
+	float result=0;
 
-	return (unsigned long)(ADC_Code*channels[channel_num].calibrate.cal.K+channels[channel_num].calibrate.cal.C);	
+	result=ADC_Code*channels[channel_num].calibrate.cal.K+channels[channel_num].calibrate.cal.C;
+
+	if(result<0)
+	{
+		return 0;
+	}
+	else
+	{
+		return (unsigned long)result; 
+	}
+
+	//return (unsigned long)(ADC_Code*channels[channel_num].calibrate.cal.K+channels[channel_num].calibrate.cal.C);	
 }
 //------------------------------------------------------------
 void RestoreCalibrate(void)		 //восстановление точек калибровки из EEPROM
@@ -26,12 +38,7 @@ void RestoreCalibrate(void)		 //восстановление точек калибровки из EEPROM
 
 	if(true_crc!=crc)
 	{
-		for(i=0;i<CHANNEL_NUMBER;i++)
-		{
-			Calibrate_Set_Flag(i,RESET);
-		}
-		true_crc= (unsigned long)Calibrate_Get_CRC();//расчет текущей CRC калибровок
-		EEPROM_Write(&true_crc,1,CALIBRATE_DEVICE_CRC_ADDR);//запомним CRC 	
+		Calibrate_Set_Default();
 	}
 
 	return;
@@ -57,13 +64,6 @@ unsigned char Calibrate_Get_CRC(void)//расчет crc  в eerprom
 
      for(i=0;i<CHANNEL_NUMBER;i++)
 	 {
-//        for(j=0;j<4;j++)
-//		{
-//		 	crc = Crc8Table[crc ^ (((unsigned char *)(&channels[i].calibrate.serialize[0]))[j])];
-//			crc = Crc8Table[crc ^ (((unsigned char *)(&channels[i].calibrate.serialize[1]))[j])];
-//			crc = Crc8Table[crc ^ (((unsigned char *)(&channels[i].calibrate.serialize[2]))[j])];
-//		}
-
 		for(j=0;j<(3*sizeof(unsigned long));j++)
 		{
 			crc = Crc8Table[crc ^ (((unsigned char *)(&channels[i].calibrate.serialize))[j])];
@@ -94,3 +94,18 @@ void Calibrate_Set_Flag(unsigned char channel,unsigned char flag)//установить/сн
   	true_crc= (unsigned long)Calibrate_Get_CRC();//расчет текущей CRC калибровок
 	EEPROM_Write(&true_crc,1,CALIBRATE_DEVICE_CRC_ADDR);//запомним CRC 	
 }
+//----------------------------------------------------------------
+void Calibrate_Set_Default(void)//установка калибровки по умолчанию(отключена)
+{
+		unsigned char i=0;
+	    unsigned long true_crc=0;		
+
+		for(i=0;i<CHANNEL_NUMBER;i++)
+		{
+			Calibrate_Set_Flag(i,RESET);
+		}
+		
+		true_crc= (unsigned long)Calibrate_Get_CRC();//расчет текущей CRC калибровок
+		EEPROM_Write(&true_crc,1,CALIBRATE_DEVICE_CRC_ADDR);//запомним CRC 		
+}
+//----------------------------------------------------------------

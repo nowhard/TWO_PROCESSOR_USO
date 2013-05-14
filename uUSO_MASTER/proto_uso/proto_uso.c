@@ -49,7 +49,7 @@ union //объединение для конвертирования char->long
 sym_8_to_float;
 extern unsigned char idata i2c_buffer[6];
 //-----------------------------------------------------------------------------------
-#pragma OT(0,Speed)
+//#pragma OT(0,Speed)
 void UART_ISR(void) interrupt 4 //using 1
 {	
 	EA=0;	//запрет прерывания
@@ -176,7 +176,7 @@ void UART_ISR(void) interrupt 4 //using 1
 	return;
 }
 //------------------------------------------------------------------------------
-#pragma OT(6,Speed)
+//#pragma OT(6,Speed)
 void Protocol_Init(void) //using 0
 {
 	TI=0;
@@ -199,7 +199,7 @@ void Protocol_Init(void) //using 0
 //-----------------------------------------------------------------------------
 unsigned char Send_Info(void) //using 0    //посылка информации об устройстве
 {
-	    unsigned char   idata i=0;
+	    unsigned char    i=0;
 	   									
 	   //заголовок кадра---
 	   TransferBuf[0]=0x00;
@@ -265,7 +265,7 @@ unsigned char Channel_Get_Data(void) //using 0 //Выдать данные по каналам, согла
 //-----------------------------------------------------------------------------
 unsigned char  Channel_Set_Parameters(void) //using 0 //Установить параметры по каналам, согласно абсолютной нумерации;
 {
-       unsigned char xdata index=0, store_data=0;//i=0;
+       unsigned char  index=0, store_data=0;//i=0;
 	 
 	   while(index<RecieveBuf[5]-1)				   // данные по каналам
 	      {
@@ -519,6 +519,13 @@ unsigned char Channel_Set_Address_Desc(void)//установить новый адрес устройства,
 	return 0;
 }
 //-----------------------------------------------------------------------------
+unsigned char Channel_Set_All_Default(void)//установить настройки и калибровки каналов по умолчанию
+{
+	Channels_Set_Default();
+	Calibrate_Set_Default();
+	return	Request_Error(FR_SUCCESFUL);//ошибки нет, подтверждение		
+}
+//-----------------------------------------------------------------------------
 unsigned char Request_Error(unsigned char error_code) //using 0 //	Ошибочный запрос/ответ;
 {
 	TransferBuf[0]=0x00;TransferBuf[1]=0xD7;TransferBuf[2]=0x29;
@@ -616,6 +623,12 @@ void ProtoBufHandling(void) //using 0 //процесс обработки принятого запроса
 	}
 	break;
 //------------------------------------------
+	case CHANNEL_SET_ALL_DEFAULT:
+	{
+		 buf_len=Channel_Set_All_Default();
+	}
+	break;
+//------------------------------------------
     default:
 	{
 //       COMMAND_ERR=0x1;//несуществующая команда
@@ -627,9 +640,7 @@ void ProtoBufHandling(void) //using 0 //процесс обработки принятого запроса
   return;
 }
 //-----------------------------------------------------------------------------------
-
-//--------------------------------------------------------------------------------------
-#pragma OT(0,Speed) 
+//#pragma OT(0,Speed) 
 PT_THREAD(ProtoProcess(struct pt *pt))
  {
  //unsigned char i=0;
@@ -684,7 +695,7 @@ PT_THREAD(ProtoProcess(struct pt *pt))
  PT_END(pt);
 }
 //-----------------------CRC------------------------------------------------------------
-#pragma OT(6,Speed)
+//#pragma OT(6,Speed)
   unsigned char CRC_Check( unsigned char xdata *Spool_pr,unsigned char Count_pr ) 
  {
      unsigned char crc = 0x0;
