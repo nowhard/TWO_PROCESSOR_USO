@@ -175,8 +175,8 @@
             <XDataHold>0</XDataHold>
             <UseOnchipRom>0</UseOnchipRom>
             <UseOnchipArithmetic>0</UseOnchipArithmetic>
-            <UseMultipleDPTR>1</UseMultipleDPTR>
-            <UseOnchipXram>1</UseOnchipXram>
+            <UseMultipleDPTR>0</UseMultipleDPTR>
+            <UseOnchipXram>0</UseOnchipXram>
             <HadIRAM>1</HadIRAM>
             <HadXRAM>1</HadXRAM>
             <HadIROM>1</HadIROM>
@@ -238,7 +238,7 @@
               <Ocr1>
                 <Type>0</Type>
                 <StartAddress>0x0</StartAddress>
-                <Size>0x0</Size>
+                <Size>0x7fff</Size>
               </Ocr1>
               <Ocr2>
                 <Type>0</Type>
@@ -327,7 +327,7 @@
             <CSection></CSection>
             <UserSection></UserSection>
             <CodeBaseAddress></CodeBaseAddress>
-            <XDataBaseAddress></XDataBaseAddress>
+            <XDataBaseAddress>0X0000-0X7FFE</XDataBaseAddress>
             <PDataBaseAddress></PDataBaseAddress>
             <BitBaseAddress></BitBaseAddress>
             <DataBaseAddress></DataBaseAddress>
@@ -370,7 +370,7 @@
                 <uAregs>1</uAregs>
                 <UseInterruptVector>2</UseInterruptVector>
                 <Fuzzy>3</Fuzzy>
-                <Optimize>9</Optimize>
+                <Optimize>0</Optimize>
                 <WarningLevel>3</WarningLevel>
                 <SizeSpeed>1</SizeSpeed>
                 <ObjectExtend>2</ObjectExtend>

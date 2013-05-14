@@ -65,7 +65,7 @@ IDATALEN	EQU	80H	; the length of IDATA memory in bytes.
 XDATASTART	EQU	0H	; the absolute start-address of XDATA memory
 ; <o> XDATALEN: XDATA memory size <0x0-0xFFFF> 
 ;     <i> The length of XDATA memory in bytes.
-XDATALEN	EQU	0H	; the length of XDATA memory in bytes.
+XDATALEN	EQU	7FFFH	; the length of XDATA memory in bytes.
 ;
 ; <o> PDATASTART: PDATA memory start <0x0-0xFFFF> 
 ;     <i> The absolute start address of PDATA memory.
@@ -100,7 +100,7 @@ IBPSTACKTOP	EQU	0FFH+1	; set top of stack to highest location+1.
 XBPSTACK	EQU	0	; set to 1 if large reentrant is used.
 ;  <o> XBPSTACKTOP: End address of LARGE model stack <0x0-0xFFFF>
 ;     <i> Set the top of the stack to the highest location.
-XBPSTACKTOP	EQU	0FFFFH+1; set top of stack to highest location+1.
+XBPSTACKTOP	EQU	07FFFH+1; set top of stack to highest location+1.
 ; </h>
 ;
 ; <h>  Stack space for reentrant functions in the COMPACT model.	
@@ -109,7 +109,7 @@ XBPSTACKTOP	EQU	0FFFFH+1; set top of stack to highest location+1.
 PBPSTACK	EQU	0	; set to 1 if compact reentrant is used.
 ;  <o> PBPSTACKTOP: End address of COMPACT model stack <0x0-0xFFFF>
 ;     <i> Set the top of the stack to the highest location.
-PBPSTACKTOP	EQU	0FFFFH+1; set top of stack to highest location+1.
+PBPSTACKTOP	EQU	07FFFH+1; set top of stack to highest location+1.
 ; </h>
 ;</h>
 ;
