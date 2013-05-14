@@ -27,8 +27,8 @@ volatile unsigned char idata  CUT_OUT_NULL;//флаг-вырезаем 0 после 0xD7
 volatile unsigned char xdata frame_len=0;//длина кадра, которую вытаскиваем из шестого байта кадра
 //--------------------------------------------------------------------
 volatile unsigned char xdata  RecieveBuf[MAX_LENGTH_REC_BUF]={0} ; //буфер принимаемых данных
-volatile unsigned char xdata 			*TransferBuf;
-//static unsigned char /*data*/ volatile  TransferBuf[MAX_LENGTH_TR_BUF] ; //буфер передаваемых данных
+//volatile unsigned char xdata 			*TransferBuf;
+volatile unsigned char xdata  TransferBuf[MAX_LENGTH_TR_BUF]={0} ; //буфер передаваемых данных
 //--------------------------------------------------------------------
 volatile unsigned char xdata  STATE_BYTE=0xC0;//байт состояния устройства
 volatile unsigned char idata symbol=0xFF;//принятый символ
@@ -177,7 +177,7 @@ void Protocol_Init(void) //using 0
 	TI=0;
 	RI=0;
 	
-	TransferBuf=&RecieveBuf[0];	 //буфер ответа =буфер запроса
+//	TransferBuf=&RecieveBuf[0];	 //буфер ответа =буфер запроса
 
 	Restore_Dev_Address_Desc();
 

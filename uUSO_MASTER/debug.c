@@ -74,7 +74,7 @@ void main(void) //using 0
 	}
 }
 //-----------------------------------------------------------------------------
-#pragma OT(0,Speed)
+//#pragma OT(0,Speed)
  //---------------------------------
  PT_THREAD(I2C_RepeatRead(struct pt *pt))//поток чтения I2C
  {  

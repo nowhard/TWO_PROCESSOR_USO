@@ -5,7 +5,7 @@ volatile unsigned char xdata mid_cycle_counter=0;
 volatile unsigned long  temp;
 
 //------------------------------------------------
-#pragma OT(0,Speed) 
+//#pragma OT(0,Speed) 
  PT_THREAD(ulongsort_process(struct pt *pt))
  {
    static volatile  unsigned char counter=0,i=0,j=0;

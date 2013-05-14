@@ -1,5 +1,5 @@
 #include "calibrate.h"
-#pragma OT(6,Speed)
+//#pragma OT(6,Speed)
 //------------------------------------------------------------
 unsigned long GetCalibrateVal(unsigned char channel_num,unsigned long ADC_Code)   //преобразование значения АЦП в калиброванное значение	 ??? проверить && debug
 {
