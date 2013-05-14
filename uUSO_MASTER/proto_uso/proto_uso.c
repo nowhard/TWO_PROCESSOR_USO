@@ -17,18 +17,12 @@ volatile unsigned char xdata ADRESS_DEV=0x1;
 
 volatile unsigned char xdata dev_desc_len=20;//длина описания устройства
 //--------------------------------global variable------------------------------------
-//volatile unsigned char xdata	PROTO_STATE;//счетчик состояний
 volatile unsigned char idata	RECIEVED=0;//принято
 volatile unsigned char xdata    recieve_count;//счетчик приемного буфера
 volatile unsigned char xdata	transf_count;//счетчик передаваемых байтов	   
 volatile unsigned char xdata	buf_len;//длина передаваемого буфера
 
 //------------------------флаги ошибок--------------------------------
-//volatile unsigned char xdata CRC_ERR;	//ошибка сrc
-//volatile unsigned char xdata COMMAND_ERR;//неподдерживаемая команда
-
-//volatile unsigned char xdata TIMEOUT;//таймаут 
-
 volatile unsigned char idata  CUT_OUT_NULL;//флаг-вырезаем 0 после 0xD7
 volatile unsigned char xdata frame_len=0;//длина кадра, которую вытаскиваем из шестого байта кадра
 //--------------------------------------------------------------------
@@ -47,6 +41,7 @@ union //объединение для конвертирования char->long
 	unsigned char result_char[4];
 }
 sym_8_to_float;
+
 extern unsigned char idata i2c_buffer[6];
 //-----------------------------------------------------------------------------------
 //#pragma OT(0,Speed)
@@ -643,7 +638,6 @@ void ProtoBufHandling(void) //using 0 //процесс обработки принятого запроса
 //#pragma OT(0,Speed) 
 PT_THREAD(ProtoProcess(struct pt *pt))
  {
- //unsigned char i=0;
  static unsigned char  CRC=0x0;
   PT_BEGIN(pt);
 
