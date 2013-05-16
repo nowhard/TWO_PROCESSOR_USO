@@ -6,6 +6,7 @@
 #include<stdio.h>
 #include "proto_uso/channels.h"
 
+#define I2C_ADDR 0x58
 //------------------------------------------
 struct I2C_Channel	   //структура кадра I2C
 {	

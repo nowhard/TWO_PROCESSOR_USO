@@ -67,13 +67,18 @@ void ADC_Out_Freq(unsigned int freq)  // using 0
 //------------------------------------------------------------------------------------------------------------------
 void ADC_Restore_Settings(void) //using 0//восстановление настроек ацп
 {
-	 unsigned char xdata i=0;
+	 unsigned char xdata i=0,j=0;
 	for(i=0;i<ADC_CHANNELS_NUM;i++)
 	{
 		adc_channels[i].adc_buf_counter=0;
 		adc_channels[i].buffered=BUF_ENABLE;
 		adc_channels[i].unipolar=ADC_UNIPOLAR;
-		adc_channels[i].new_measuring=0;	
+		adc_channels[i].new_measuring=0;
+		
+		for(j=0;j<ADC_BUF_SIZE;j++)//обнулим массивы значений ацп
+		{
+			adc_channels[i].ADC_BUF_UN[j].ADC_LONG=0x0;
+		}	
 	}
 	return;
 }

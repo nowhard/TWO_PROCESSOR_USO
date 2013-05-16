@@ -14,26 +14,37 @@
 # define STI_EXT  EX1=1; EX0=1; ET0=1;
 
 
-
-
-unsigned char volatile idata measure_state=0;//автомат состояний для оптимизации процесса вычисления(уменьшение нагрузки на процессор)
 //------------------------------------------
-volatile struct Frequency xdata frequency[FREQ_CHANNELS] ; //структура частотных каналов
+volatile struct Frequency xdata frequency[FREQ_CHANNELS]={0}; //структура частотных каналов
 //------------------------------------------
 #define FRQ_CHNL_1 0
 #define FRQ_CHNL_2 1
 #define FRQ_CHNL_3 2
 //--------------------------------------------------------
-//#pragma OT(6,Speed)
+#pragma OT(9,Speed)
 void Frequency_Init(void) //инициализация частотных каналов
 {
+	unsigned char i=0,j=0;
+	
 	Timer0_Initialize();
 	Timer2_Initialize();
 	EX1=1;//включаем внешние прерывания
 	EX0=1;
 	IT0=1;
 	IT1=1;
-	frequency[FRQ_CHNL_1].time_counter=0;
+	
+
+	for(i=0;i<3;i++) //обнуление структуры
+	{
+		frequency[i].time_counter=0;
+		for(j=0;j<4;j++)
+		{
+			frequency[i].frame[j].event_counter=0;
+			frequency[i].frame[j].timestamp=0;
+			frequency[i].frame[j].time_copy=0;
+			frequency[i].frame[j].event_copy=0;
+		}
+	}
 	return;
 }
 //--------------------------------------------------------
@@ -74,8 +85,6 @@ void Timer2_ISR(void) interrupt 5 //using 3//обработчик прерывания счетного тайм
 	TF2 = 0;
 //	TH2=0xE7;
 //	TL2=0xFF;
-
-
 
  	switch(frequency[FRQ_CHNL_1].time_counter)
 	{
@@ -169,7 +178,7 @@ void Timer2_ISR(void) interrupt 5 //using 3//обработчик прерывания счетного тайм
 	return;
 }
 //------------------------------------------------------------
-//#pragma OT(0,Speed)
+#pragma OT(0,Speed)
   PT_THREAD(Frequency_Measure_Process(struct pt *pt))
  { 
  	static unsigned char frq_chnl=0;

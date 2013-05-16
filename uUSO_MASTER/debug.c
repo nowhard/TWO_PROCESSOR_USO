@@ -17,7 +17,7 @@
 #include "calibrate/calibrate.h"
 #include "pt/pt.h"
 
-#define I2C_ADDR 0x58//0xD0	
+
 
 extern unsigned char idata i2c_buffer[6];
 
@@ -35,7 +35,6 @@ void main(void) //using 0
 {			   
 	EA = 0;
 	
-	//CFG845=0x1;//enable xram
 	
 	PLLCON&=PLLCON_VAL;//настройка частоты процессора
 	
@@ -61,9 +60,8 @@ void main(void) //using 0
 	EA=1;
 
 	i2c_buffer[0]=0x0;//сброс флага инициализации
-//	I2C_Write_Buf(I2C_ADDR,&buf,1);
 
-	I2C_Repeat_Start_Read(I2C_ADDR,&i2c_buffer,1,i2c_channels.I2C_CHNL.i2c_buf,10);	  //производим первое чтение заранее
+	I2C_Repeat_Start_Read(I2C_ADDR,&i2c_buffer,1,i2c_channels.I2C_CHNL.i2c_buf,sizeof(i2c_channels));	  //производим первое чтение заранее
 	while(1)
 	{	
 		ProtoProcess(&pt_proto);
@@ -83,8 +81,7 @@ void main(void) //using 0
 	  while(1) 
 	  {
 			PT_DELAY(pt,15);
-			//buf[0]=0x0;  	//номер канала, который читаем с I2C устройства
-			I2C_Repeat_Start_Read(I2C_ADDR,&i2c_buffer,1,i2c_channels.I2C_CHNL.i2c_buf,10);	//исправить сдвиг адресации
+			I2C_Repeat_Start_Read(I2C_ADDR,&i2c_buffer,1,i2c_channels.I2C_CHNL.i2c_buf,sizeof(i2c_channels));	//исправить сдвиг адресации
 			WDT_Clear();
 	  }
 	  PT_END(pt);
