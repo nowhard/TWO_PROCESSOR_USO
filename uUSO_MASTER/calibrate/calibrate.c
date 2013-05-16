@@ -7,13 +7,20 @@ unsigned long GetCalibrateVal(unsigned char channel_num,unsigned long ADC_Code) 
 
 	result=ADC_Code*channels[channel_num].calibrate.cal.K+channels[channel_num].calibrate.cal.C;
 
-	if(result<0)
+	if(result>(float)0xFFFFFF)
 	{
-		return 0;
+		return 0xFFFFFF;
 	}
 	else
 	{
-		return (unsigned long)result; 
+		if(result<0)
+		{
+			return 0;
+		}
+		else
+		{
+			return (unsigned long)result; 
+		}
 	}
 }
 //------------------------------------------------------------
