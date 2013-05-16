@@ -30,3 +30,17 @@
 									 0x74, 0xC8, 0x75, 0xC9, 0x76, 0xCA, 0x77, 0xCB, 
 									 0x78, 0xC4, 0x79, 0xC5, 0x7A, 0xC6, 0x7B, 0xC7, 
 									 0x7C, 0xC0, 0x7D, 0xC1, 0x7E, 0xC2, 0x7F, 0xC3};
+
+//-----------------------CRC------------------------------------------------------------
+#pragma OT(9,Speed)
+  unsigned char CRC_Check( unsigned char xdata *Spool_pr,unsigned char Count_pr ) 
+ {
+     unsigned char crc = 0x0;
+
+     while (Count_pr--)
+         crc = Crc8Table[crc ^ *Spool_pr++];
+
+     return crc;
+ }
+#pragma OT(0,Speed)
+//--------------------------------------------------------------------------------------

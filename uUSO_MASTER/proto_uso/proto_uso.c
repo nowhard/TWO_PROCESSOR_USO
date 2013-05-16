@@ -330,7 +330,7 @@ unsigned char Channel_Set_Reset_State_Flags(void) //using 0 //	Установка/Сброс ф
 	return	Request_Error(FR_SUCCESFUL);//ошибки нет, подтверждение
 }
 //-----------------------------------------------------------------------------
-
+#pragma OT(9,Speed)
 unsigned char Channel_All_Get_Data(void) //using 0 //Выдать информацию по всем каналам узла (расширенный режим);
 {
    unsigned char data index=0,i=0;
@@ -443,6 +443,7 @@ unsigned char Channel_All_Get_Data(void) //using 0 //Выдать информацию по всем к
 	  return (unsigned char)(index+1);
 }
 //-----------------------------------------------------------------------------
+#pragma OT(0,Speed)
 unsigned char Channel_Set_Calibrate(void)//установить верхнюю или нижнюю точку калибровки
 {
 
@@ -472,16 +473,12 @@ unsigned char Channel_Set_Calibrate(void)//установить верхнюю или нижнюю точку к
 
 		case 1:
 		{
-			//channels[RecieveBuf[6]].calibrate.cal.calibrate=0;//установим/снимем флаг калибровки
-			//EEPROM_Write(&channels[RecieveBuf[6]].calibrate.serialize,3,ADC_CALIBRATE_ADDR+RecieveBuf[6]*3);
 			Calibrate_Set_Flag(RecieveBuf[6],RESET);
 		}
 		break;
 
 		case 2:
 		{
-			//channels[RecieveBuf[6]].calibrate.cal.calibrate=1;//установим/снимем флаг калибровки
-			//EEPROM_Write(&channels[RecieveBuf[6]].calibrate.serialize,3,ADC_CALIBRATE_ADDR+RecieveBuf[6]*3);
 			Calibrate_Set_Flag(RecieveBuf[6],SET);	
 		}
 		break;
@@ -626,9 +623,7 @@ void ProtoBufHandling(void) //using 0 //процесс обработки принятого запроса
 //------------------------------------------
     default:
 	{
-//       COMMAND_ERR=0x1;//несуществующая команда
 	   buf_len=Request_Error(FR_COMMAND_NOT_EXIST);
-//	   PROTO_STATE=PROTO_ERR_HANDLING;//на обработчик ошибки
     }								   
   }
 
@@ -688,17 +683,6 @@ PT_THREAD(ProtoProcess(struct pt *pt))
 
  PT_END(pt);
 }
-//-----------------------CRC------------------------------------------------------------
-//#pragma OT(6,Speed)
-  unsigned char CRC_Check( unsigned char xdata *Spool_pr,unsigned char Count_pr ) 
- {
-     unsigned char crc = 0x0;
-
-     while (Count_pr--)
-         crc = Crc8Table[crc ^ *Spool_pr++];
-
-     return crc;
- }
 //-----------------------------------------------------------------------------------------------
 void Store_Dev_Address_Desc(unsigned char addr,void* name,void* ver,void* desc,unsigned char desc_len)//сохранить в ППЗУ новый адрес устройства, имя, версию, описание
 {

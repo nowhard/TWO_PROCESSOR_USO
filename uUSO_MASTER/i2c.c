@@ -1,5 +1,5 @@
 #include "i2c.h"
-#include "proto_uso/proto_uso.h"//для crc
+#include "crc_table.h"//для crc
 //-------------------------------------------------------------
 
 volatile unsigned char xdata DEV_ADDR;
