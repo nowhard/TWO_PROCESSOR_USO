@@ -55,6 +55,9 @@
 
 #define  CHANNEL_SET_CALIBRATE			0xCA//установить верхнюю или нижнюю точку двухточечной калибровки
 
+#define  CHANNEL_GET_CALIBRATE_REQ		0xCB//получить коэфициенты калибровки заданного канала
+#define  CHANNEL_GET_CALIBRATE_RESP		0xCC//получить коэфициенты калибровки заданного канала
+
 #define  CHANNEL_SET_ALL_DEFAULT		0xDF //установить все значения по умолчанию
 
 #define  REQUEST_ERROR					0xFF//Ошибочный запрос/ответ;
@@ -92,6 +95,7 @@ unsigned char Channel_All_Get_Data(void);//Выдать информацию по всем каналам узл
 unsigned char Channel_Set_Address_Desc(void);//установить новый адрес устройства, имя, описание, версию прошивки и комментарий
 unsigned char Channel_Set_Calibrate(void);//установить верхнюю или нижнюю точку калибровки
 unsigned char Channel_Set_All_Default(void);//установить настройки и калибровки каналов по умолчанию
+unsigned char Channel_Get_Calibrate_Value(void);//получить коэфициенты калибровки заданного канала
 unsigned char Request_Error(unsigned char error_code);//	Ошибочный запрос/ответ;
 
 

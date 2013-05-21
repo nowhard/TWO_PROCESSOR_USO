@@ -494,6 +494,46 @@ unsigned char Channel_Set_Calibrate(void)//установить верхнюю или нижнюю точку к
 	return	Request_Error(FR_SUCCESFUL);//ошибки нет, подтверждение	
 }
 //------------------------------------------------------------------------------
+unsigned char Channel_Get_Calibrate_Value(void)//получить коэфициенты калибровки заданного канала
+{
+   unsigned char data channel=0;
+
+
+   TransferBuf[0]=0x00;TransferBuf[1]=0xD7;TransferBuf[2]=0x29;
+   TransferBuf[3]=ADRESS_DEV;  // адрес узла
+   TransferBuf[4]=CHANNEL_GET_CALIBRATE_RESP;  // код операции
+   TransferBuf[5]=0xB;//длина оставшейся части кадра
+
+
+   channel=RecieveBuf[6];
+
+   if(channel>=CHANNEL_NUMBER)
+   {
+   		return Request_Error(FR_COMMAND_STRUCT_ERROR);//непрвильный номер канала	
+   }
+
+   TransferBuf[6]=channel;
+
+   TransferBuf[7]=channels[channel].calibrate.cal.calibrate;
+
+   sym_8_to_float.result_float=channels[channel].calibrate.cal.K;
+
+   	TransferBuf[11]=sym_8_to_float.result_char[0];
+	TransferBuf[10]=sym_8_to_float.result_char[1];
+	TransferBuf[9]=sym_8_to_float.result_char[2];
+	TransferBuf[8]=sym_8_to_float.result_char[3];
+
+   sym_8_to_float.result_float=channels[channel].calibrate.cal.C;
+
+   	TransferBuf[15]=sym_8_to_float.result_char[0];
+	TransferBuf[14]=sym_8_to_float.result_char[1];
+	TransferBuf[13]=sym_8_to_float.result_char[2];
+	TransferBuf[12]=sym_8_to_float.result_char[3];
+
+	TransferBuf[16]=CRC_Check(&TransferBuf[1],15); // подсчет кс
+	return 0x11;//17	
+}
+//------------------------------------------------------------------------------
 unsigned char Channel_Set_Address_Desc(void)//установить новый адрес устройства, имя, описание, версию прошивки и комментарий
 {
 	unsigned char  desc_len=0;
@@ -618,6 +658,12 @@ void ProtoBufHandling(void) //using 0 //процесс обработки принятого запроса
 	case CHANNEL_SET_ALL_DEFAULT:
 	{
 		 buf_len=Channel_Set_All_Default();
+	}
+	break;
+//------------------------------------------
+	case CHANNEL_GET_CALIBRATE_REQ:
+	{
+		 buf_len=Channel_Get_Calibrate_Value();
 	}
 	break;
 //------------------------------------------
