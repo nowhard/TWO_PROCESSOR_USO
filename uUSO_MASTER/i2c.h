@@ -15,13 +15,14 @@ struct I2C_Channel	   //структура кадра I2C
 		struct
 		{
 			unsigned long DOL;
+			unsigned char frequency_modific;
 			unsigned int frequency;
 			unsigned int mid_frequency;
 			unsigned char state_byte;
 			unsigned char CRC; 
 		} channels;
 	
-		unsigned char i2c_buf[10];//сериализованная часть структуры
+		unsigned char i2c_buf[11];//сериализованная часть структуры
 	} I2C_CHNL;
 } ;
 //-------------------------------------------

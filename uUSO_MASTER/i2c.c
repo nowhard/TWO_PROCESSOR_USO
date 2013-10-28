@@ -1,5 +1,6 @@
 #include "i2c.h"
 #include "crc_table.h"//для crc
+#include "channels.h"
 //-------------------------------------------------------------
 
 volatile unsigned char xdata DEV_ADDR;
@@ -281,11 +282,34 @@ static PT_THREAD(I2C_Write_Buf(struct pt *pt,unsigned char *buf,unsigned char le
 static PT_THREAD(I2C_Read_Complete(struct pt *pt))//постобработка пакета
 {
 	PT_BEGIN(pt);
-   if(i2c_channels.I2C_CHNL.channels.CRC==CRC_Check(i2c_channels.I2C_CHNL.i2c_buf,9))
+   if(i2c_channels.I2C_CHNL.channels.CRC==CRC_Check(i2c_channels.I2C_CHNL.i2c_buf,10))
    {
  	channels[11].channel_data=i2c_channels.I2C_CHNL.channels.DOL;
-	channels[12].channel_data=i2c_channels.I2C_CHNL.channels.frequency;
-	channels[13].channel_data=i2c_channels.I2C_CHNL.channels.mid_frequency;
+
+
+	switch(i2c_channels.I2C_CHNL.channels.frequency_modific)  //изменяем тип канала согласно ведомому
+	{
+		case  CHNL_FREQ_256:
+		{
+				channels[12].channel_data=i2c_channels.I2C_CHNL.channels.frequency;
+				channels[12].settings.set.modific=CHNL_FREQ_256;
+		}
+		break;
+
+		case CHNL_FREQ_COUNT_T:
+		{
+				channels[12].channel_data=i2c_channels.I2C_CHNL.channels.frequency;
+				channels[13].channel_data=i2c_channels.I2C_CHNL.channels.mid_frequency;
+				channels[12].settings.set.modific=CHNL_FREQ_COUNT_T;
+		}
+		break;
+
+		default:
+		{
+		}
+		break;
+	}
+
 	STATE_BYTE|=i2c_channels.I2C_CHNL.channels.state_byte;//обновляем байт состояния
    }
    i2c_buffer[0]=0;//не сбрасывать флаг инициализации
