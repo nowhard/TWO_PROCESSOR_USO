@@ -18,6 +18,9 @@
 	#define	 CHNL_FREQ_256		1
 	#define  CHNL_FREQ_PERIOD	3
 	#define	 CHNL_FREQ_COUNT	4
+#define CHNL_UNKNOWN	0xF //канал не определен
+	#define CHNL_UNKNOWN_MOD	0
+
 //------------------------------------------------------------------
 struct Channel
 {

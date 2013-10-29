@@ -19,7 +19,7 @@ volatile struct I2C_Channel xdata i2c_channels;
 unsigned char idata i2c_buffer[6]={0};
 
 extern volatile unsigned char xdata  STATE_BYTE;
-
+extern unsigned char channel_number;//количество каналов
 
 //-------------------------------------------------------------
 volatile unsigned char START_I2C=0;
@@ -293,6 +293,8 @@ static PT_THREAD(I2C_Read_Complete(struct pt *pt))//постобработка пакета
 		{
 				channels[12].channel_data=i2c_channels.I2C_CHNL.channels.frequency;
 				channels[12].settings.set.modific=CHNL_FREQ_256;
+				channel_number=CHANNEL_NUMBER-1; //удаляем канал усреднения высокой частоты
+				
 		}
 		break;
 
@@ -301,6 +303,8 @@ static PT_THREAD(I2C_Read_Complete(struct pt *pt))//постобработка пакета
 				channels[12].channel_data=i2c_channels.I2C_CHNL.channels.frequency;
 				channels[13].channel_data=i2c_channels.I2C_CHNL.channels.mid_frequency;
 				channels[12].settings.set.modific=CHNL_FREQ_COUNT_T;
+				channel_number=CHANNEL_NUMBER; //все каналы задействованы
+
 		}
 		break;
 

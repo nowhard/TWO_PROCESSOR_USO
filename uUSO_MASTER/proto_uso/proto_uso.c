@@ -43,6 +43,7 @@ union //объединение дл€ конвертировани€ char->long
 sym_8_to_float;
 
 extern unsigned char idata i2c_buffer[6];
+extern unsigned char channel_number;//количество каналов
 //-----------------------------------------------------------------------------------
 //#pragma OT(0,Speed)
 void UART_ISR(void) interrupt 4 //using 1
@@ -225,22 +226,22 @@ unsigned char Send_Info(void) //using 0    //посылка информации об устройстве
 		   }
 	   }
 
-	   TransferBuf[32]=CHANNEL_NUMBER;		   // количество каналов
+	   TransferBuf[32]=channel_number;		   // количество каналов
 
-	   for(i=0;i<CHANNEL_NUMBER;i++)				   // данные по каналу
+	   for(i=0;i<channel_number;i++)				   // данные по каналу
        {
 		  	TransferBuf[i*2+33]=((channels[i].settings.set.type)<<4)|channels[i].settings.set.modific; // байт данных
 		  	TransferBuf[i*2+33+1]=0x00;							// резерв байт
 	   }	
 	   for(i=0;i<dev_desc_len;i++)					// записываем примечание
 	   {
-			 TransferBuf[i+33+CHANNEL_NUMBER*2]=NOTICE[i];
+			 TransferBuf[i+33+channel_number*2]=NOTICE[i];
 	   }
 			
-	   TransferBuf[5]=28+CHANNEL_NUMBER*2+dev_desc_len;			// подсчет длины данных 
-	   TransferBuf[33+CHANNEL_NUMBER*2+dev_desc_len]=CRC_Check(&TransferBuf[1],32+CHANNEL_NUMBER*2+dev_desc_len); // подсчет контрольной суммы
+	   TransferBuf[5]=28+channel_number*2+dev_desc_len;			// подсчет длины данных 
+	   TransferBuf[33+channel_number*2+dev_desc_len]=CRC_Check(&TransferBuf[1],32+channel_number*2+dev_desc_len); // подсчет контрольной суммы
 
-	return (34+CHANNEL_NUMBER*2+dev_desc_len);
+	return (34+channel_number*2+dev_desc_len);
 }
 //-----------------------------------------------------------------------------
 unsigned char Node_Full_Init(void) //using 0 //полна€ инициализаци€ узла
@@ -264,7 +265,7 @@ unsigned char  Channel_Set_Parameters(void) //using 0 //”становить параметры по 
 	 
 	   while(index<RecieveBuf[5]-1)				   // данные по каналам
 	      {
-			  	if(RecieveBuf[6+index]<CHANNEL_NUMBER)
+			  	if(RecieveBuf[6+index]<channel_number)
 			    {
 					switch((RecieveBuf[6+index+1]>>4)&0xF)
 					{
@@ -343,7 +344,7 @@ unsigned char Channel_All_Get_Data(void) //using 0 //¬ыдать информацию по всем к
 
    index=7;//длина заголовка
  
-    for(i=0;i<CHANNEL_NUMBER;i++)				   // данные по каналам
+    for(i=0;i<channel_number;i++)				   // данные по каналам
     {
 		  TransferBuf[index++]=i;
 		  TransferBuf[index++]=((channels[i].settings.set.type)<<4)|channels[i].settings.set.modific; // тип и модификаци€ канала
@@ -507,7 +508,7 @@ unsigned char Channel_Get_Calibrate_Value(void)//получить коэфициенты калибровки
 
    channel=RecieveBuf[6];
 
-   if(channel>=CHANNEL_NUMBER)
+   if(channel>=channel_number)
    {
    		return Request_Error(FR_COMMAND_STRUCT_ERROR);//непрвильный номер канала	
    }

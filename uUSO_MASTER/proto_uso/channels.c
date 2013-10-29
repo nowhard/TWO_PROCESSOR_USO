@@ -4,6 +4,8 @@
 //-----------------------------------
 volatile struct Channel xdata channels[CHANNEL_NUMBER] /*_at_ 0x20*/;
 extern unsigned char code Crc8Table[];
+
+unsigned char channel_number=CHANNEL_NUMBER;//количество каналов
 //-----------------------------------
 void ChannelsInit(void) //using 0//инициализация структуры каналов
 {	
