@@ -3,11 +3,12 @@
 #include "timer2.h"
 
 #include "preferences.h"
-#include "rtos/timer1.h"
+//#include "timer1.h"
 #include "watchdog.h"
 
 #include "dol.h"
 #include "i2c_slave.h"
+#include "frequency.h"
 
 extern struct Channel xdata channels;//каналы по интерфейсу I2C
 
@@ -34,8 +35,9 @@ void main(void) //using 0
 	}
 
 	
-	Timer1_Initialize(); //
-	Timer2_Initialize();
+//	Timer1_Initialize(); //
+//	Timer2_Initialize();
+	Frequency_Init(channels.I2C_CHNL.channels.frequency_modific);
 
 	Dol_Init();
 
@@ -46,7 +48,8 @@ void main(void) //using 0
 
 	while(1)
 	{		
-	  Frequency_Handler();//обработчик измерения частоты
+	  //Frequency_Handler();//обработчик измерения частоты
+	  Frequency_Measure_Process();
 	  WDT_Clear();
 	}
 }

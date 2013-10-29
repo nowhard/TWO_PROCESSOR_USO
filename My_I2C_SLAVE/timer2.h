@@ -3,7 +3,7 @@
 
 #include <ADuC845.h>
 #include "preferences.h"
-#include "proto_uso/channels.h"
+#include "channels.h"
 //-----------------------------------
 #define FREQ_CHN		1
 #define FREQ_CHN_MID	2

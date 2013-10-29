@@ -1,11 +1,11 @@
 "debug.obj",
 "watchdog.obj",
 "START_AD.obj",
-"timer1.obj",
 "dol.obj",
 "i2c_slave.obj",
-"channels.obj",
-"timer2.obj" 
+"timer1.obj",
+"frequency.obj",
+"channels.obj" 
 TO "debug" 
 RAMSIZE(256) 
 XDATA( 0X0000-0X07FF )

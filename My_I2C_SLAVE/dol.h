@@ -1,7 +1,6 @@
 #ifndef DOL_H
 #define DOL_H
-#include "rtos/core.h"
-#include "proto_uso/channels.h"
+#include "channels.h"
 #include "preferences.h"
 #include "watchdog.h"
 //----------------------------------------------------

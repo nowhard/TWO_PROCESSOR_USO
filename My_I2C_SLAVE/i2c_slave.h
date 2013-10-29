@@ -1,7 +1,7 @@
 #ifndef I2C_SLAVE_H
 #define	I2C_SLAVE_H
 #include <ADuC845.h>
-#include "proto_uso/channels.h"
+#include "channels.h"
 //-----------------------------------
 extern struct Channel xdata channels;
 //--------------ведомый I2C---------
