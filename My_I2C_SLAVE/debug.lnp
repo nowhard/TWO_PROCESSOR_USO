@@ -3,7 +3,6 @@
 "START_AD.obj",
 "dol.obj",
 "i2c_slave.obj",
-"timer1.obj",
 "frequency.obj",
 "channels.obj" 
 TO "debug" 

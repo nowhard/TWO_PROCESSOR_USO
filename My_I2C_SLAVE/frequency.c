@@ -97,6 +97,8 @@ void Frequency_Init(unsigned char frequency_modific) //инициализация частотных к
 		
 		//-----------Timer1-счетный таймер----------
 			TMOD=0x50;//счетчик 16 бит
+			TH1	= 0; /// 
+			TL1 = 0;//
 			TR1=1;
 		//-----------Timer2-опорный таймер----------
 			ET2 = 1;
@@ -114,15 +116,15 @@ void Frequency_Init(unsigned char frequency_modific) //инициализация частотных к
 //--------------------------------------------------------
 void INT_TIM1_ISR(void) interrupt 3 //using 3//обработчик внешнего прерывания 2-использует внешний вход таймера T1
 {
-	unsigned char cnt;
-		
-	TH1=0xFF;
-	TL1=0xFF;
-
-	cnt=(frequency[FRQ_CHNL_1].time_counter>>SHEAR)&0x3;
-
-	frequency[FRQ_CHNL_1].frame[cnt].event_counter++;
-	frequency[FRQ_CHNL_1].frame[cnt].timestamp=frequency[FRQ_CHNL_1].time_counter;
+		unsigned char cnt;
+			
+		TH1=0xFF;
+		TL1=0xFF;
+	
+		cnt=(frequency[FRQ_CHNL_1].time_counter>>SHEAR)&0x3;
+	
+		frequency[FRQ_CHNL_1].frame[cnt].event_counter++;
+		frequency[FRQ_CHNL_1].frame[cnt].timestamp=frequency[FRQ_CHNL_1].time_counter;
 	return;
 }
 //--------------------------------------------------------
@@ -221,14 +223,7 @@ void Frequency_Measure_Process(void)
 		else
 		{
 			channels.frequency_buf=0xFFFF;
-		}
-	
-	
-//		frq_chnl++;
-//		if(frq_chnl>=3)
-//		{
-//			frq_chnl=0;
-//		} 
+		} 
 	}
 	else //измерение высокой частоты
 	{
@@ -242,7 +237,7 @@ void Frequency_Measure_Process(void)
 		poschet_intervalov++;
 	
 		 
-		// temp_Hz_kanal_mgnov=((unsigned long)TH1*0x100)|TL1;
+
 		 TH1=TL1=0;
 		 temp_Hz_kanal_sred+=temp_Hz_kanal_mgnov;
 		 Hz_data_mgnov+=temp_Hz_kanal_mgnov;//*=10;
@@ -250,11 +245,16 @@ void Frequency_Measure_Process(void)
 		 if(poschet_intervalov==2)
 		 {
 			 Hz_data_mgnov*=5;
-		 //	if(channels.transfer==0)	//если передачи нет
-		//	{
-		 		//channels.I2C_CHNL.channels.frequency=Hz_data_mgnov;//FloatToStrPC((void*)&Hz_data_mgnov);
-				channels.frequency_buf=Hz_data_mgnov;
-		//	}
+
+				if(Hz_data_mgnov<=0xFFFF)	//частота превышена
+				{
+					channels.frequency_buf=Hz_data_mgnov;
+				}
+				else
+				{
+					channels.frequency_buf=0xFFFF;
+				}
+
 			 Hz_data_mgnov=0;
 		 }
 	
@@ -276,11 +276,15 @@ void Frequency_Measure_Process(void)
 					  sym_kanal_sred+=temp_Hz_kanal_sred;
 					  Hz_data_sred=(float)sym_kanal_sred/(float)kol_sec_sred;
 
-				  //	if(channels.transfer==0)	//если передачи нет
-				//	{
-				  		//channels.I2C_CHNL.channels.mid_frequency=Hz_data_sred;//FloatToStrPC((void*)&Hz_data_sred);
-						 channels.mid_frequency_buf=Hz_data_sred;
-				//	}
+
+						if(Hz_data_sred<=0xFFFF) //частота превышена
+						{
+						 	channels.mid_frequency_buf=Hz_data_sred;
+						}
+						else
+						{
+							 channels.mid_frequency_buf=0xFFFF;
+						}
 				 }
 				 else
 				 {

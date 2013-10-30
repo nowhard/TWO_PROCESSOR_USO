@@ -1,9 +1,7 @@
 #include <ADuC845.h>
 
-#include "timer2.h"
 
 #include "preferences.h"
-//#include "timer1.h"
 #include "watchdog.h"
 
 #include "dol.h"
@@ -34,9 +32,6 @@ void main(void) //using 0
 		channels.I2C_CHNL.channels.frequency_modific=CHNL_FREQ_COUNT_T;
 	}
 
-	
-//	Timer1_Initialize(); //
-//	Timer2_Initialize();
 	Frequency_Init(channels.I2C_CHNL.channels.frequency_modific);
 
 	Dol_Init();
@@ -48,7 +43,6 @@ void main(void) //using 0
 
 	while(1)
 	{		
-	  //Frequency_Handler();//обработчик измерения частоты
 	  Frequency_Measure_Process();
 	  WDT_Clear();
 	}
