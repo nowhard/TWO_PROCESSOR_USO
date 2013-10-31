@@ -82,7 +82,7 @@ void main(void) //using 0
 	  {
 			PT_DELAY(pt,15);
 			I2C_Repeat_Start_Read(I2C_ADDR,&i2c_buffer,1,i2c_channels.I2C_CHNL.i2c_buf,sizeof(i2c_channels));	//исправить сдвиг адресации
-			WDT_Clear();
+			//WDT_Clear();
 	  }
 	  PT_END(pt);
 

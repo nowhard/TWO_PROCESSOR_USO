@@ -44,6 +44,7 @@ sym_8_to_float;
 
 extern unsigned char idata i2c_buffer[6];
 extern unsigned char channel_number;//количество каналов
+
 //-----------------------------------------------------------------------------------
 //#pragma OT(0,Speed)
 void UART_ISR(void) interrupt 4 //using 1
@@ -691,8 +692,13 @@ PT_THREAD(ProtoProcess(struct pt *pt))
 		DE_RE=0;//линия на прием
 		ES=1;
   //-----------------------------
-	   PT_WAIT_UNTIL(pt,RECIEVED); //ждем команды на старт
-	   RECIEVED=0;
+	  // PT_WAIT_UNTIL(pt,RECIEVED); //ждем команды на старт
+	   PT_YIELD_UNTIL(pt,RECIEVED); //ждем команды на старт	
+
+	   WDT_Clear();//если посылка не приходит-сбрасываем
+
+	  
+	    RECIEVED=0;
 		
 		if(RecieveBuf[3]!=ADRESS_DEV)//если адрес совпал	  
 		{

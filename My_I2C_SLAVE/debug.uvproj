@@ -419,11 +419,6 @@
               <FilePath>.\START_AD.A51</FilePath>
             </File>
             <File>
-              <FileName>timer1.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\rtos\timer1.c</FilePath>
-            </File>
-            <File>
               <FileName>dol.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\dol.c</FilePath>
@@ -434,14 +429,14 @@
               <FilePath>.\i2c_slave.c</FilePath>
             </File>
             <File>
-              <FileName>channels.c</FileName>
+              <FileName>frequency.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\proto_uso\channels.c</FilePath>
+              <FilePath>.\frequency.c</FilePath>
             </File>
             <File>
-              <FileName>timer2.c</FileName>
+              <FileName>channels.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\timer2.c</FilePath>
+              <FilePath>.\channels.c</FilePath>
             </File>
           </Files>
         </Group>
