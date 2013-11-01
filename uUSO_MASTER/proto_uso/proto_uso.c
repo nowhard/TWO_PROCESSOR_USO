@@ -4,6 +4,7 @@
 #include <intrins.h>
 #include "crc_table.h"
 #include "channels.h"
+#include "watchdog.h"
 //-----------------------------------------------------------------------------------
 
 sbit DE_RE=P3^5;

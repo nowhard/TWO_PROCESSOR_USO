@@ -39,7 +39,7 @@ void ADC_ISR(void) interrupt 6 //using 1
 	adc_channels[ADC0CON2&0x7].ADC_BUF_UN[adc_channels[ADC0CON2&0x7].adc_buf_counter].ADC_CHAR[2]=ADC0M;
 	adc_channels[ADC0CON2&0x7].ADC_BUF_UN[adc_channels[ADC0CON2&0x7].adc_buf_counter].ADC_CHAR[3]=ADC0L; 
 
-	adc_channels[ADC0CON2&0x7].adc_buf_counter=(adc_channels[ADC0CON2&0x7].adc_buf_counter+1)&(ADC_BUF_SIZE-1);	//инкрементируем указатель усредняющего буфера текущего канала
+	adc_channels[ADC0CON2&0x7].adc_buf_counter=((adc_channels[ADC0CON2&0x7].adc_buf_counter+1)&(ADC_BUF_SIZE-1));	//инкрементируем указатель усредняющего буфера текущего канала
 	adc_channels[ADC0CON2&0x7].new_measuring=1;	 //новое измерение было
 		
 	ADCMODE &= 0xDF; // 1101 1111
