@@ -187,7 +187,7 @@ void Timer2_ISR(void) interrupt 5 //using 3//обработчик прерывания счетного тайм
 
   while(1) 
   {
-		PT_DELAY(pt,40);
+		PT_DELAY(pt,20);
 		temp_freq=(((unsigned long)frequency[frq_chnl].frame[0].event_copy+(unsigned long)frequency[frq_chnl].frame[1].event_copy+(unsigned long)frequency[frq_chnl].frame[2].event_copy+(unsigned long)frequency[frq_chnl].frame[3].event_copy)<<18)/((frequency[frq_chnl].frame[0].time_copy+frequency[frq_chnl].frame[1].time_copy+frequency[frq_chnl].frame[2].time_copy+frequency[frq_chnl].frame[3].time_copy));
 
 		PT_YIELD(pt);//дадим другим процессам время

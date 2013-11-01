@@ -14,7 +14,7 @@ volatile unsigned long  temp;
 
   while(1) 
   {
-	   PT_DELAY(pt,5);
+	   PT_DELAY(pt,1);
 	  //------------ищем новое измерение-----------------
 
 		if(!adc_channels[mid_cycle_counter].new_measuring)

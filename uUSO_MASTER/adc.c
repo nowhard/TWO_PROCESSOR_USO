@@ -34,19 +34,25 @@ void ADC_Initialize() //using 0
 //-------------------------------------------
 void ADC_ISR(void) interrupt 6 //using 1
 {
-	adc_channels[ADC0CON2&0x7].ADC_BUF_UN[adc_channels[ADC0CON2&0x7].adc_buf_counter].ADC_CHAR[0]=0x0;//получим результат
-	adc_channels[ADC0CON2&0x7].ADC_BUF_UN[adc_channels[ADC0CON2&0x7].adc_buf_counter].ADC_CHAR[1]=ADC0H;
-	adc_channels[ADC0CON2&0x7].ADC_BUF_UN[adc_channels[ADC0CON2&0x7].adc_buf_counter].ADC_CHAR[2]=ADC0M;
-	adc_channels[ADC0CON2&0x7].ADC_BUF_UN[adc_channels[ADC0CON2&0x7].adc_buf_counter].ADC_CHAR[3]=ADC0L; 
+	static unsigned char current_channel;
+	static unsigned char current_buf_item; //элемент буфера усреднени€
 
-	adc_channels[ADC0CON2&0x7].adc_buf_counter=((adc_channels[ADC0CON2&0x7].adc_buf_counter+1)&(ADC_BUF_SIZE-1));	//инкрементируем указатель усредн€ющего буфера текущего канала
-	adc_channels[ADC0CON2&0x7].new_measuring=1;	 //новое измерение было
+	current_channel=ADC0CON2&0x7;
+	current_buf_item=adc_channels[current_channel].adc_buf_counter;
+
+	adc_channels[current_channel].ADC_BUF_UN[current_buf_item].ADC_CHAR[0]=0x0;//получим результат
+	adc_channels[current_channel].ADC_BUF_UN[current_buf_item].ADC_CHAR[1]=ADC0H;
+	adc_channels[current_channel].ADC_BUF_UN[current_buf_item].ADC_CHAR[2]=ADC0M;
+	adc_channels[current_channel].ADC_BUF_UN[current_buf_item].ADC_CHAR[3]=ADC0L; 
+
+	adc_channels[current_channel].adc_buf_counter=((current_buf_item+1)&(ADC_BUF_SIZE-1));	//инкрементируем указатель усредн€ющего буфера текущего канала
+	adc_channels[current_channel].new_measuring=1;	 //новое измерение было
 		
-	ADCMODE &= 0xDF; // 1101 1111
-	ADC0CON2=((ADC0CON2+1)&0x7)|(ADC0CON2&0xF0); //инкремент аналогового входа 	
+//	ADCMODE &= 0xDF; // 1101 1111
+	ADC0CON2=((current_channel+1)&0x7)|(ADC0CON2&0xF0); //инкремент аналогового входа 	
 	ADC0CON1=(ADC0CON1&0xF8)|((channels[ADC0CON2&0x7].settings.set.state_byte_1^0x7)&0x7);//восстанавливаем усиление следующего канала
 	SF=channels[(ADC0CON2/*+1*/)&0x7].settings.set.state_byte_2;						 
-	ADCMODE |= 0x20; //0010 0000 //ENABLE
+//	ADCMODE |= 0x20; //0010 0000 //ENABLE
 
 	RDY0=0;
 //	return;
