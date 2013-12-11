@@ -22,7 +22,7 @@
 extern unsigned char idata i2c_buffer[6];
 
 extern struct I2C_Channel xdata i2c_channels;
-extern struct pt pt_proto;
+extern struct pt pt_proto, pt_wdt;
 volatile struct pt pt_i2c_read, pt_freq_measure,pt_sort,pt_i2c_process;
 
 
@@ -68,7 +68,8 @@ void main(void) //using 0
 		I2C_RepeatRead(&pt_i2c_read);
 		Frequency_Measure_Process(&pt_freq_measure);	
 		ulongsort_process(&pt_sort);
-		I2C_Process(&pt_i2c_process);	    
+		I2C_Process(&pt_i2c_process);
+		WDT_Process(&pt_wdt);	    
 	}
 }
 //-----------------------------------------------------------------------------
@@ -76,13 +77,16 @@ void main(void) //using 0
  //---------------------------------
  PT_THREAD(I2C_RepeatRead(struct pt *pt))//поток чтения I2C
  {  
-	   PT_BEGIN(pt);
-	
+	  wdt_count[I2C_RepeatRead_Proc].process_state=RUN;
+	   
+	  PT_BEGIN(pt);
+	  
 	  while(1) 
 	  {
 			PT_DELAY(pt,15);
 			I2C_Repeat_Start_Read(I2C_ADDR,&i2c_buffer,1,i2c_channels.I2C_CHNL.i2c_buf,sizeof(i2c_channels));	//исправить сдвиг адресации
 			//WDT_Clear();
+			wdt_count[I2C_RepeatRead_Proc].count++;
 	  }
 	  PT_END(pt);
 
@@ -97,5 +101,6 @@ void Timer1_Interrupt(void) interrupt 3  //таймер шедулера
 	pt_freq_measure.pt_time++;
 	pt_sort.pt_time++;
 	pt_proto.pt_time++;
+	pt_wdt.pt_time++;
 	return;	
 }

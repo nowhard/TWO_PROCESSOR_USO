@@ -1,4 +1,5 @@
 #include "frequency.h"
+#include "watchdog.h"
 
 #define FREQ_CHANNELS	3
 
@@ -183,6 +184,8 @@ void Timer2_ISR(void) interrupt 5 //using 3//обработчик прерывания счетного тайм
  { 
  	static unsigned char frq_chnl=0;
 	static unsigned long temp_freq=0; 
+	wdt_count[Frequency_Measure_Proc].process_state=RUN;
+
    PT_BEGIN(pt);
 
   while(1) 
@@ -206,6 +209,8 @@ void Timer2_ISR(void) interrupt 5 //using 3//обработчик прерывания счетного тайм
 		{
 			frq_chnl=0;
 		} 
+
+		wdt_count[Frequency_Measure_Proc].count++;
 
   }
   PT_END(pt);

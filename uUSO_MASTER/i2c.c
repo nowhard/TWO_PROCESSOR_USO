@@ -1,6 +1,7 @@
 #include "i2c.h"
 #include "crc_table.h"//для crc
 #include "channels.h"
+#include "watchdog.h"
 //-------------------------------------------------------------
 
 volatile unsigned char xdata DEV_ADDR;
@@ -64,7 +65,9 @@ void I2C_Repeat_Start_Read(unsigned char addr,unsigned char *par_buf,unsigned ch
 //-------------------------------------------------------------
 //#pragma OT(0,Speed) 
  PT_THREAD(I2C_Process(struct pt *pt))//поток  I2C
- {  
+ { 
+   wdt_count[I2C_Proc].process_state=RUN; 
+
    PT_BEGIN(pt);
 
   while(1) 
@@ -176,6 +179,7 @@ void I2C_Repeat_Start_Read(unsigned char addr,unsigned char *par_buf,unsigned ch
 	  PT_SPAWN(pt, &pt_i2c_read_complete, I2C_Read_Complete(&pt_i2c_read_complete));
 
 	 //----------------------------------
+	  wdt_count[I2C_Proc].count++;
   }
   PT_END(pt);
 
