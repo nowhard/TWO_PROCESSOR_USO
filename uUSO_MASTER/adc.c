@@ -17,14 +17,23 @@ void ADC_Initialize() //using 0
 	ADC0CON1|=ADC_UNIPOLAR;
 	ADC0CON1|=RN_2560;
 
+	ADC0CON2&=0xF0;
+	ADC0CON2|=EXT_REF;//включим внешнюю опору
+
+//	ADCMODE=ADC0_ENABLE|ADC_0_INTERNAL_CAL;
+//	while(!ADCSTAT&ADC_STATUS_CALIBRATE);
+//	
+//	ADCMODE=ADC0_ENABLE|ADC_FULL_INTERNAL_CAL;
+//	while(!ADCSTAT&ADC_STATUS_CALIBRATE);
+
+//	ADCMODE&=0xF8;//power down adc
 
 	ADC_Restore_Settings();
 	ADC_Set_Mode(ADC_CONTIN_CONV);
 
 	ADC_Out_Freq(100);	
 
-	ADC0CON2&=0xF0;
-	ADC0CON2|=EXT_REF;//включим внешнюю опору
+
 	EADC = 1;
 
 	ADCMODE |= 0x20; //0010 0000 //ENABLE
