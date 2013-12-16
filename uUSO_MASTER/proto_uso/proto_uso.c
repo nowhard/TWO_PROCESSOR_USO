@@ -698,7 +698,7 @@ PT_THREAD(ProtoProcess(struct pt *pt))
 	   wdt_count[Proto_Proc].process_state=IDLE;
 
 	   PT_YIELD_UNTIL(pt,RECIEVED); //ждем команды на старт	
-
+	   wdt_count[Proto_Proc].count++;
 	  // WDT_Clear();//если посылка не приходит-сбрасываем
 
 	  
@@ -706,7 +706,7 @@ PT_THREAD(ProtoProcess(struct pt *pt))
 		
 		if(RecieveBuf[3]!=ADRESS_DEV)//если адрес совпал	  
 		{
-			PT_RESTART(pt);//если адрес не сошолся-перезапустим протокол			
+			PT_RESTART(pt);//если адрес не сошелся-перезапустим протокол			
 		}	
 				
 	    CRC=RecieveBuf[recieve_count-1];
@@ -736,7 +736,7 @@ PT_THREAD(ProtoProcess(struct pt *pt))
 			PT_DELAY(pt,10);			
 		}
 
-		wdt_count[Proto_Proc].count++;
+		
   //-----------------------------
   }
 

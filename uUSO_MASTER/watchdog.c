@@ -58,7 +58,7 @@ void WDT_Clear(void) //using 0//сброс счетчика сторожевого таймера
 
   while(1) 
   {
-  		PT_DELAY(pt,50);
+  		PT_DELAY(pt,100);
 		process_error=0;
 		
 		wdt_count[Watch_Proc].count++;
