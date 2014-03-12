@@ -624,7 +624,100 @@ unsigned char Old_CRC_Check(unsigned char xdata *Spool_pr,unsigned char Count_pr
 //-----------------------------------------------------------------------------
 unsigned char Old_Channel_Get_Data(void)
 {
-	
+  unsigned char channel=0;
+  channel=((RecieveBuf[4]>>3)&0x1F);
+  if(channel<CHANNEL_NUMBER)
+  {  
+	   TransferBuf[0]=0x00;TransferBuf[1]=0xD7;TransferBuf[2]=0x28;
+	   TransferBuf[3]=0x0;  // 
+	   TransferBuf[4]=RecieveBuf[4];
+	   TransferBuf[5]=0x63;// код операции	
+
+ 			switch(channels[channel].settings.set.type)
+		    {
+				 case CHNL_ADC:  //аналоговый канал
+				 {
+					 switch(channels[channel].settings.set.modific)
+	                 {
+						  case CHNL_ADC_FIX_16:
+						  {
+//						  		if(channels[channel].calibrate.cal.calibrate==1)//калиброванный
+//								{			 			 
+//									 	TransferBuf[6]=((unsigned char*)(&channels[channel].channel_data_calibrate))[2];
+//			    					  	TransferBuf[7]=((unsigned char*)(&channels[channel].channel_data_calibrate))[1];
+//								}
+//								else
+//								{
+									 	TransferBuf[6]=((unsigned char*)(&channels[channel].channel_data))[1];
+			    					  	TransferBuf[7]=((unsigned char*)(&channels[channel].channel_data))[2];	
+//								} 					
+						  }
+						  break; 
+
+						  case CHNL_ADC_FIX_24:
+						  {
+//						        if(channels[channel].calibrate.cal.calibrate==1)//калиброванный
+//								{			 									  
+//									 	TransferBuf[channel]=((unsigned char*)(&channels[channel].channel_data_calibrate))[3];
+//									 	TransferBuf[channel]=((unsigned char*)(&channels[channel].channel_data_calibrate))[2];
+//			    					  	TransferBuf[channel]=((unsigned char*)(&channels[channel].channel_data_calibrate))[1];
+//								}
+//								else
+//								{									 
+									 	TransferBuf[6]=((unsigned char*)(&channels[channel].channel_data))[1];
+			    					  	TransferBuf[7]=((unsigned char*)(&channels[channel].channel_data))[2];	
+//								}
+
+						  }
+						  break;
+					  }					  
+				  }
+				  break;
+
+			 	case CHNL_DOL:	 //ДОЛ
+				{
+					  switch(channels[channel].settings.set.modific)
+				      {	  
+							  case CHNL_DOL_ENC:
+							  {
+									 	TransferBuf[6]=((unsigned char*)(&channels[channel].channel_data))[2];
+									 	TransferBuf[7]=((unsigned char*)(&channels[channel].channel_data))[3];
+//			    					  	TransferBuf[channel]=((unsigned char*)(&channels[channel].channel_data))[0];
+//										TransferBuf[channel]=((unsigned char*)(&channels[channel].channel_data))[1];
+							  }
+							  break; 
+					   }
+				}
+				break;
+
+				 case CHNL_FREQ: //частотный
+				 { 
+					  switch(channels[channel].settings.set.modific)
+				      {	  
+							  
+							  case CHNL_FREQ_COUNT_T:
+							  {
+									 	TransferBuf[6]=((unsigned char*)(&channels[channel].channel_data))[2];
+									 	TransferBuf[7]=((unsigned char*)(&channels[channel].channel_data))[3];
+
+							  }
+							  break;
+
+							  case CHNL_FREQ_256:
+							  {
+									 	TransferBuf[6]=((unsigned char*)(&channels[channel].channel_data))[2];
+									 	TransferBuf[7]=((unsigned char*)(&channels[channel].channel_data))[3];
+							  }
+							  break; 
+					   }					   
+				  }
+				  break;		 
+		  }
+	   
+	   TransferBuf[8]=Old_CRC_Check(TransferBuf,8);
+	   return 9;
+   }
+   return 0;	
 }
 //-----------------------------------------------------------------------------
 unsigned char Old_Channel_Get_Data_State(void)
@@ -656,10 +749,7 @@ unsigned char Old_Channel_Get_Data_State(void)
 //								{
 									 	TransferBuf[6]=((unsigned char*)(&channels[channel].channel_data))[1];
 			    					  	TransferBuf[7]=((unsigned char*)(&channels[channel].channel_data))[2];	
-//								} 
-						
-							    		TransferBuf[8]=0x40;	 // первый байт состояния канала
-       									TransferBuf[9]=0x0A;	 // второй байт состояния канала
+//								} 					
 						  }
 						  break; 
 
@@ -676,30 +766,98 @@ unsigned char Old_Channel_Get_Data_State(void)
 									 	TransferBuf[6]=((unsigned char*)(&channels[channel].channel_data))[1];
 			    					  	TransferBuf[7]=((unsigned char*)(&channels[channel].channel_data))[2];	
 //								}
-										TransferBuf[8]=0x40;	 // первый байт состояния канала
-									    TransferBuf[9]=0x0A;	 // второй байт состояния канала
+
 						  }
 						  break;
 					  }
+					  
+					  switch(channels[channel].settings.set.state_byte_1&0xF)
+					  {
+					  		case 0x0:
+							{
+								TransferBuf[8]=0x00;	 // первый байт состояния канала
+							}
+							break;
+
+					  		case 0x1:
+							{
+								TransferBuf[8]=0x02;	 // первый байт состояния канала	
+							}
+							break;
+
+					  		case 0x5:
+							{
+								TransferBuf[8]=0x04;	 // первый байт состояния канала	
+							}
+							break;
+
+					  		case 0x7:
+							{
+								TransferBuf[8]=0x06;	 // первый байт состояния канала
+							}
+							break;
+
+					  		default :
+							{
+								TransferBuf[8]=0x00;	 // первый байт состояния канала
+							}
+							break;
+
+					  }
+					  
+					  TransferBuf[9]=0x0A;	 // второй байт состояния канала
+
 				  }
 				  break;
 
-			 	case CHNL_DOL:	 //ДОЛ
-				{
-					  switch(channels[channel].settings.set.modific)
-				      {	  
-							  case CHNL_DOL_ENC:
-							  {
-									 	TransferBuf[6]=((unsigned char*)(&channels[channel].channel_data))[2];
-									 	TransferBuf[7]=((unsigned char*)(&channels[channel].channel_data))[3];
+			  case CHNL_DOL:	 //ДОЛ
+			  {
+				  switch(channels[channel].settings.set.modific)
+			      {	  
+						  case CHNL_DOL_ENC:
+						  {
+							 	TransferBuf[6]=((unsigned char*)(&channels[channel].channel_data))[2];
+							 	TransferBuf[7]=((unsigned char*)(&channels[channel].channel_data))[3];
 //			    					  	TransferBuf[channel]=((unsigned char*)(&channels[channel].channel_data))[0];
 //										TransferBuf[channel]=((unsigned char*)(&channels[channel].channel_data))[1];
 
-										TransferBuf[8]=0x42;	 // первый байт состояния канала
-       									TransferBuf[9]=0x00;	 // второй байт состояния канала
+							//	TransferBuf[8]=0x42;	 // первый байт состояния канала
+								TransferBuf[9]=0x00;	 // второй байт состояния канала
 
-							  }
-							  break; 
+								switch(channels[channel].settings.set.state_byte_1&0xF)
+								{
+								  		case 0x0:
+										{
+											TransferBuf[8]=0x40;	 // первый байт состояния канала
+										}
+										break;
+			
+								  		case 0x1:
+										{
+											TransferBuf[8]=0x42;	 // первый байт состояния канала	
+										}
+										break;
+			
+								  		case 0x5:
+										{
+											TransferBuf[8]=0x44;	 // первый байт состояния канала	
+										}
+										break;
+			
+								  		case 0x7:
+										{
+											TransferBuf[8]=0x46;	 // первый байт состояния канала
+										}
+										break;
+			
+								  		default :
+										{
+											TransferBuf[8]=0x40;	 // первый байт состояния канала
+										}
+										break;					
+								}
+						  }
+						  break; 
 					   }
 				}
 				break;
@@ -713,9 +871,7 @@ unsigned char Old_Channel_Get_Data_State(void)
 							  {
 									 	TransferBuf[6]=((unsigned char*)(&channels[channel].channel_data))[2];
 									 	TransferBuf[7]=((unsigned char*)(&channels[channel].channel_data))[3];
-									    
-										TransferBuf[8]=0x40;	 // первый байт состояния канала
-       									TransferBuf[9]=0x00;	 // второй байт состояния канала
+
 							  }
 							  break;
 
@@ -723,19 +879,16 @@ unsigned char Old_Channel_Get_Data_State(void)
 							  {
 									 	TransferBuf[6]=((unsigned char*)(&channels[channel].channel_data))[2];
 									 	TransferBuf[7]=((unsigned char*)(&channels[channel].channel_data))[3];
-
-									    TransferBuf[8]=0x40;	 // первый байт состояния канала
-       									TransferBuf[9]=0x00;	 // второй байт состояния канала
 							  }
 							  break; 
 					   }
+					   
+					TransferBuf[8]=0x40;	 // первый байт состояния канала
+       				TransferBuf[9]=0x00;	 // второй байт состояния канала
 				  }
 				  break;		 
 		  }
-	   
 
-//	   TransferBuf[8]=0x40;	 // первый байт состояния канала
-//       TransferBuf[9]=0x0A;	 // второй байт состояния канала
 	   TransferBuf[10]=0xFF;
 	   TransferBuf[11]=Old_CRC_Check(TransferBuf,11);
 	   return 12;
@@ -746,17 +899,162 @@ unsigned char Old_Channel_Get_Data_State(void)
 //-----------------------------------------------------------------------------
 unsigned char Old_Channel_Get_State(void)
 {
+  unsigned char channel=0;
+  channel=((RecieveBuf[4]>>3)&0x1F);
+  if(channel<CHANNEL_NUMBER)
+  {
+  
+	   TransferBuf[0]=0x00;TransferBuf[1]=0xD7;TransferBuf[2]=0x28;
+	   TransferBuf[3]=0x0;  // 
+	   TransferBuf[4]=RecieveBuf[4];
+	   TransferBuf[5]=0x43;// код операции	
+
+ 			switch(channels[channel].settings.set.type)
+		    {
+				 case CHNL_ADC:  //аналоговый канал
+				 {		  
+					  switch(channels[channel].settings.set.state_byte_1&0xF)
+					  {
+					  		case 0x0:
+							{
+								TransferBuf[6]=0x00;	 // первый байт состояния канала
+							}
+							break;
+
+					  		case 0x1:
+							{
+								TransferBuf[6]=0x02;	 // первый байт состояния канала	
+							}
+							break;
+
+					  		case 0x5:
+							{
+								TransferBuf[6]=0x04;	 // первый байт состояния канала	
+							}
+							break;
+
+					  		case 0x7:
+							{
+								TransferBuf[6]=0x06;	 // первый байт состояния канала
+							}
+							break;
+
+					  		default :
+							{
+								TransferBuf[6]=0x00;	 // первый байт состояния канала
+							}
+							break;
+					  }
+					  
+					  TransferBuf[7]=0x0A;	 // второй байт состояния канала
+				  }
+				  break;
+
+			 	case CHNL_DOL:	 //ДОЛ
+				{
+
+						switch(channels[channel].settings.set.state_byte_1&0xF)
+						{
+						  		case 0x0:
+								{
+									TransferBuf[6]=0x40;	 // первый байт состояния канала
+								}
+								break;
 	
+						  		case 0x1:
+								{
+									TransferBuf[6]=0x42;	 // первый байт состояния канала	
+								}
+								break;
+	
+						  		case 0x5:
+								{
+									TransferBuf[6]=0x44;	 // первый байт состояния канала	
+								}
+								break;
+	
+						  		case 0x7:
+								{
+									TransferBuf[6]=0x46;	 // первый байт состояния канала
+								}
+								break;
+	
+						  		default :
+								{
+									TransferBuf[6]=0x40;	 // первый байт состояния канала
+								}
+								break;
+	
+						}
+						TransferBuf[7]=0x00;	 // второй байт состояния канала
+				}
+				break;
+
+				 case CHNL_FREQ: //частотный
+				 { 
+					   
+					TransferBuf[6]=0x40;	 // первый байт состояния канала
+       				TransferBuf[7]=0x00;	 // второй байт состояния канала
+				 }
+				 break;		 
+		  }
+	   
+	   TransferBuf[8]=Old_CRC_Check(TransferBuf,8);
+	   return 9;
+   }
+   return 0;	
 }
 //-----------------------------------------------------------------------------
 unsigned char Old_Reinit_Block(void)
 {
-	
+	return 0;	
 }
 //-----------------------------------------------------------------------------
 unsigned char Old_Channel_Set_ADC_Range(void)
 {
-	
+  unsigned char channel=0;
+  channel=((RecieveBuf[4]>>3)&0x1F);
+  if(channel<CHANNEL_NUMBER)
+  {	
+	switch((RecieveBuf[6]>>1)&0x7)
+	{
+	  		case 0x0:
+			{
+			     channels[channel].settings.set.state_byte_1&=0xF0;
+				 //channels[channel].settings.set.state_byte_1|=0x0;
+			}
+			break;
+
+	  		case 0x1:
+			{
+				 channels[channel].settings.set.state_byte_1&=0xF0;
+				 channels[channel].settings.set.state_byte_1|=0x1;
+			}
+			break;
+
+	  		case 0x2:
+			{
+				 channels[channel].settings.set.state_byte_1&=0xF0;
+				 channels[channel].settings.set.state_byte_1|=0x5;
+			}
+			break;
+
+	  		case 0x3:
+			{
+			     channels[channel].settings.set.state_byte_1&=0xF0;
+				 channels[channel].settings.set.state_byte_1|=0x7;
+			}
+			break;
+
+	  		default :
+			{
+				 channels[channel].settings.set.state_byte_1&=0xF0;
+			}
+			break;
+
+	}
+  }
+  return 0;
 }
 //-----------------------------------------------------------------------------
 void ProtoBufHandling(void) //using 0 //процесс обработки принятого запроса
