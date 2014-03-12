@@ -62,6 +62,13 @@
 
 #define  REQUEST_ERROR					0xFF//Ошибочный запрос/ответ;
 
+//-------------------------старый протокол-------------------------------------------------
+#define	OLD_CHANNEL_GET_DATA			0x3
+#define	OLD_CHANNEL_GET_DATA_STATE		0x4
+#define	OLD_CHANNEL_GET_STATE		    0x2	 //
+#define	OLD_CHANNEL_REINIT_BLOCK 		0x0	 //реинициализация блока
+#define	OLD_CHANNEL_SET_ADC_RANGE		0x1	 //установить усиление ацп
+
 //-------------------------коды сбойных ситуаций-------------------------------------------
 #define	FR_SUCCESFUL 								0x0//Нет ошибки (используется для подтверждения)  
 #define	FR_UNATTENDED_CHANNEL 						0x1//В запросе задан канал, не обслуживаемый измерительным модулем;
@@ -77,6 +84,12 @@
 #define	FR_CHANNEL_NUM_TOO_MUCH						0xC//слишком много каналов в кадре.
 #define	FR_CHNL_TYPE_ERROR							0xD//Несоответствие типа канала
 #define	FR_CHNL_NOT_EXIST							0xF//Отсутствующий канал
+
+enum
+{
+	PROTO_TYPE_NEW=0,
+	PROTO_TYPE_OLD=1
+};
 //--------------------------------прототипы---------------------------
 void UART_ISR(void); //обработчик прерывания уарт
 void Protocol_Init(void); //инициализация протокола
