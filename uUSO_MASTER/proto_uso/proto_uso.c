@@ -633,7 +633,7 @@ unsigned char Old_Channel_Get_Data(void)
 	   TransferBuf[0]=0x00;TransferBuf[1]=0xD7;TransferBuf[2]=0x28;
 	   TransferBuf[3]=0x0;  // 
 	   TransferBuf[4]=RecieveBuf[4];
-	   TransferBuf[5]=0x63;// код операции	
+	   TransferBuf[5]=((OLD_CHANNEL_GET_DATA<<5)&0x1F)|0x3;//0x63;// код операции	
 
  			switch(channels[channel].settings.set.type)
 		    {
@@ -730,11 +730,10 @@ unsigned char Old_Channel_Get_Data_State(void)
   channel=((RecieveBuf[4]>>3)&0x1F);
   if(channel<CHANNEL_NUMBER)
   {
-  
 	   TransferBuf[0]=0x00;TransferBuf[1]=0xD7;TransferBuf[2]=0x28;
 	   TransferBuf[3]=0x0;  // 
 	   TransferBuf[4]=RecieveBuf[4];
-	   TransferBuf[5]=0x66;// код операции	
+	   TransferBuf[5]=((OLD_CHANNEL_GET_DATA_STATE<<5)&0x1F)|0x6;//0x66;// код операции	
 
  			switch(channels[channel].settings.set.type)
 		    {
@@ -913,7 +912,7 @@ unsigned char Old_Channel_Get_State(void)
 	   TransferBuf[0]=0x00;TransferBuf[1]=0xD7;TransferBuf[2]=0x28;
 	   TransferBuf[3]=0x0;  // 
 	   TransferBuf[4]=RecieveBuf[4];
-	   TransferBuf[5]=0x43;// код операции	
+	   TransferBuf[5]=((OLD_CHANNEL_GET_STATE<<5)&0x1F)|0x3;//0x43;// код операции	
 
  			switch(channels[channel].settings.set.type)
 		    {
