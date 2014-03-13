@@ -643,32 +643,31 @@ unsigned char Old_Channel_Get_Data(void)
 	                 {
 						  case CHNL_ADC_FIX_16:
 						  {
-//						  		if(channels[channel].calibrate.cal.calibrate==1)//калиброванный
-//								{			 			 
-//									 	TransferBuf[6]=((unsigned char*)(&channels[channel].channel_data_calibrate))[2];
-//			    					  	TransferBuf[7]=((unsigned char*)(&channels[channel].channel_data_calibrate))[1];
-//								}
-//								else
-//								{
+						  		if(channels[channel].calibrate.cal.calibrate==1)//калиброванный
+								{			 			 
+									 	TransferBuf[6]=((unsigned char*)(&channels[channel].channel_data_calibrate))[1];
+			    					  	TransferBuf[7]=((unsigned char*)(&channels[channel].channel_data_calibrate))[2];
+								}
+								else
+								{
 									 	TransferBuf[6]=((unsigned char*)(&channels[channel].channel_data))[1];
 			    					  	TransferBuf[7]=((unsigned char*)(&channels[channel].channel_data))[2];	
-//								} 					
+								} 					
 						  }
 						  break; 
 
 						  case CHNL_ADC_FIX_24:
 						  {
-//						        if(channels[channel].calibrate.cal.calibrate==1)//калиброванный
-//								{			 									  
-//									 	TransferBuf[channel]=((unsigned char*)(&channels[channel].channel_data_calibrate))[3];
-//									 	TransferBuf[channel]=((unsigned char*)(&channels[channel].channel_data_calibrate))[2];
-//			    					  	TransferBuf[channel]=((unsigned char*)(&channels[channel].channel_data_calibrate))[1];
-//								}
-//								else
-//								{									 
+						        if(channels[channel].calibrate.cal.calibrate==1)//калиброванный
+								{			 									  
+									 	TransferBuf[channel]=((unsigned char*)(&channels[channel].channel_data_calibrate))[1];
+			    					  	TransferBuf[channel]=((unsigned char*)(&channels[channel].channel_data_calibrate))[2];
+								}
+								else
+								{									 
 									 	TransferBuf[6]=((unsigned char*)(&channels[channel].channel_data))[1];
 			    					  	TransferBuf[7]=((unsigned char*)(&channels[channel].channel_data))[2];	
-//								}
+								}
 
 						  }
 						  break;
@@ -745,32 +744,31 @@ unsigned char Old_Channel_Get_Data_State(void)
 	                 {
 						  case CHNL_ADC_FIX_16:
 						  {
-//						  		if(channels[channel].calibrate.cal.calibrate==1)//калиброванный
-//								{			 			 
-//									 	TransferBuf[6]=((unsigned char*)(&channels[channel].channel_data_calibrate))[2];
-//			    					  	TransferBuf[7]=((unsigned char*)(&channels[channel].channel_data_calibrate))[1];
-//								}
-//								else
-//								{
+						  		if(channels[channel].calibrate.cal.calibrate==1)//калиброванный
+								{			 			 
+									 	TransferBuf[6]=((unsigned char*)(&channels[channel].channel_data_calibrate))[1];
+			    					  	TransferBuf[7]=((unsigned char*)(&channels[channel].channel_data_calibrate))[2];
+								}
+								else
+								{
 									 	TransferBuf[6]=((unsigned char*)(&channels[channel].channel_data))[1];
 			    					  	TransferBuf[7]=((unsigned char*)(&channels[channel].channel_data))[2];	
-//								} 					
+								} 					
 						  }
 						  break; 
 
 						  case CHNL_ADC_FIX_24:
 						  {
-//						        if(channels[channel].calibrate.cal.calibrate==1)//калиброванный
-//								{			 									  
-//									 	TransferBuf[channel]=((unsigned char*)(&channels[channel].channel_data_calibrate))[3];
-//									 	TransferBuf[channel]=((unsigned char*)(&channels[channel].channel_data_calibrate))[2];
-//			    					  	TransferBuf[channel]=((unsigned char*)(&channels[channel].channel_data_calibrate))[1];
-//								}
-//								else
-//								{									 
+						        if(channels[channel].calibrate.cal.calibrate==1)//калиброванный
+								{			 									  
+									 	TransferBuf[channel]=((unsigned char*)(&channels[channel].channel_data_calibrate))[1];
+			    					  	TransferBuf[channel]=((unsigned char*)(&channels[channel].channel_data_calibrate))[2];
+								}
+								else
+								{									 
 									 	TransferBuf[6]=((unsigned char*)(&channels[channel].channel_data))[1];
 			    					  	TransferBuf[7]=((unsigned char*)(&channels[channel].channel_data))[2];	
-//								}
+								}
 
 						  }
 						  break;
@@ -1267,21 +1265,21 @@ PT_THREAD(ProtoProcess(struct pt *pt))
 				
 	    CRC=RecieveBuf[recieve_count-1];
 		
-//		if(protocol_type==PROTO_TYPE_NEW)
-//		{		
-//			if(CRC_Check(&RecieveBuf,(recieve_count-CRC_LEN))!=CRC)
-//			{
-//				PT_RESTART(pt);//если CRC не сошлось-перезапустим протокол	 
-//			}
-//		}
-//		else
-//		{
-//			if(Old_CRC_Check(&RecieveBuf,(recieve_count-CRC_LEN))!=CRC)
-//			{
-//				PT_RESTART(pt);//если CRC не сошлось-перезапустим протокол	 
-//			}			
-//		}
-		PT_YIELD(pt);//дадим другим процессам время
+		if(protocol_type==PROTO_TYPE_NEW)
+		{		
+			if(CRC_Check(&RecieveBuf,(recieve_count-CRC_LEN))!=CRC)
+			{
+				PT_RESTART(pt);//если CRC не сошлось-перезапустим протокол	 
+			}
+		}
+		else
+		{
+			if(Old_CRC_Check(&RecieveBuf,(recieve_count-CRC_LEN))!=CRC)
+			{
+				PT_RESTART(pt);//если CRC не сошлось-перезапустим протокол	 
+			}			
+		}
+	//	PT_YIELD(pt);//дадим другим процессам время
   //-----------------------------
   		ProtoBufHandling();//процедура обработки сообщения	
 		if(buf_len==0)//если в буфере пусто
