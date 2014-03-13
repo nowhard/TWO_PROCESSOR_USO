@@ -21,9 +21,13 @@ void ChannelsInit(void) //using 0//инициализация структуры каналов
 	channels[8].channel_data=0;
 	channels[9].channel_data=0;
 	channels[10].channel_data=0;
-	channels[11].channel_data=0x80008000;
+//	channels[11].channel_data=0x80008000;
 	channels[12].channel_data=0;
 	channels[13].channel_data=0;
+
+	channels[11].settings.set.state_byte_1=0x40;
+	channels[11].settings.set.state_byte_2=0x0A;
+	channels[11].channel_data=0x80008000;
 	return;
 }
 //-----------------------------------

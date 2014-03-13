@@ -168,7 +168,7 @@ void UART_ISR(void) interrupt 4 //using 1
 		 
 		if(transf_count<buf_len)
 		{
-			if(transf_count<3)//передаем заголовок
+			if((transf_count<3)||(protocol_type==PROTO_TYPE_OLD))//передаем заголовок или все подряд, если старый протокол
 			{
 				SBUF=TransferBuf[transf_count];			
 				transf_count++;
@@ -611,7 +611,8 @@ unsigned char Old_CRC_Check(unsigned char xdata *Spool_pr,unsigned char Count_pr
 
 	 for(i=0;i<Count_pr;i++)
 	 {
-	 	crc+=Spool_pr[i];
+	 	CY=0;
+		crc+=Spool_pr[i];
 		if(CY)
 		{
 			crc++;
@@ -625,6 +626,7 @@ unsigned char Old_CRC_Check(unsigned char xdata *Spool_pr,unsigned char Count_pr
 unsigned char Old_Channel_Get_Data(void)
 {
   unsigned char channel=0;
+  unsigned char len=0;
   channel=((RecieveBuf[4]>>3)&0x1F);
   if(channel<CHANNEL_NUMBER)
   {  
@@ -714,8 +716,10 @@ unsigned char Old_Channel_Get_Data(void)
 				  break;		 
 		  }
 	   
-	   TransferBuf[8]=Old_CRC_Check(TransferBuf,8);
-	   return 9;
+	   len=Old_Proto_Paste_Null(TransferBuf,8);
+
+	   TransferBuf[len]=Old_CRC_Check(TransferBuf,len);
+	   return len+1;
    }
    return 0;	
 }
@@ -723,6 +727,7 @@ unsigned char Old_Channel_Get_Data(void)
 unsigned char Old_Channel_Get_Data_State(void)
 {
   unsigned char channel=0;
+  unsigned char len=0;
   channel=((RecieveBuf[4]>>3)&0x1F);
   if(channel<CHANNEL_NUMBER)
   {
@@ -771,38 +776,37 @@ unsigned char Old_Channel_Get_Data_State(void)
 						  break;
 					  }
 					  
-					  switch(channels[channel].settings.set.state_byte_1&0xF)
+				  	  switch(channels[channel].settings.set.state_byte_1&0x7)
 					  {
-					  		case 0x0:
+					  		case PROTO_ADC_AMP_1:
 							{
-								TransferBuf[8]=0x00;	 // первый байт состояния канала
+								TransferBuf[8]=(0x00|(OLD_PROTO_ADC_AMP_1<<1))&0xFE;	 // первый байт состояния канала
 							}
 							break;
 
-					  		case 0x1:
+					  		case PROTO_ADC_AMP_2:
 							{
-								TransferBuf[8]=0x02;	 // первый байт состояния канала	
+								TransferBuf[8]=(0x00|(OLD_PROTO_ADC_AMP_2<<1))&0xFE;	 // первый байт состояния канала	
 							}
 							break;
 
-					  		case 0x5:
+					  		case PROTO_ADC_AMP_32:
 							{
-								TransferBuf[8]=0x04;	 // первый байт состояния канала	
+								TransferBuf[8]=(0x00|(OLD_PROTO_ADC_AMP_32<<1))&0xFE;	 // первый байт состояния канала	
 							}
 							break;
 
-					  		case 0x7:
+					  		case PROTO_ADC_AMP_128:
 							{
-								TransferBuf[8]=0x06;	 // первый байт состояния канала
+								TransferBuf[8]=(0x00|(OLD_PROTO_ADC_AMP_128<<1))&0xFE;	 // первый байт состояния канала
 							}
 							break;
 
 					  		default :
 							{
-								TransferBuf[8]=0x00;	 // первый байт состояния канала
+								TransferBuf[8]=(0x00|(OLD_PROTO_ADC_AMP_1<<1))&0xFE;	 // первый байт состояния канала
 							}
 							break;
-
 					  }
 					  
 					  TransferBuf[9]=0x0A;	 // второй байт состояния канала
@@ -821,41 +825,41 @@ unsigned char Old_Channel_Get_Data_State(void)
 //			    					  	TransferBuf[channel]=((unsigned char*)(&channels[channel].channel_data))[0];
 //										TransferBuf[channel]=((unsigned char*)(&channels[channel].channel_data))[1];
 
-							//	TransferBuf[8]=0x42;	 // первый байт состояния канала
-								TransferBuf[9]=0x00;	 // второй байт состояния канала
+								
 
-								switch(channels[channel].settings.set.state_byte_1&0xF)
+								switch(channels[channel].settings.set.state_byte_1&0x7)
 								{
-								  		case 0x0:
+								  		case PROTO_ADC_AMP_1:
 										{
-											TransferBuf[8]=0x40;	 // первый байт состояния канала
+											TransferBuf[8]=(0x40|(OLD_PROTO_ADC_AMP_1<<1))&0xFE;	 // первый байт состояния канала
 										}
 										break;
 			
-								  		case 0x1:
+								  		case PROTO_ADC_AMP_2:
 										{
-											TransferBuf[8]=0x42;	 // первый байт состояния канала	
+											TransferBuf[8]=(0x40|(OLD_PROTO_ADC_AMP_2<<1))&0xFE;	 // первый байт состояния канала	
 										}
 										break;
 			
-								  		case 0x5:
+								  		case PROTO_ADC_AMP_32:
 										{
-											TransferBuf[8]=0x44;	 // первый байт состояния канала	
+											TransferBuf[8]=(0x40|(OLD_PROTO_ADC_AMP_32<<1))&0xFE;	 // первый байт состояния канала	
 										}
 										break;
 			
-								  		case 0x7:
+								  		case PROTO_ADC_AMP_128:
 										{
-											TransferBuf[8]=0x46;	 // первый байт состояния канала
+											TransferBuf[8]=(0x40|(OLD_PROTO_ADC_AMP_128<<1))&0xFE;	 // первый байт состояния канала
 										}
 										break;
 			
 								  		default :
 										{
-											TransferBuf[8]=0x40;	 // первый байт состояния канала
+											TransferBuf[8]=(0x40|(OLD_PROTO_ADC_AMP_1<<1))&0xFE;
 										}
-										break;					
+										break;			
 								}
+								TransferBuf[9]=0x00;	 // второй байт состояния канала
 						  }
 						  break; 
 					   }
@@ -890,8 +894,11 @@ unsigned char Old_Channel_Get_Data_State(void)
 		  }
 
 	   TransferBuf[10]=0xFF;
-	   TransferBuf[11]=Old_CRC_Check(TransferBuf,11);
-	   return 12;
+
+	   len=Old_Proto_Paste_Null(TransferBuf,11);
+
+	   TransferBuf[len]=Old_CRC_Check(TransferBuf,len);
+	   return len+1;
    }
    return 0;
 
@@ -900,6 +907,7 @@ unsigned char Old_Channel_Get_Data_State(void)
 unsigned char Old_Channel_Get_State(void)
 {
   unsigned char channel=0;
+  unsigned char len=0;
   channel=((RecieveBuf[4]>>3)&0x1F);
   if(channel<CHANNEL_NUMBER)
   {
@@ -913,35 +921,35 @@ unsigned char Old_Channel_Get_State(void)
 		    {
 				 case CHNL_ADC:  //аналоговый канал
 				 {		  
-					  switch(channels[channel].settings.set.state_byte_1&0xF)
+					  switch(channels[channel].settings.set.state_byte_1&0x7)
 					  {
-					  		case 0x0:
+					  		case PROTO_ADC_AMP_1:
 							{
-								TransferBuf[6]=0x00;	 // первый байт состояния канала
+								TransferBuf[6]=0x00|(OLD_PROTO_ADC_AMP_1<<1);	 // первый байт состояния канала
 							}
 							break;
 
-					  		case 0x1:
+					  		case PROTO_ADC_AMP_2:
 							{
-								TransferBuf[6]=0x02;	 // первый байт состояния канала	
+								TransferBuf[6]=0x00|(OLD_PROTO_ADC_AMP_2<<1);	 // первый байт состояния канала	
 							}
 							break;
 
-					  		case 0x5:
+					  		case PROTO_ADC_AMP_32:
 							{
-								TransferBuf[6]=0x04;	 // первый байт состояния канала	
+								TransferBuf[6]=0x00|(OLD_PROTO_ADC_AMP_32<<1);	 // первый байт состояния канала	
 							}
 							break;
 
-					  		case 0x7:
+					  		case PROTO_ADC_AMP_128:
 							{
-								TransferBuf[6]=0x06;	 // первый байт состояния канала
+								TransferBuf[6]=0x00|(OLD_PROTO_ADC_AMP_128<<1);	 // первый байт состояния канала
 							}
 							break;
 
 					  		default :
 							{
-								TransferBuf[6]=0x00;	 // первый байт состояния канала
+								TransferBuf[6]=0x00|(OLD_PROTO_ADC_AMP_1<<1);	 // первый байт состояния канала
 							}
 							break;
 					  }
@@ -953,29 +961,29 @@ unsigned char Old_Channel_Get_State(void)
 			 	case CHNL_DOL:	 //ДОЛ
 				{
 
-						switch(channels[channel].settings.set.state_byte_1&0xF)
+						switch(channels[channel].settings.set.state_byte_1&0x7)
 						{
-						  		case 0x0:
+						  		case PROTO_ADC_AMP_1:
 								{
-									TransferBuf[6]=0x40;	 // первый байт состояния канала
+									TransferBuf[6]=0x40|(OLD_PROTO_ADC_AMP_1<<1);	 // первый байт состояния канала
 								}
 								break;
 	
-						  		case 0x1:
+						  		case PROTO_ADC_AMP_2:
 								{
-									TransferBuf[6]=0x42;	 // первый байт состояния канала	
+									TransferBuf[6]=0x40|(OLD_PROTO_ADC_AMP_2<<1);	 // первый байт состояния канала	
 								}
 								break;
 	
-						  		case 0x5:
+						  		case PROTO_ADC_AMP_32:
 								{
-									TransferBuf[6]=0x44;	 // первый байт состояния канала	
+									TransferBuf[6]=0x40|(OLD_PROTO_ADC_AMP_32<<1);	 // первый байт состояния канала	
 								}
 								break;
 	
-						  		case 0x7:
+						  		case PROTO_ADC_AMP_128:
 								{
-									TransferBuf[6]=0x46;	 // первый байт состояния канала
+									TransferBuf[6]=0x40|(OLD_PROTO_ADC_AMP_128<<1);	 // первый байт состояния канала
 								}
 								break;
 	
@@ -999,8 +1007,10 @@ unsigned char Old_Channel_Get_State(void)
 				 break;		 
 		  }
 	   
-	   TransferBuf[8]=Old_CRC_Check(TransferBuf,8);
-	   return 9;
+	   len=Old_Proto_Paste_Null(TransferBuf,8);
+
+	   TransferBuf[len]=Old_CRC_Check(TransferBuf,len);
+	   return len+1;
    }
    return 0;	
 }
@@ -1016,45 +1026,66 @@ unsigned char Old_Channel_Set_ADC_Range(void)
   channel=((RecieveBuf[4]>>3)&0x1F);
   if(channel<CHANNEL_NUMBER)
   {	
-	switch((RecieveBuf[6]>>1)&0x7)
+	switch((RecieveBuf[6]>>1)&0x3)
 	{
-	  		case 0x0:
+	  		case OLD_PROTO_ADC_AMP_1:
 			{
 			     channels[channel].settings.set.state_byte_1&=0xF0;
-				 //channels[channel].settings.set.state_byte_1|=0x0;
+				 channels[channel].settings.set.state_byte_1|=PROTO_ADC_AMP_1;
 			}
 			break;
 
-	  		case 0x1:
+	  		case OLD_PROTO_ADC_AMP_2:
 			{
 				 channels[channel].settings.set.state_byte_1&=0xF0;
-				 channels[channel].settings.set.state_byte_1|=0x1;
+				 channels[channel].settings.set.state_byte_1|=PROTO_ADC_AMP_2;
 			}
 			break;
 
-	  		case 0x2:
+	  		case OLD_PROTO_ADC_AMP_32:
 			{
 				 channels[channel].settings.set.state_byte_1&=0xF0;
-				 channels[channel].settings.set.state_byte_1|=0x5;
+				 channels[channel].settings.set.state_byte_1|=PROTO_ADC_AMP_32;
 			}
 			break;
 
-	  		case 0x3:
+	  		case OLD_PROTO_ADC_AMP_128:
 			{
 			     channels[channel].settings.set.state_byte_1&=0xF0;
-				 channels[channel].settings.set.state_byte_1|=0x7;
+				 channels[channel].settings.set.state_byte_1|=PROTO_ADC_AMP_128;
 			}
 			break;
 
 	  		default :
 			{
-				 channels[channel].settings.set.state_byte_1&=0xF0;
+			     channels[channel].settings.set.state_byte_1&=0xF0;
+				 channels[channel].settings.set.state_byte_1|=PROTO_ADC_AMP_1;
 			}
 			break;
-
 	}
   }
   return 0;
+}
+//-----------------------------------------------------------------------------
+unsigned char Old_Proto_Paste_Null(unsigned char *buf,unsigned char len)//т.к. старый протокол прибавляет к длине количество 0 после D7 то обрабатываем вне прерывания
+{
+	volatile unsigned char xdata i=0,j=0;
+
+	for(i=3;i<len;i++) //пропустим заголовок 0x00 0xD7 0x28
+	{
+		 if(buf[i]==0xD7)
+		 {
+		 	 for(j=(len-1);j>i;j--)
+			 {
+			 	buf[j+1]=buf[j];//сдвигаем элементы буфера вправо на одну позицию до D7
+			 }
+			 buf[i+1]=0x0;//вставляем 0x00 после 0xD7
+			 buf[5]++;//длина кадра увеличилась на 1
+			 len++;
+			 i++;//не проверяем 0 спереди
+		 }
+	}
+	return len;
 }
 //-----------------------------------------------------------------------------
 void ProtoBufHandling(void) //using 0 //процесс обработки принятого запроса
@@ -1236,20 +1267,20 @@ PT_THREAD(ProtoProcess(struct pt *pt))
 				
 	    CRC=RecieveBuf[recieve_count-1];
 		
-		if(protocol_type==PROTO_TYPE_NEW)
-		{		
-			if(CRC_Check(&RecieveBuf,(recieve_count-CRC_LEN))!=CRC)
-			{
-				PT_RESTART(pt);//если CRC не сошлось-перезапустим протокол	 
-			}
-		}
-		else
-		{
-			if(Old_CRC_Check(&RecieveBuf,(recieve_count-CRC_LEN))!=CRC)
-			{
-				PT_RESTART(pt);//если CRC не сошлось-перезапустим протокол	 
-			}			
-		}
+//		if(protocol_type==PROTO_TYPE_NEW)
+//		{		
+//			if(CRC_Check(&RecieveBuf,(recieve_count-CRC_LEN))!=CRC)
+//			{
+//				PT_RESTART(pt);//если CRC не сошлось-перезапустим протокол	 
+//			}
+//		}
+//		else
+//		{
+//			if(Old_CRC_Check(&RecieveBuf,(recieve_count-CRC_LEN))!=CRC)
+//			{
+//				PT_RESTART(pt);//если CRC не сошлось-перезапустим протокол	 
+//			}			
+//		}
 		PT_YIELD(pt);//дадим другим процессам время
   //-----------------------------
   		ProtoBufHandling();//процедура обработки сообщения	
@@ -1268,10 +1299,15 @@ PT_THREAD(ProtoProcess(struct pt *pt))
 			transf_count++;//инкрементируем счетчик переданных
 			ES=1; //включим прерывание уарт	
 
-			PT_DELAY(pt,10);			
-		}
-
-		
+		    if(protocol_type==PROTO_TYPE_NEW)
+			{
+				PT_DELAY(pt,10);
+			}
+			else
+			{
+				PT_DELAY(pt,3);
+			}			
+		}		
   //-----------------------------
   }
 

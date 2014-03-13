@@ -68,7 +68,16 @@
 #define	OLD_CHANNEL_GET_STATE		    0x2	 //
 #define	OLD_CHANNEL_REINIT_BLOCK 		0x0	 //реинициализация блока
 #define	OLD_CHANNEL_SET_ADC_RANGE		0x1	 //установить усиление ацп
+//------------------------------------варианты усиления каналов----------------------------
+#define OLD_PROTO_ADC_AMP_1	 		0
+#define OLD_PROTO_ADC_AMP_2			1
+#define OLD_PROTO_ADC_AMP_32		2
+#define OLD_PROTO_ADC_AMP_128		3
 
+#define PROTO_ADC_AMP_1	 		0
+#define PROTO_ADC_AMP_2			1
+#define PROTO_ADC_AMP_32		5
+#define PROTO_ADC_AMP_128		7
 //-------------------------коды сбойных ситуаций-------------------------------------------
 #define	FR_SUCCESFUL 								0x0//Нет ошибки (используется для подтверждения)  
 #define	FR_UNATTENDED_CHANNEL 						0x1//В запросе задан канал, не обслуживаемый измерительным модулем;
@@ -111,6 +120,7 @@ unsigned char Channel_Set_All_Default(void);//установить настройки и калибровки 
 unsigned char Channel_Get_Calibrate_Value(void);//получить коэфициенты калибровки заданного канала
 unsigned char Request_Error(unsigned char error_code);//	Ошибочный запрос/ответ;
 
+unsigned char Old_Proto_Paste_Null(unsigned char *buf,unsigned char len);//т.к. старый протокол прибавляет к длине количество 0 после D7 то обрабатываем вне прерывания
 
 void ProtoBufHandling(void); //процесс обработки принятого запроса
 PT_THREAD(ProtoProcess(struct pt *pt));//главный процесс протокола
