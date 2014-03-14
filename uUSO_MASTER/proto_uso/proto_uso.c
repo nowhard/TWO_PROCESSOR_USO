@@ -358,6 +358,7 @@ unsigned char Channel_Set_Reset_State_Flags(void) //using 0 //	Установка/Сброс ф
 {
 	STATE_BYTE=0x40;
 	i2c_buffer[0]=0x12;//сбросим флаг инициализации ведомого
+	ChannelsInit();
 	return	Request_Error(FR_SUCCESFUL);//ошибки нет, подтверждение
 }
 //-----------------------------------------------------------------------------
@@ -1089,6 +1090,8 @@ void ProtoBufHandling(void) //using 0 //процесс обработки принятого запроса
 {
 	if(protocol_type==PROTO_TYPE_NEW)
 	{
+		  channels[11].settings.set.state_byte_1=0x40; //восстановим байты статуса дола
+		  channels[11].settings.set.state_byte_2=0x0A;
 		  switch(RecieveBuf[4])
 		  {
 		//---------------------------------------
