@@ -12,6 +12,16 @@
 #include "pt/pt.h"
 
 //--------------------------------------------------------------------------------
+#define RING_BUF_SIZE		256
+
+struct RingBuf	 //структура кольцевого буфера
+{
+  	unsigned char buf[RING_BUF_SIZE];
+	unsigned char tail;
+	unsigned char head;
+	unsigned char count;
+};
+
 #define MAX_LENGTH_REC_BUF 	270 //максимальная длина принимаемого кадра
 #define MIN_LENGTH_REC_BUF	5 //минимальная длина принимаемого кадра
 
@@ -87,7 +97,8 @@
 enum
 {
 	PROTO_TYPE_NEW=0,
-	PROTO_TYPE_OLD=1
+	PROTO_TYPE_OLD=1,
+	PROTO_TYPE_MODBUS_ASCII=3
 };
 //--------------------------------прототипы---------------------------
 void UART_ISR(void); //обработчик прерывания уарт
@@ -131,6 +142,7 @@ unsigned char Old_Proto_Paste_Null(unsigned char *buf,unsigned char len);//т.к. 
 //-----------------------------------------------------------------------------------------------
 void ProtoBufHandling(void); //процесс обработки принятого запроса
 PT_THREAD(ProtoProcess(struct pt *pt));//главный процесс протокола
+PT_THREAD(ProtoBufHandling(struct pt *pt));//обработка кольцевого буфера
 
 static unsigned char  CRC_Check( unsigned char xdata *Spool,unsigned char Count);//расчет CRC
 

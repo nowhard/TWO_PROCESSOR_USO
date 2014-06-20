@@ -5,6 +5,7 @@
 #include "crc_table.h"
 #include "channels.h"
 #include "watchdog.h"
+#include "modbus\modbus_ascii.h"
 //-----------------------------------------------------------------------------------
 
 sbit DE_RE=P3^5;
@@ -36,7 +37,9 @@ volatile unsigned char idata symbol=0xFF;//принятый символ
 
 volatile unsigned char xdata protocol_type=PROTO_TYPE_NEW;//тип протокола
 
-volatile struct pt pt_proto;
+volatile struct pt pt_proto, pt_buf_handle;
+
+struct RingBuf rngbuf;
 //-----------------------------------------------------------------------------------
 union //объединение для конвертирования char->long
 {
@@ -57,146 +60,182 @@ void UART_ISR(void) interrupt 4 //using 1
 	if(RI)
 	{
 		RI=0; 
+		rngbuf.buf[rngbuf.tail]=SBUF;
+		rngbuf.tail++;
+		rngbuf.count++;
+		//if(rngbuf.tail==RING_BUF_SIZE) rngbuf.tail=0x0;
+
 //----------------------обрабатываем возможные ошибки длины кадра-------------
-		if(recieve_count>MAX_LENGTH_REC_BUF)	//если посылка слишком длинная
-		{
-			PT_RESTART_OUT(pt_proto);  //внепроцессный рестарт
-			return;
-		} 
-
-
-		symbol=SBUF;
-		wdt_count[Proto_Proc].process_state=RUN;
-		switch(symbol)
-		{
-			case (char)(0xD7):
-			{
-				RecieveBuf[recieve_count]=symbol;
-				recieve_count++;
-				CUT_OUT_NULL=1;		 
-			}
-			break;
-
-			case (char)(0x29):
-			{
-				if(CUT_OUT_NULL==1)
-				{
-					RecieveBuf[0]=0x0;
-					RecieveBuf[1]=0xD7;
-					RecieveBuf[2]=0x29;
-					recieve_count=0x3;
-					protocol_type=PROTO_TYPE_NEW;		 	
-				}
-				else
-				{
-					RecieveBuf[recieve_count]=symbol;
-					recieve_count++;	
-				}
-				CUT_OUT_NULL=0;
-			}
-			break;
-
-			case (char)(0x28):
-			{
-				if(CUT_OUT_NULL==1)
-				{
-					RecieveBuf[0]=0x0;
-					RecieveBuf[1]=0xD7;
-					RecieveBuf[2]=0x28;
-					recieve_count=0x3;
-					protocol_type=PROTO_TYPE_OLD;		 	
-				}
-				else
-				{
-					RecieveBuf[recieve_count]=symbol;
-					recieve_count++;	
-				}
-				CUT_OUT_NULL=0;
-			}
-			break;
-
-			case (char)(0x0):
-			{
- 				if(CUT_OUT_NULL==1)	  //если после 0xD7-пропускаем
-				{
-					CUT_OUT_NULL=0;		
-				}
-				else
-				{
-					RecieveBuf[recieve_count]=symbol;
-					recieve_count++;	
-				}
-			}
-			break;
-
-			default :
-			{
-				RecieveBuf[recieve_count]=symbol;
-				recieve_count++;
-				CUT_OUT_NULL=0;
-				
-			}
-		}
-
-	   if(recieve_count>6)
-	   {
-	   		  if(recieve_count==6+frame_len)	  // принимаем указанное в frame_len число байт данные, 6 значит что обмен идет с компом, надо ставаить 5 чтобы обмениваться с устройствами
-   			  {
-					RECIEVED=1;//буфер принят
-			  		ES=0;
-			  		REN=0;  //recieve disable -запрещаем принимать в буфер	
-				   	CUT_OUT_NULL=0;  			  			
-			  }	  
-	   }
-	   else
-	   {
-			   if(recieve_count==6)
-			   {     
-		        	
-					frame_len=RecieveBuf[recieve_count-1];  // получаем длину данных после заголовка
-					if(protocol_type==PROTO_TYPE_OLD)
-					{
-						frame_len&=0x1F;//в старом протоколе только 5 младших бит -длина оставшейся части	
-					}					 
-			   }	   		
-	   }										
+//		if(recieve_count>MAX_LENGTH_REC_BUF)	//если посылка слишком длинная
+//		{
+//			PT_RESTART_OUT(pt_proto);  //внепроцессный рестарт
+//			return;
+//		} 
+//
+//
+//		symbol=SBUF;
+//
+//		wdt_count[Proto_Proc].process_state=RUN;
+//
+//
+//		if((recieve_count==0x0)&&(symbol==':'))
+//		{
+//			protocol_type=PROTO_TYPE_MODBUS_ASCII;			
+//		}
+//
+//		switch(symbol)
+//		{
+//			case (char)(0xD7):
+//			{
+//				RecieveBuf[recieve_count]=symbol;
+//				recieve_count++;
+//				CUT_OUT_NULL=1;		 
+//			}
+//			break;
+//
+//			case (char)(0x29):
+//			{
+//				if(CUT_OUT_NULL==1)
+//				{
+//					RecieveBuf[0]=0x0;
+//					RecieveBuf[1]=0xD7;
+//					RecieveBuf[2]=0x29;
+//					recieve_count=0x3;
+//					protocol_type=PROTO_TYPE_NEW;		 	
+//				}
+//				else
+//				{
+//					RecieveBuf[recieve_count]=symbol;
+//					recieve_count++;	
+//				}
+//				CUT_OUT_NULL=0;
+//			}
+//			break;
+//
+//			case (char)(0x28):
+//			{
+//				if(CUT_OUT_NULL==1)
+//				{
+//					RecieveBuf[0]=0x0;
+//					RecieveBuf[1]=0xD7;
+//					RecieveBuf[2]=0x28;
+//					recieve_count=0x3;
+//					protocol_type=PROTO_TYPE_OLD;		 	
+//				}
+//				else
+//				{
+//					RecieveBuf[recieve_count]=symbol;
+//					recieve_count++;	
+//				}
+//				CUT_OUT_NULL=0;
+//			}
+//			break;
+//
+//			case (char)(0x0):
+//			{
+// 				if(CUT_OUT_NULL==1)	  //если после 0xD7-пропускаем
+//				{
+//					CUT_OUT_NULL=0;		
+//				}
+//				else
+//				{
+//					RecieveBuf[recieve_count]=symbol;
+//					recieve_count++;	
+//				}
+//			}
+//			break;
+//
+//			//---------MD ASCII------
+//			case  0x3A:	 //":"
+//			{
+//				RecieveBuf[recieve_count]=symbol;
+//				recieve_count++;
+//				protocol_type=PROTO_TYPE_MODBUS_ASCII;								 
+//			}
+//			break;
+//
+//			case 0xA:	 //"LF"
+//			{
+//			  	ES=0;
+//			  	REN=0;  //recieve disable 
+//			}
+//			break;
+//
+//			case 0xD:	 //"CR"
+//			{
+//				//
+//			}
+//			break;
+//			//-----------------------
+//
+//			default :
+//			{
+//				RecieveBuf[recieve_count]=symbol;
+//				recieve_count++;
+//				CUT_OUT_NULL=0;
+//				
+//			}
+//		}
+//
+//	   if(recieve_count>6)
+//	   {
+//	   		  if(recieve_count==6+frame_len)	  // принимаем указанное в frame_len число байт данные, 6 значит что обмен идет с компом, надо ставаить 5 чтобы обмениваться с устройствами
+//   			  {
+//					RECIEVED=1;//буфер принят
+//			  		ES=0;
+//			  		REN=0;  //recieve disable -запрещаем принимать в буфер	
+//				   	CUT_OUT_NULL=0;  			  			
+//			  }	  
+//	   }
+//	   else
+//	   {
+//			   if(recieve_count==6)
+//			   {     
+//		        	
+//					frame_len=RecieveBuf[recieve_count-1];  // получаем длину данных после заголовка
+//					if(protocol_type==PROTO_TYPE_OLD)
+//					{
+//						frame_len&=0x1F;//в старом протоколе только 5 младших бит -длина оставшейся части	
+//					}					 
+//			   }	   		
+//	   }										
 	}
 //----------------------------передача----------------------------------------------------------------
 	if(TI)
 	{
 		TI=0;
 		 
-		if(transf_count<buf_len)
-		{
-			if((transf_count<3)||(protocol_type==PROTO_TYPE_OLD))//передаем заголовок или все подряд, если старый протокол
-			{
-				SBUF=TransferBuf[transf_count];			
-				transf_count++;
-			}
-			else   //тело...   подставляем 0 после 0xD7
-			{
-					if(CUT_OUT_NULL==0)
-					{
-						if(TransferBuf[transf_count]==(unsigned char)0xD7)//проверим, это  ,0xD7 или другое
-						{			
-							CUT_OUT_NULL=0x1;	
-						}
-						SBUF=TransferBuf[transf_count];			
-						transf_count++;
-					}
-					else
-					{
-						SBUF=(unsigned char)0x0;
-						CUT_OUT_NULL=0;		
-					}	
-			}	
-		}
-		else
-		{
-			transf_count=0;		//обнуляем счетчик
-			CUT_OUT_NULL=0;
-			PT_RESTART_OUT(pt_proto);  //внепроцессный рестарт			
-		}					   
+//		if(transf_count<buf_len)
+//		{
+//			if((transf_count<3)||(protocol_type==PROTO_TYPE_OLD))//передаем заголовок или все подряд, если старый протокол
+//			{
+//				SBUF=TransferBuf[transf_count];			
+//				transf_count++;
+//			}
+//			else   //тело...   подставляем 0 после 0xD7
+//			{
+//					if(CUT_OUT_NULL==0)
+//					{
+//						if(TransferBuf[transf_count]==(unsigned char)0xD7)//проверим, это  ,0xD7 или другое
+//						{			
+//							CUT_OUT_NULL=0x1;	
+//						}
+//						SBUF=TransferBuf[transf_count];			
+//						transf_count++;
+//					}
+//					else
+//					{
+//						SBUF=(unsigned char)0x0;
+//						CUT_OUT_NULL=0;		
+//					}	
+//			}	
+//		}
+//		else
+//		{
+//			transf_count=0;		//обнуляем счетчик
+//			CUT_OUT_NULL=0;
+//			PT_RESTART_OUT(pt_proto);  //внепроцессный рестарт			
+//		}					   
 	}			
 	EA=1;
 	return;
@@ -212,6 +251,9 @@ void Protocol_Init(void) //using 0
 
 	Restore_Dev_Address_Desc();
 
+	rngbuf.tail=0;
+	rngbuf.head=0;
+	rngbuf.count=0;
 
 	recieve_count=0x0;//счетчик буфера приема
 	transf_count=0x0;//счетчик передаваемых байтов
@@ -1088,149 +1130,174 @@ unsigned char Old_Proto_Paste_Null(unsigned char *buf,unsigned char len)//т.к. с
 //-----------------------------------------------------------------------------
 void ProtoBufHandling(void) //using 0 //процесс обработки принятого запроса
 {
-	if(protocol_type==PROTO_TYPE_NEW)
+	switch(protocol_type)
 	{
-		  channels[11].settings.set.state_byte_1=0x40; //восстановим байты статуса дола
-		  channels[11].settings.set.state_byte_2=0x0A;
-		  switch(RecieveBuf[4])
-		  {
-		//---------------------------------------
-		  	case GET_DEV_INFO_REQ:
-			{
-				buf_len=Send_Info();	
-			}
-			break;
-		//---------------------------------------
-		  	case NODE_FULL_INIT_REQ:
-			{
-				buf_len=Node_Full_Init();
-			}
-			break;
-		//---------------------------------------
-		  	case CHANNEL_LIST_INIT_REQ:
-			{	
-				buf_len=Channel_List_Init();	
-			}
-			break;
-		//---------------------------------------
-			case CHANNEL_GET_DATA_REQ:
-			{
-				buf_len=Channel_Get_Data();	
-			}
-			break;
-			//-----------------------------------
-			case CHANNEL_SET_PARAMETERS_REQ:
-			{
-				buf_len=Channel_Set_Parameters();
-			}
-			break;
-			//-----------------------------------
-			case CHANNEL_SET_ORDER_QUERY_REQ:
-			{
-				buf_len=Channel_Set_Order_Query();
-			}
-			break;
-		//----------------------------------------
-			case CHANNEL_GET_DATA_ORDER_REQ:
-			{
-				 buf_len=Channel_Get_Data_Order();
-			}
-			break;
-		//----------------------------------------
-			case CHANNEL_SET_STATE_REQ:
-			{
-				 buf_len=Channel_Set_State();
-			}
-			break;
-		//----------------------------------------
-			case CHANNEL_GET_DATA_ORDER_M2_REQ:
-			{
-				 buf_len=Channel_Get_Data_Order_M2();
-			}
-			break;
-		//------------------------------------------
-			case CHANNEL_SET_RESET_STATE_FLAGS_REQ:
-			{
-				buf_len=Channel_Set_Reset_State_Flags();
-			}
-			break;
-		//------------------------------------------
-			case CHANNEL_ALL_GET_DATA_REQ:
-			{
-				 buf_len=Channel_All_Get_Data();
-			}
-			break;
-		//------------------------------------------
-			case CHANNEL_SET_ADDRESS_DESC:
-			{
-				 buf_len=Channel_Set_Address_Desc();
-			}
-			break;
-		//------------------------------------------
-			case CHANNEL_SET_CALIBRATE:
-			{
-				 buf_len=Channel_Set_Calibrate();
-			}
-			break;
-		//------------------------------------------
-			case CHANNEL_SET_ALL_DEFAULT:
-			{
-				 buf_len=Channel_Set_All_Default();
-			}
-			break;
-		//------------------------------------------
-			case CHANNEL_GET_CALIBRATE_REQ:
-			{
-				 buf_len=Channel_Get_Calibrate_Value();
-			}
-			break;
-		//------------------------------------------
-		    default:
-			{
-			   buf_len=Request_Error(FR_COMMAND_NOT_EXIST);
-		    }								   
-		  }
-	}
-	else //старый протокол
-	{
-		  switch((RecieveBuf[5]>>5)&0x7)
-		  {
-		//---------------------------------------
-		  	case OLD_CHANNEL_REINIT_BLOCK:
-			{
-				buf_len=Old_Reinit_Block();	
-			}
-			break;
-		//---------------------------------------
-		  	case OLD_CHANNEL_SET_ADC_RANGE:
-			{
-				buf_len=Old_Channel_Set_ADC_Range();
-			}
-			break;
-		//---------------------------------------
-		  	case OLD_CHANNEL_GET_STATE:
-			{	
-				buf_len=Old_Channel_Get_State();	
-			}
-			break;
-		//---------------------------------------
-			case OLD_CHANNEL_GET_DATA:
-			{
-				buf_len=Old_Channel_Get_Data();	
-			}
-			break;
-			//-----------------------------------
-			case OLD_CHANNEL_GET_DATA_STATE:
-			{
-				buf_len=Old_Channel_Get_Data_State();
-			}
-			break;
-			//-----------------------------------
-		    default:
-			{
-			   
-		    }								   
-		  }		
+		case PROTO_TYPE_NEW:
+		{
+			  channels[11].settings.set.state_byte_1=0x40; //восстановим байты статуса дола
+			  channels[11].settings.set.state_byte_2=0x0A;
+			  switch(RecieveBuf[4])
+			  {
+			//---------------------------------------
+			  	case GET_DEV_INFO_REQ:
+				{
+					buf_len=Send_Info();	
+				}
+				break;
+			//---------------------------------------
+			  	case NODE_FULL_INIT_REQ:
+				{
+					buf_len=Node_Full_Init();
+				}
+				break;
+			//---------------------------------------
+			  	case CHANNEL_LIST_INIT_REQ:
+				{	
+					buf_len=Channel_List_Init();	
+				}
+				break;
+			//---------------------------------------
+				case CHANNEL_GET_DATA_REQ:
+				{
+					buf_len=Channel_Get_Data();	
+				}
+				break;
+				//-----------------------------------
+				case CHANNEL_SET_PARAMETERS_REQ:
+				{
+					buf_len=Channel_Set_Parameters();
+				}
+				break;
+				//-----------------------------------
+				case CHANNEL_SET_ORDER_QUERY_REQ:
+				{
+					buf_len=Channel_Set_Order_Query();
+				}
+				break;
+			//----------------------------------------
+				case CHANNEL_GET_DATA_ORDER_REQ:
+				{
+					 buf_len=Channel_Get_Data_Order();
+				}
+				break;
+			//----------------------------------------
+				case CHANNEL_SET_STATE_REQ:
+				{
+					 buf_len=Channel_Set_State();
+				}
+				break;
+			//----------------------------------------
+				case CHANNEL_GET_DATA_ORDER_M2_REQ:
+				{
+					 buf_len=Channel_Get_Data_Order_M2();
+				}
+				break;
+			//------------------------------------------
+				case CHANNEL_SET_RESET_STATE_FLAGS_REQ:
+				{
+					buf_len=Channel_Set_Reset_State_Flags();
+				}
+				break;
+			//------------------------------------------
+				case CHANNEL_ALL_GET_DATA_REQ:
+				{
+					 buf_len=Channel_All_Get_Data();
+				}
+				break;
+			//------------------------------------------
+				case CHANNEL_SET_ADDRESS_DESC:
+				{
+					 buf_len=Channel_Set_Address_Desc();
+				}
+				break;
+			//------------------------------------------
+				case CHANNEL_SET_CALIBRATE:
+				{
+					 buf_len=Channel_Set_Calibrate();
+				}
+				break;
+			//------------------------------------------
+				case CHANNEL_SET_ALL_DEFAULT:
+				{
+					 buf_len=Channel_Set_All_Default();
+				}
+				break;
+			//------------------------------------------
+				case CHANNEL_GET_CALIBRATE_REQ:
+				{
+					 buf_len=Channel_Get_Calibrate_Value();
+				}
+				break;
+			//------------------------------------------
+			    default:
+				{
+				   buf_len=Request_Error(FR_COMMAND_NOT_EXIST);
+			    }								   
+			  }
+		}
+		break;
+
+		case PROTO_TYPE_OLD: //старый протокол
+		{
+			  switch((RecieveBuf[5]>>5)&0x7)
+			  {
+			//---------------------------------------
+			  	case OLD_CHANNEL_REINIT_BLOCK:
+				{
+					buf_len=Old_Reinit_Block();	
+				}
+				break;
+			//---------------------------------------
+			  	case OLD_CHANNEL_SET_ADC_RANGE:
+				{
+					buf_len=Old_Channel_Set_ADC_Range();
+				}
+				break;
+			//---------------------------------------
+			  	case OLD_CHANNEL_GET_STATE:
+				{	
+					buf_len=Old_Channel_Get_State();	
+				}
+				break;
+			//---------------------------------------
+				case OLD_CHANNEL_GET_DATA:
+				{
+					buf_len=Old_Channel_Get_Data();	
+				}
+				break;
+				//-----------------------------------
+				case OLD_CHANNEL_GET_DATA_STATE:
+				{
+					buf_len=Old_Channel_Get_Data_State();
+				}
+				break;
+				//-----------------------------------
+			    default:
+				{
+				   
+			    }								   
+			  }	
+		 }
+		 break;
+		 
+		 case PROTO_TYPE_MODBUS_ASCII:
+		 {
+			  switch(MBCHAR2BIN(RecieveBuf[3])<<4| MBCHAR2BIN(RecieveBuf[4]))
+			  {
+				//---------------------------------------
+				  	case MB_FUNC_READ_HOLDING_REGISTER:
+					{
+						buf_len=ReadHoldingReg();	
+					}
+					break;
+				//------------------------------------------
+				    default:
+					{
+					   buf_len=0x0;
+				    }								   
+			  }
+		 }
+		 break;	
 	}
 
   return;
@@ -1239,7 +1306,7 @@ void ProtoBufHandling(void) //using 0 //процесс обработки принятого запроса
 //#pragma OT(0,Speed) 
 PT_THREAD(ProtoProcess(struct pt *pt))
  {
- static unsigned char  CRC=0x0;
+ static unsigned char  CRC=0x0, LRC=0x0;
   PT_BEGIN(pt);
 
   while(1) 
@@ -1260,27 +1327,54 @@ PT_THREAD(ProtoProcess(struct pt *pt))
 	  
 	    RECIEVED=0;
 		
-		if((protocol_type==PROTO_TYPE_NEW)&&(RecieveBuf[3]!=ADRESS_DEV))//если адрес совпал	  
+
+	 	switch(protocol_type)
 		{
-			PT_RESTART(pt);//если адрес не сошелся-перезапустим протокол			
-		}	
-				
-	    CRC=RecieveBuf[recieve_count-1];
-		
-		if(protocol_type==PROTO_TYPE_NEW)
-		{		
-			if(CRC_Check(&RecieveBuf,(recieve_count-CRC_LEN))!=CRC)
+			case PROTO_TYPE_NEW:
 			{
-				PT_RESTART(pt);//если CRC не сошлось-перезапустим протокол	 
+				if(RecieveBuf[3]!=ADRESS_DEV)//если адрес совпал	  
+				{
+					PT_RESTART(pt);//если адрес не сошелся-перезапустим протокол			
+				}
+
+				CRC=RecieveBuf[recieve_count-1];
+
+			    if(CRC_Check(&RecieveBuf,(recieve_count-CRC_LEN))!=CRC)
+				{
+					PT_RESTART(pt);//если CRC не сошлось-перезапустим протокол	 
+				}
 			}
-		}
-		else
-		{
-			if(Old_CRC_Check(&RecieveBuf,(recieve_count-CRC_LEN))!=CRC)
+			break;
+	
+			case PROTO_TYPE_OLD:
 			{
-				PT_RESTART(pt);//если CRC не сошлось-перезапустим протокол	 
-			}			
+				CRC=RecieveBuf[recieve_count-1];
+
+				if(Old_CRC_Check(&RecieveBuf,(recieve_count-CRC_LEN))!=CRC)
+				{
+					PT_RESTART(pt);//если CRC не сошлось-перезапустим протокол	 
+				}
+			}
+			break;
+	
+			case PROTO_TYPE_MODBUS_ASCII:
+			{
+				if((unsigned char)(MBCHAR2BIN(RecieveBuf[1])<<4| MBCHAR2BIN(RecieveBuf[2]))!=ADRESS_DEV)
+				{
+					PT_RESTART(pt);	
+				}	
+				
+	   	
+				LRC=((MBCHAR2BIN(RecieveBuf[recieve_count-LRC_LEN])<<4)|(MBCHAR2BIN(RecieveBuf[recieve_count-LRC_LEN+1])));
+					
+				if(LRC_Check(&RecieveBuf,(recieve_count-LRC_LEN))!=LRC)
+				{
+					PT_RESTART(pt);//если LRC не сошлось-перезапустим протокол	 		 
+				}
+			}
+			break;
 		}
+
 	//	PT_YIELD(pt);//дадим другим процессам время
   //-----------------------------
   		ProtoBufHandling();//процедура обработки сообщения	
@@ -1371,3 +1465,21 @@ void Restore_Dev_Address_Desc(void)//восстановить из ппзу адрес и информацию об 
 	return;
 }
 //-----------------------------------------------------------------------------------------------
+
+
+ PT_THREAD(ProtoBufHandling(struct pt *pt))//обработка кольцевого буфера
+ {
+ 	static unsigned cahr temp_count=0;
+
+  PT_BEGIN(pt);
+
+  while(1) 
+  {
+  		PT_YIELD_UNTIL(pt,(rngbuf.count>0x0));//в буфере есть данные
+		ES=0;
+		ES=1;
+  		
+  }
+
+  PT_END(pt);
+ }

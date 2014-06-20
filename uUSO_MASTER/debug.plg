@@ -30,3 +30,103 @@ linking...
 Program Size: data=22.0 xdata=1596 code=18755
 creating hex file from "debug"...
 "debug" - 0 Error(s), 2 Warning(s).
+Build target 'Target 1'
+compiling debug.c...
+compiling proto_uso.c...
+PROTO_USO\PROTO_USO.C(1243): warning C206: 'MBCHAR2BIN': missing function-prototype
+PROTO_USO\PROTO_USO.C(1243): error C267: 'MBCHAR2BIN': requires ANSI-style prototype
+PROTO_USO\PROTO_USO.C(1246): error C202: 'MB_FUNC_READ_HOLDING_REGISTER': undefined identifier
+compiling modbus_ascii.c...
+modbus\modbus_ascii.c(3): warning C318: can't open file 'channels.h'
+MODBUS\MODBUS_ASCII.C(7): error C202: 'MAX_LENGTH_REC_BUF': undefined identifier
+MODBUS\MODBUS_ASCII.C(7): error C136: invalid dimension size: [0]
+MODBUS\MODBUS_ASCII.C(8): error C202: 'MAX_LENGTH_TR_BUF': undefined identifier
+MODBUS\MODBUS_ASCII.C(8): error C136: invalid dimension size: [0]
+MODBUS\MODBUS_ASCII.C(178): error C202: 'CHANNEL_NUMBER': undefined identifier
+MODBUS\MODBUS_ASCII.C(195): error C202: 'channels': undefined identifier
+Target not created
+Build target 'Target 1'
+compiling proto_uso.c...
+PROTO_USO\PROTO_USO.C(1243): warning C206: 'MBCHAR2BIN': missing function-prototype
+PROTO_USO\PROTO_USO.C(1243): error C267: 'MBCHAR2BIN': requires ANSI-style prototype
+PROTO_USO\PROTO_USO.C(1246): error C202: 'MB_FUNC_READ_HOLDING_REGISTER': undefined identifier
+compiling modbus_ascii.c...
+modbus\modbus_ascii.c(3): warning C318: can't open file 'channels.h'
+MODBUS\MODBUS_ASCII.C(178): error C202: 'CHANNEL_NUMBER': undefined identifier
+MODBUS\MODBUS_ASCII.C(195): error C202: 'channels': undefined identifier
+Target not created
+Build target 'Target 1'
+compiling proto_uso.c...
+compiling modbus_ascii.c...
+modbus\modbus_ascii.c(3): warning C318: can't open file 'channels.h'
+MODBUS\MODBUS_ASCII.C(178): error C202: 'CHANNEL_NUMBER': undefined identifier
+MODBUS\MODBUS_ASCII.C(195): error C202: 'channels': undefined identifier
+Target not created
+Build target 'Target 1'
+compiling modbus_ascii.c...
+MODBUS\MODBUS_ASCII.C(195): error C202: 'channels': undefined identifier
+Target not created
+Build target 'Target 1'
+compiling modbus_ascii.c...
+MODBUS\MODBUS_ASCII.C(203): error C214: illegal pointer conversion
+Target not created
+Build target 'Target 1'
+compiling modbus_ascii.c...
+linking...
+*** ERROR L104: MULTIPLE PUBLIC DEFINITIONS
+    SYMBOL:  ADRESS_DEV
+    MODULE:  modbus_ascii.obj (MODBUS_ASCII)
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_SYM_2_TO_CHAR?MODBUS_ASCII
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_INT_TO_SYM_4?MODBUS_ASCII
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_SYM_8_TO_LONG?MODBUS_ASCII
+Program Size: data=22.0 xdata=1610 code=19879
+Target not created
+Build target 'Target 1'
+compiling proto_uso.c...
+PROTO_USO\PROTO_USO.C(1321): error C202: 'DEV_ADDRESS': undefined identifier
+PROTO_USO\PROTO_USO.C(1327): error C202: 'buf_count': undefined identifier
+Target not created
+Build target 'Target 1'
+compiling proto_uso.c...
+PROTO_USO\PROTO_USO.C(1327): error C202: 'buf_count': undefined identifier
+Target not created
+Build target 'Target 1'
+compiling proto_uso.c...
+PROTO_USO\PROTO_USO.C(1327): error C202: 'LRC_LEN': undefined identifier
+Target not created
+Build target 'Target 1'
+compiling proto_uso.c...
+PROTO_USO\PROTO_USO.C(1329): warning C206: 'LRC_Check': missing function-prototype
+PROTO_USO\PROTO_USO.C(1329): error C267: 'LRC_Check': requires ANSI-style prototype
+compiling modbus_ascii.c...
+Target not created
+Build target 'Target 1'
+compiling proto_uso.c...
+compiling modbus_ascii.c...
+linking...
+*** ERROR L104: MULTIPLE PUBLIC DEFINITIONS
+    SYMBOL:  ADRESS_DEV
+    MODULE:  modbus_ascii.obj (MODBUS_ASCII)
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_SYM_2_TO_CHAR?MODBUS_ASCII
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_INT_TO_SYM_4?MODBUS_ASCII
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_SYM_8_TO_LONG?MODBUS_ASCII
+Program Size: data=22.0 xdata=1611 code=20100
+Target not created
+Build target 'Target 1'
+compiling modbus_ascii.c...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_SYM_2_TO_CHAR?MODBUS_ASCII
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_INT_TO_SYM_4?MODBUS_ASCII
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_SYM_8_TO_LONG?MODBUS_ASCII
+Program Size: data=22.0 xdata=1610 code=20096
+creating hex file from "debug"...
+"debug" - 0 Error(s), 3 Warning(s).

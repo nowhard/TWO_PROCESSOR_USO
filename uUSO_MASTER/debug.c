@@ -22,7 +22,7 @@
 extern unsigned char idata i2c_buffer[6];
 
 extern struct I2C_Channel xdata i2c_channels;
-extern struct pt pt_proto, pt_wdt;
+extern struct pt pt_proto, pt_wdt, pt_buf_handle;
 volatile struct pt pt_i2c_read, pt_freq_measure,pt_sort,pt_i2c_process;
 
 
@@ -102,5 +102,6 @@ void Timer1_Interrupt(void) interrupt 3  //таймер шедулера
 	pt_sort.pt_time++;
 	pt_proto.pt_time++;
 	pt_wdt.pt_time++;
+	pt_buf_handle.pt_time++
 	return;	
 }

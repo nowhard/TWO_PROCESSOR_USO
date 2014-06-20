@@ -1,0 +1,1 @@
+"modbus\modbus_ascii.c" LARGE OPTIMIZE (6,SPEED) BROWSE ORDER NOAREGS DEBUG OBJECTEXTEND PRINT(.\modbus_ascii.lst) OBJECT(modbus_ascii.obj)
