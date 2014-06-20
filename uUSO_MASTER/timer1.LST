@@ -1,0 +1,90 @@
+C51 COMPILER V9.00   TIMER1                                                                06/20/2014 09:02:40 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE TIMER1
+OBJECT MODULE PLACED IN timer1.OBJ
+COMPILER INVOKED BY: C:\Program Files\Keil\C51\BIN\C51.EXE timer1.c LARGE OPTIMIZE(6,SPEED) BROWSE ORDER NOAREGS DEBUG O
+                    -BJECTEXTEND CODE SYMBOLS
+
+line level    source
+
+   1          #include "timer1.h"
+   2          
+   3          //---------------------------------------------------------
+   4          void Timer1_Initialize(void) //initialize delay timer1
+   5          {
+   6   1              TMOD &= 0xF; // 0000 1111
+   7   1              TMOD |= 0x10; //16bit 
+   8   1      
+   9   1              TH1     = TH1_VAL; ///1000 Hz; 
+  10   1              TL1 = TL1_VAL;//
+  11   1              
+  12   1      
+  13   1              ET1=1;
+  14   1              TR1=1;
+  15   1              return;
+  16   1      }
+C51 COMPILER V9.00   TIMER1                                                                06/20/2014 09:02:40 PAGE 2   
+
+ASSEMBLY LISTING OF GENERATED OBJECT CODE
+
+
+             ; FUNCTION Timer1_Initialize (BEGIN)
+                                           ; SOURCE LINE # 4
+                                           ; SOURCE LINE # 5
+                                           ; SOURCE LINE # 6
+0000 53890F            ANL     TMOD,#0FH
+                                           ; SOURCE LINE # 7
+0003 438910            ORL     TMOD,#010H
+                                           ; SOURCE LINE # 9
+0006 758D8A            MOV     TH1,#08AH
+                                           ; SOURCE LINE # 10
+0009 758BD0            MOV     TL1,#0D0H
+                                           ; SOURCE LINE # 13
+000C D2AB              SETB    ET1
+                                           ; SOURCE LINE # 14
+000E D28E              SETB    TR1
+                                           ; SOURCE LINE # 16
+0010         ?C0001:
+0010 22                RET     
+             ; FUNCTION Timer1_Initialize (END)
+
+C51 COMPILER V9.00   TIMER1                                                                06/20/2014 09:02:40 PAGE 3   
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+TCON . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0088H  1
+TMOD . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0089H  1
+TL1. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   008BH  1
+TH1. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   008DH  1
+SCON . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0098H  1
+P2 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A0H  1
+IE . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A8H  1
+P3 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B0H  1
+IP . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B8H  1
+WDCON. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C0H  1
+T2CON. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C8H  1
+PSW. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D0H  1
+ADCSTAT. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D8H  1
+I2CCON . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E8H  1
+DCON . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E8H  1
+SPICON . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F8H  1
+TR1. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      008EH  1
+ET1. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00ABH  1
+Timer1_Initialize. . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     17    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

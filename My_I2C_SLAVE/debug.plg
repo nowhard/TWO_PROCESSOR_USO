@@ -1,0 +1,44 @@
+<html>
+<body>
+<pre>
+<h1>µVision Build Log</h1>
+<h2>Project:</h2>
+D:\PROJECTS\GIT_REPOSITORY\8051\keil\Protothreads\USO_PT\My_I2C_SLAVE\debug.uvproj
+Project File Date:  10/30/2013
+
+<h2>Output:</h2>
+Load "D:\\PROJECTS\\GIT_REPOSITORY\\8051\\keil\\Protothreads\\USO_PT\\My_I2C_SLAVE\\debug" 
+Detected Device: ADI 847     Monitor Revision: V217
+Erasing Program and Data Flash...
+Erase Done.
+Programming Done.
+Verify Done.
+Application running ...
+Load "D:\\PROJECTS\\GIT_REPOSITORY\\8051\\keil\\Protothreads\\USO_PT\\My_I2C_SLAVE\\debug" 
+Detected Device: ADI 847     Monitor Revision: V217
+Erasing Program and Data Flash...
+Erase Done.
+Programming Done.
+Verify Done.
+Application running ...
+Load "D:\\PROJECTS\\GIT_REPOSITORY\\8051\\keil\\Protothreads\\USO_PT\\My_I2C_SLAVE\\debug" 
+Detected Device: ADI 847     Monitor Revision: V217
+Erasing Program and Data Flash...
+Erase Done.
+Programming Done.
+Verify Done.
+Application running ...
+Load "D:\\PROJECTS\\GIT_REPOSITORY\\8051\\keil\\Protothreads\\USO_PT\\My_I2C_SLAVE\\debug" 
+Detected Device: ADI 847     Monitor Revision: V217
+Erasing Program and Data Flash...
+Erase Done.
+Programming Done.
+Verify Done.
+Application running ...
+Load "D:\\PROJECTS\\GIT_REPOSITORY\\8051\\keil\\Protothreads\\USO_PT\\My_I2C_SLAVE\\debug" 
+Detected Device: ADI 847     Monitor Revision: V217
+Erasing Program and Data Flash...
+Erase Done.
+Programming Done.
+Verify Done.
+Application running ...

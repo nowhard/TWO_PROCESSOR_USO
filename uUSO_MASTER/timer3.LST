@@ -1,0 +1,92 @@
+C51 COMPILER V9.00   TIMER3                                                                06/20/2014 09:02:39 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE TIMER3
+OBJECT MODULE PLACED IN timer3.OBJ
+COMPILER INVOKED BY: C:\Program Files\Keil\C51\BIN\C51.EXE timer3.c LARGE OPTIMIZE(6,SPEED) BROWSE ORDER NOAREGS DEBUG O
+                    -BJECTEXTEND CODE SYMBOLS
+
+line level    source
+
+   1          #include "timer3.h"
+   2          //------------------------------
+   3          void UART_Init(void) //using 0
+   4          { 
+   5   1                              //Configure UART
+   6   1          T3CON = T3CON_VAL;
+   7   1      
+   8   1          T3FD = T3FD_VAL;
+   9   1          SCON =0x52; //0x53;
+  10   1              ES=1;
+  11   1              TI=0;
+  12   1              RI=0;
+  13   1              PS=1; //наивысший приоритет у UART      возможно вызывает ошибки
+  14   1              return;
+  15   1      }
+C51 COMPILER V9.00   TIMER3                                                                06/20/2014 09:02:39 PAGE 2   
+
+ASSEMBLY LISTING OF GENERATED OBJECT CODE
+
+
+             ; FUNCTION UART_Init (BEGIN)
+                                           ; SOURCE LINE # 3
+                                           ; SOURCE LINE # 4
+                                           ; SOURCE LINE # 6
+0000 759E82            MOV     T3CON,#082H
+                                           ; SOURCE LINE # 8
+0003 759D2D            MOV     T3FD,#02DH
+                                           ; SOURCE LINE # 9
+0006 759852            MOV     SCON,#052H
+                                           ; SOURCE LINE # 10
+0009 D2AC              SETB    ES
+                                           ; SOURCE LINE # 11
+000B C299              CLR     TI
+                                           ; SOURCE LINE # 12
+000D C298              CLR     RI
+                                           ; SOURCE LINE # 13
+000F D2BC              SETB    PS
+                                           ; SOURCE LINE # 15
+0011         ?C0001:
+0011 22                RET     
+             ; FUNCTION UART_Init (END)
+
+C51 COMPILER V9.00   TIMER3                                                                06/20/2014 09:02:39 PAGE 3   
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+TCON . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0088H  1
+SCON . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0098H  1
+T3FD . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   009DH  1
+T3CON. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   009EH  1
+P2 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A0H  1
+IE . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A8H  1
+P3 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B0H  1
+IP . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B8H  1
+WDCON. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C0H  1
+T2CON. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C8H  1
+PSW. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D0H  1
+ADCSTAT. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D8H  1
+I2CCON . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E8H  1
+DCON . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E8H  1
+SPICON . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F8H  1
+ES . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00ACH  1
+PS . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00BCH  1
+TI . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0099H  1
+RI . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0098H  1
+UART_Init. . . . . . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     18    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

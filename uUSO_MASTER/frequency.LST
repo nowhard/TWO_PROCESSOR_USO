@@ -1,0 +1,1812 @@
+C51 COMPILER V9.00   FREQUENCY                                                             06/20/2014 09:02:40 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE FREQUENCY
+OBJECT MODULE PLACED IN frequency.OBJ
+COMPILER INVOKED BY: C:\Program Files\Keil\C51\BIN\C51.EXE frequency.c LARGE OPTIMIZE(6,SPEED) BROWSE ORDER NOAREGS DEBU
+                    -G OBJECTEXTEND CODE SYMBOLS
+
+line level    source
+
+   1          #include "frequency.h"
+   2          #include "watchdog.h"
+   3          
+   4          #define FREQ_CHANNELS   3
+   5          
+   6          
+   7          #define FRAME_TIME_1    511  //границы кадров захвата
+   8          #define FRAME_TIME_2    1023
+   9          #define FRAME_TIME_3    1535
+  10          #define FRAME_TIME_4    2047
+  11          
+  12          #define SHEAR                   9         //рассчитывается из максимума кадра захвата, как Nбит-2
+  13          
+  14          # define CLI_EXT  EX1=0; EX0=0; ET0=0;
+  15          # define STI_EXT  EX1=1; EX0=1; ET0=1;
+  16          
+  17          
+  18          //------------------------------------------
+  19          volatile struct Frequency xdata frequency[FREQ_CHANNELS]={0}; //структура частотных каналов
+  20          //------------------------------------------
+  21          #define FRQ_CHNL_1 0
+  22          #define FRQ_CHNL_2 1
+  23          #define FRQ_CHNL_3 2
+  24          //--------------------------------------------------------
+  25          #pragma OT(9,Speed)
+  26          void Frequency_Init(void) //инициализация частотных каналов
+  27          {
+  28   1              unsigned char i=0,j=0;
+  29   1              
+  30   1              Timer0_Initialize();
+  31   1              Timer2_Initialize();
+  32   1              EX1=1;//включаем внешние прерывания
+  33   1              EX0=1;
+  34   1              IT0=1;
+  35   1              IT1=1;
+  36   1              
+  37   1      
+  38   1              for(i=0;i<3;i++) //обнуление структуры
+  39   1              {
+  40   2                      frequency[i].time_counter=0;
+  41   2                      for(j=0;j<4;j++)
+  42   2                      {
+  43   3                              frequency[i].frame[j].event_counter=0;
+  44   3                              frequency[i].frame[j].timestamp=0;
+  45   3                              frequency[i].frame[j].time_copy=0;
+  46   3                              frequency[i].frame[j].event_copy=0;
+  47   3                      }
+  48   2              }
+  49   1              return;
+  50   1      }
+  51          //--------------------------------------------------------
+  52          void INT0_ISR(void) interrupt 0 //using 3//обработчик внешнего прерывания 0
+  53          {
+  54   1              unsigned char cnt;
+C51 COMPILER V9.00   FREQUENCY                                                             06/20/2014 09:02:40 PAGE 2   
+
+  55   1              cnt=(frequency[FRQ_CHNL_1].time_counter>>SHEAR)&0x3;
+  56   1              frequency[FRQ_CHNL_1].frame[cnt].event_counter++;
+  57   1              frequency[FRQ_CHNL_1].frame[cnt].timestamp=frequency[FRQ_CHNL_1].time_counter;
+  58   1              return;
+  59   1      }
+  60          //--------------------------------------------------------
+  61          void INT1_ISR(void) interrupt 2 //using 3//обработчик внешнего прерывания 1
+  62          {
+  63   1              unsigned char cnt;
+  64   1              cnt=(frequency[FRQ_CHNL_1].time_counter>>SHEAR)&0x3;
+  65   1              frequency[FRQ_CHNL_2].frame[cnt].event_counter++;
+  66   1              frequency[FRQ_CHNL_2].frame[cnt].timestamp=frequency[FRQ_CHNL_1].time_counter;
+  67   1              return;
+  68   1      }
+  69          //--------------------------------------------------------
+  70          void INT2_ISR(void) interrupt 1 //using 3//обработчик внешнего прерывания 2-использует внешний вход таймер
+             -а T0
+  71          {
+  72   1              unsigned char cnt;
+  73   1                      
+  74   1              TH0=0xFF;
+  75   1              TL0=0xFF;
+  76   1      
+  77   1              cnt=(frequency[FRQ_CHNL_1].time_counter>>SHEAR)&0x3;
+  78   1      
+  79   1              frequency[FRQ_CHNL_3].frame[cnt].event_counter++;
+  80   1              frequency[FRQ_CHNL_3].frame[cnt].timestamp=frequency[FRQ_CHNL_1].time_counter;
+  81   1              return;
+  82   1      }
+  83          //--------------------------------------------------------
+  84          void Timer2_ISR(void) interrupt 5 //using 3//обработчик прерывания счетного таймера частоты
+  85          {
+  86   1              TF2 = 0;
+  87   1      //      TH2=0xE7;
+  88   1      //      TL2=0xFF;
+  89   1      
+  90   1              switch(frequency[FRQ_CHNL_1].time_counter)
+  91   1              {
+  92   2                      case FRAME_TIME_1:
+  93   2                      {
+  94   3                              frequency[FRQ_CHNL_1].frame[0].time_copy=frequency[FRQ_CHNL_1].frame[0].timestamp+FRAME_TIME_4-frequenc
+             -y[FRQ_CHNL_1].frame[3].timestamp;
+  95   3                              frequency[FRQ_CHNL_1].frame[0].event_copy=frequency[FRQ_CHNL_1].frame[0].event_counter; 
+  96   3      
+  97   3      
+  98   3                              frequency[FRQ_CHNL_1].frame[3].event_counter=0;
+  99   3                              //---------------------------------------
+ 100   3                              frequency[FRQ_CHNL_2].frame[0].time_copy=frequency[FRQ_CHNL_2].frame[0].timestamp+FRAME_TIME_4-frequenc
+             -y[FRQ_CHNL_2].frame[3].timestamp;
+ 101   3                              frequency[FRQ_CHNL_2].frame[0].event_copy=frequency[FRQ_CHNL_2].frame[0].event_counter; 
+ 102   3      
+ 103   3      
+ 104   3                              frequency[FRQ_CHNL_2].frame[3].event_counter=0;
+ 105   3      
+ 106   3                              //---------------------------------------
+ 107   3                              frequency[FRQ_CHNL_3].frame[0].time_copy=frequency[FRQ_CHNL_3].frame[0].timestamp+FRAME_TIME_4-frequenc
+             -y[FRQ_CHNL_3].frame[3].timestamp;
+ 108   3                              frequency[FRQ_CHNL_3].frame[0].event_copy=frequency[FRQ_CHNL_3].frame[0].event_counter; 
+ 109   3      
+ 110   3      
+ 111   3                              frequency[FRQ_CHNL_3].frame[3].event_counter=0;
+ 112   3      
+C51 COMPILER V9.00   FREQUENCY                                                             06/20/2014 09:02:40 PAGE 3   
+
+ 113   3                      }
+ 114   2                      break;
+ 115   2      
+ 116   2                      case FRAME_TIME_2:
+ 117   2                      {
+ 118   3                              frequency[FRQ_CHNL_1].frame[1].time_copy=frequency[FRQ_CHNL_1].frame[1].timestamp-frequency[FRQ_CHNL_1]
+             -.frame[0].timestamp;
+ 119   3                              frequency[FRQ_CHNL_1].frame[1].event_copy=frequency[FRQ_CHNL_1].frame[1].event_counter; 
+ 120   3      
+ 121   3                              frequency[FRQ_CHNL_1].frame[0].event_counter=0;
+ 122   3                              //----------------------------------------------
+ 123   3                              frequency[FRQ_CHNL_2].frame[1].time_copy=frequency[FRQ_CHNL_2].frame[1].timestamp-frequency[FRQ_CHNL_2]
+             -.frame[0].timestamp;
+ 124   3                              frequency[FRQ_CHNL_2].frame[1].event_copy=frequency[FRQ_CHNL_2].frame[1].event_counter; 
+ 125   3      
+ 126   3                              frequency[FRQ_CHNL_2].frame[0].event_counter=0;
+ 127   3                              //----------------------------------------------
+ 128   3                              frequency[FRQ_CHNL_3].frame[1].time_copy=frequency[FRQ_CHNL_3].frame[1].timestamp-frequency[FRQ_CHNL_3]
+             -.frame[0].timestamp;
+ 129   3                              frequency[FRQ_CHNL_3].frame[1].event_copy=frequency[FRQ_CHNL_3].frame[1].event_counter; 
+ 130   3      
+ 131   3                              frequency[FRQ_CHNL_3].frame[0].event_counter=0;
+ 132   3                      }
+ 133   2                      break;
+ 134   2      
+ 135   2                      case FRAME_TIME_3:
+ 136   2                      {
+ 137   3                              frequency[FRQ_CHNL_1].frame[2].time_copy=frequency[FRQ_CHNL_1].frame[2].timestamp-frequency[FRQ_CHNL_1]
+             -.frame[1].timestamp;
+ 138   3                              frequency[FRQ_CHNL_1].frame[2].event_copy=frequency[FRQ_CHNL_1].frame[2].event_counter; 
+ 139   3      
+ 140   3                              frequency[FRQ_CHNL_1].frame[1].event_counter=0;
+ 141   3                              //----------------------------------------------------
+ 142   3                              frequency[FRQ_CHNL_2].frame[2].time_copy=frequency[FRQ_CHNL_2].frame[2].timestamp-frequency[FRQ_CHNL_2]
+             -.frame[1].timestamp;
+ 143   3                              frequency[FRQ_CHNL_2].frame[2].event_copy=frequency[FRQ_CHNL_2].frame[2].event_counter; 
+ 144   3      
+ 145   3                              frequency[FRQ_CHNL_2].frame[1].event_counter=0;
+ 146   3                              //---------------------------------------------------
+ 147   3                              frequency[FRQ_CHNL_3].frame[2].time_copy=frequency[FRQ_CHNL_3].frame[2].timestamp-frequency[FRQ_CHNL_3]
+             -.frame[1].timestamp;
+ 148   3                              frequency[FRQ_CHNL_3].frame[2].event_copy=frequency[FRQ_CHNL_3].frame[2].event_counter; 
+ 149   3      
+ 150   3                              frequency[FRQ_CHNL_3].frame[1].event_counter=0;
+ 151   3                      }
+ 152   2                      break;
+ 153   2      
+ 154   2                      case FRAME_TIME_4:
+ 155   2                      {
+ 156   3                              frequency[FRQ_CHNL_1].frame[3].time_copy=frequency[FRQ_CHNL_1].frame[3].timestamp-frequency[FRQ_CHNL_1]
+             -.frame[2].timestamp;
+ 157   3                              frequency[FRQ_CHNL_1].frame[3].event_copy=frequency[FRQ_CHNL_1].frame[3].event_counter; 
+ 158   3      
+ 159   3                              frequency[FRQ_CHNL_1].frame[2].event_counter=0; 
+ 160   3                              //-----------------------------------------------------
+ 161   3                              frequency[FRQ_CHNL_2].frame[3].time_copy=frequency[FRQ_CHNL_2].frame[3].timestamp-frequency[FRQ_CHNL_2]
+             -.frame[2].timestamp;
+ 162   3                              frequency[FRQ_CHNL_2].frame[3].event_copy=frequency[FRQ_CHNL_2].frame[3].event_counter; 
+ 163   3      
+ 164   3                              frequency[FRQ_CHNL_2].frame[2].event_counter=0;
+ 165   3                              //----------------------------------------------------
+ 166   3                              frequency[FRQ_CHNL_3].frame[3].time_copy=frequency[FRQ_CHNL_3].frame[3].timestamp-frequency[FRQ_CHNL_3]
+C51 COMPILER V9.00   FREQUENCY                                                             06/20/2014 09:02:40 PAGE 4   
+
+             -.frame[2].timestamp;
+ 167   3                              frequency[FRQ_CHNL_3].frame[3].event_copy=frequency[FRQ_CHNL_3].frame[3].event_counter; 
+ 168   3      
+ 169   3                              frequency[FRQ_CHNL_3].frame[2].event_counter=0;
+ 170   3                              
+ 171   3                              frequency[FRQ_CHNL_1].time_counter=0;
+ 172   3                      }
+ 173   2                      break;
+ 174   2              }
+ 175   1      
+ 176   1              frequency[FRQ_CHNL_1].time_counter++;
+ 177   1              frequency[FRQ_CHNL_1].time_counter&=FRAME_TIME_4;
+ 178   1      
+ 179   1              return;
+ 180   1      }
+ 181          //------------------------------------------------------------
+ 182          #pragma OT(0,Speed)
+ 183            PT_THREAD(Frequency_Measure_Process(struct pt *pt))
+ 184           { 
+ 185   1              static unsigned char frq_chnl=0;
+ 186   1              static unsigned long temp_freq=0; 
+ 187   1              wdt_count[Frequency_Measure_Proc].process_state=RUN;
+ 188   1      
+ 189   1         PT_BEGIN(pt);
+ 190   3      
+ 191   3        while(1) 
+ 192   3        {
+ 193   4                      PT_DELAY(pt,20);
+ 194   4                      temp_freq=(((unsigned long)frequency[frq_chnl].frame[0].event_copy+(unsigned long)frequency[frq_chnl].fr
+             -ame[1].event_copy+(unsigned long)frequency[frq_chnl].frame[2].event_copy+(unsigned long)frequency[frq_chnl].frame[3].eve
+             -nt_copy)<<18)/((frequency[frq_chnl].frame[0].time_copy+frequency[frq_chnl].frame[1].time_copy+frequency[frq_chnl].frame[
+             -2].time_copy+frequency[frq_chnl].frame[3].time_copy));
+ 195   4      
+ 196   4                      PT_YIELD(pt);//дадим другим процессам время
+ 197   4                      if(temp_freq<=0xFFFF)
+ 198   4                      {
+ 199   5                              channels[8+frq_chnl].channel_data=temp_freq;
+ 200   5                      }
+ 201   4                      else
+ 202   4                      {
+ 203   5                              channels[8+frq_chnl].channel_data=0xFFFF;
+ 204   5                      }
+ 205   4              
+ 206   4              
+ 207   4                      frq_chnl++;
+ 208   4                      if(frq_chnl>=3)
+ 209   4                      {
+ 210   5                              frq_chnl=0;
+ 211   5                      } 
+ 212   4      
+ 213   4                      wdt_count[Frequency_Measure_Proc].count++;
+ 214   4      
+ 215   4        }
+ 216   3        PT_END(pt);
+ 217   1      
+ 218   1       }
+C51 COMPILER V9.00   FREQUENCY                                                             06/20/2014 09:02:40 PAGE 5   
+
+ASSEMBLY LISTING OF GENERATED OBJECT CODE
+
+
+             ; FUNCTION Frequency_Init (BEGIN)
+                                           ; SOURCE LINE # 26
+                                           ; SOURCE LINE # 27
+                                           ; SOURCE LINE # 28
+;---- Variable 'i' assigned to Register 'R7' ----
+0000 E4                CLR     A
+0001 FF                MOV     R7,A
+0002 900000      R     MOV     DPTR,#j
+0005 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 30
+0006 120000      E     LCALL   Timer0_Initialize
+                                           ; SOURCE LINE # 31
+0009 120000      E     LCALL   Timer2_Initialize
+                                           ; SOURCE LINE # 32
+000C D2AA              SETB    EX1
+                                           ; SOURCE LINE # 33
+000E D2A8              SETB    EX0
+                                           ; SOURCE LINE # 34
+0010 D288              SETB    IT0
+                                           ; SOURCE LINE # 35
+0012 D28A              SETB    IT1
+                                           ; SOURCE LINE # 38
+0014 E4                CLR     A
+0015 FF                MOV     R7,A
+0016         ?C0001:
+                                           ; SOURCE LINE # 39
+                                           ; SOURCE LINE # 40
+0016 EF                MOV     A,R7
+0017 75F022            MOV     B,#022H
+001A A4                MUL     AB
+001B 2400        R     ADD     A,#LOW frequency
+001D F582              MOV     DPL,A
+001F E4                CLR     A
+0020 3400        R     ADDC    A,#HIGH frequency
+0022 F583              MOV     DPH,A
+0024 E4                CLR     A
+0025 F0                MOVX    @DPTR,A
+0026 A3                INC     DPTR
+0027 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 41
+0028 900000      R     MOV     DPTR,#j
+002B F0                MOVX    @DPTR,A
+002C         ?C0004:
+                                           ; SOURCE LINE # 42
+                                           ; SOURCE LINE # 43
+002C EF                MOV     A,R7
+002D 75F022            MOV     B,#022H
+0030 A4                MUL     AB
+0031 2400        R     ADD     A,#LOW frequency+02H
+0033 F582              MOV     DPL,A
+0035 E4                CLR     A
+0036 3400        R     ADDC    A,#HIGH frequency+02H
+0038 F583              MOV     DPH,A
+003A C083              PUSH    DPH
+003C C082              PUSH    DPL
+003E 900000      R     MOV     DPTR,#j
+0041 E0                MOVX    A,@DPTR
+0042 FE                MOV     R6,A
+0043 D082              POP     DPL
+C51 COMPILER V9.00   FREQUENCY                                                             06/20/2014 09:02:40 PAGE 6   
+
+0045 D083              POP     DPH
+0047 75F008            MOV     B,#08H
+004A 120000      E     LCALL   ?C?OFFXADD
+004D E4                CLR     A
+004E F0                MOVX    @DPTR,A
+004F A3                INC     DPTR
+0050 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 44
+0051 EF                MOV     A,R7
+0052 75F022            MOV     B,#022H
+0055 A4                MUL     AB
+0056 2400        R     ADD     A,#LOW frequency+04H
+0058 F582              MOV     DPL,A
+005A E4                CLR     A
+005B 3400        R     ADDC    A,#HIGH frequency+04H
+005D F583              MOV     DPH,A
+005F 75F008            MOV     B,#08H
+0062 EE                MOV     A,R6
+0063 120000      E     LCALL   ?C?OFFXADD
+0066 E4                CLR     A
+0067 F0                MOVX    @DPTR,A
+0068 A3                INC     DPTR
+0069 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 45
+006A EF                MOV     A,R7
+006B 75F022            MOV     B,#022H
+006E A4                MUL     AB
+006F 2400        R     ADD     A,#LOW frequency+06H
+0071 F582              MOV     DPL,A
+0073 E4                CLR     A
+0074 3400        R     ADDC    A,#HIGH frequency+06H
+0076 F583              MOV     DPH,A
+0078 C083              PUSH    DPH
+007A C082              PUSH    DPL
+007C 900000      R     MOV     DPTR,#j
+007F E0                MOVX    A,@DPTR
+0080 FE                MOV     R6,A
+0081 D082              POP     DPL
+0083 D083              POP     DPH
+0085 75F008            MOV     B,#08H
+0088 120000      E     LCALL   ?C?OFFXADD
+008B E4                CLR     A
+008C F0                MOVX    @DPTR,A
+008D A3                INC     DPTR
+008E F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 46
+008F EF                MOV     A,R7
+0090 75F022            MOV     B,#022H
+0093 A4                MUL     AB
+0094 2400        R     ADD     A,#LOW frequency+08H
+0096 F582              MOV     DPL,A
+0098 E4                CLR     A
+0099 3400        R     ADDC    A,#HIGH frequency+08H
+009B F583              MOV     DPH,A
+009D 75F008            MOV     B,#08H
+00A0 EE                MOV     A,R6
+00A1 120000      E     LCALL   ?C?OFFXADD
+00A4 E4                CLR     A
+00A5 F0                MOVX    @DPTR,A
+00A6 A3                INC     DPTR
+00A7 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 47
+C51 COMPILER V9.00   FREQUENCY                                                             06/20/2014 09:02:40 PAGE 7   
+
+00A8 900000      R     MOV     DPTR,#j
+00AB E0                MOVX    A,@DPTR
+00AC 04                INC     A
+00AD F0                MOVX    @DPTR,A
+00AE E0                MOVX    A,@DPTR
+00AF 6404              XRL     A,#04H
+00B1 6003              JZ      $ + 5H
+00B3 020000      R     LJMP    ?C0004
+                                           ; SOURCE LINE # 48
+00B6         ?C0003:
+00B6 0F                INC     R7
+00B7 EF                MOV     A,R7
+00B8 6403              XRL     A,#03H
+00BA 6003              JZ      $ + 5H
+00BC 020000      R     LJMP    ?C0001
+                                           ; SOURCE LINE # 50
+00BF         ?C0007:
+00BF 22                RET     
+             ; FUNCTION Frequency_Init (END)
+
+             ; FUNCTION INT0_ISR (BEGIN)
+0000 C0E0              PUSH    ACC
+0002 C0F0              PUSH    B
+0004 C083              PUSH    DPH
+0006 C082              PUSH    DPL
+0008 C0D0              PUSH    PSW
+000A E8                MOV     A,R0
+000B C0E0              PUSH    ACC
+000D EC                MOV     A,R4
+000E C0E0              PUSH    ACC
+0010 ED                MOV     A,R5
+0011 C0E0              PUSH    ACC
+0013 EF                MOV     A,R7
+0014 C0E0              PUSH    ACC
+                                           ; SOURCE LINE # 52
+                                           ; SOURCE LINE # 55
+0016 900000      R     MOV     DPTR,#frequency
+0019 E0                MOVX    A,@DPTR
+001A C3                CLR     C
+001B 13                RRC     A
+001C 5403              ANL     A,#03H
+001E FF                MOV     R7,A
+;---- Variable 'cnt' assigned to Register 'R7' ----
+                                           ; SOURCE LINE # 56
+001F 75F008            MOV     B,#08H
+0022 A4                MUL     AB
+0023 2400        R     ADD     A,#LOW frequency+02H
+0025 F582              MOV     DPL,A
+0027 E4                CLR     A
+0028 3400        R     ADDC    A,#HIGH frequency+02H
+002A F583              MOV     DPH,A
+002C E4                CLR     A
+002D 75F001            MOV     B,#01H
+0030 120000      E     LCALL   ?C?IILDX
+                                           ; SOURCE LINE # 57
+0033 900000      R     MOV     DPTR,#frequency
+0036 E0                MOVX    A,@DPTR
+0037 FC                MOV     R4,A
+0038 A3                INC     DPTR
+0039 E0                MOVX    A,@DPTR
+003A FD                MOV     R5,A
+003B EF                MOV     A,R7
+C51 COMPILER V9.00   FREQUENCY                                                             06/20/2014 09:02:40 PAGE 8   
+
+003C 75F008            MOV     B,#08H
+003F A4                MUL     AB
+0040 2400        R     ADD     A,#LOW frequency+04H
+0042 F582              MOV     DPL,A
+0044 E4                CLR     A
+0045 3400        R     ADDC    A,#HIGH frequency+04H
+0047 F583              MOV     DPH,A
+0049 EC                MOV     A,R4
+004A F0                MOVX    @DPTR,A
+004B A3                INC     DPTR
+004C ED                MOV     A,R5
+004D F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 59
+004E         ?C0008:
+004E D0E0              POP     ACC
+0050 FF                MOV     R7,A
+0051 D0E0              POP     ACC
+0053 FD                MOV     R5,A
+0054 D0E0              POP     ACC
+0056 FC                MOV     R4,A
+0057 D0E0              POP     ACC
+0059 F8                MOV     R0,A
+005A D0D0              POP     PSW
+005C D082              POP     DPL
+005E D083              POP     DPH
+0060 D0F0              POP     B
+0062 D0E0              POP     ACC
+0064 32                RETI    
+             ; FUNCTION INT0_ISR (END)
+
+             ; FUNCTION INT1_ISR (BEGIN)
+0000 C0E0              PUSH    ACC
+0002 C0F0              PUSH    B
+0004 C083              PUSH    DPH
+0006 C082              PUSH    DPL
+0008 C0D0              PUSH    PSW
+000A E8                MOV     A,R0
+000B C0E0              PUSH    ACC
+000D EC                MOV     A,R4
+000E C0E0              PUSH    ACC
+0010 ED                MOV     A,R5
+0011 C0E0              PUSH    ACC
+0013 EF                MOV     A,R7
+0014 C0E0              PUSH    ACC
+                                           ; SOURCE LINE # 61
+                                           ; SOURCE LINE # 64
+0016 900000      R     MOV     DPTR,#frequency
+0019 E0                MOVX    A,@DPTR
+001A C3                CLR     C
+001B 13                RRC     A
+001C 5403              ANL     A,#03H
+001E FF                MOV     R7,A
+;---- Variable 'cnt' assigned to Register 'R7' ----
+                                           ; SOURCE LINE # 65
+001F 75F008            MOV     B,#08H
+0022 A4                MUL     AB
+0023 2400        R     ADD     A,#LOW frequency+024H
+0025 F582              MOV     DPL,A
+0027 E4                CLR     A
+0028 3400        R     ADDC    A,#HIGH frequency+024H
+002A F583              MOV     DPH,A
+002C E4                CLR     A
+C51 COMPILER V9.00   FREQUENCY                                                             06/20/2014 09:02:40 PAGE 9   
+
+002D 75F001            MOV     B,#01H
+0030 120000      E     LCALL   ?C?IILDX
+                                           ; SOURCE LINE # 66
+0033 900000      R     MOV     DPTR,#frequency
+0036 E0                MOVX    A,@DPTR
+0037 FC                MOV     R4,A
+0038 A3                INC     DPTR
+0039 E0                MOVX    A,@DPTR
+003A FD                MOV     R5,A
+003B EF                MOV     A,R7
+003C 75F008            MOV     B,#08H
+003F A4                MUL     AB
+0040 2400        R     ADD     A,#LOW frequency+026H
+0042 F582              MOV     DPL,A
+0044 E4                CLR     A
+0045 3400        R     ADDC    A,#HIGH frequency+026H
+0047 F583              MOV     DPH,A
+0049 EC                MOV     A,R4
+004A F0                MOVX    @DPTR,A
+004B A3                INC     DPTR
+004C ED                MOV     A,R5
+004D F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 68
+004E         ?C0009:
+004E D0E0              POP     ACC
+0050 FF                MOV     R7,A
+0051 D0E0              POP     ACC
+0053 FD                MOV     R5,A
+0054 D0E0              POP     ACC
+0056 FC                MOV     R4,A
+0057 D0E0              POP     ACC
+0059 F8                MOV     R0,A
+005A D0D0              POP     PSW
+005C D082              POP     DPL
+005E D083              POP     DPH
+0060 D0F0              POP     B
+0062 D0E0              POP     ACC
+0064 32                RETI    
+             ; FUNCTION INT1_ISR (END)
+
+             ; FUNCTION INT2_ISR (BEGIN)
+0000 C0E0              PUSH    ACC
+0002 C0F0              PUSH    B
+0004 C083              PUSH    DPH
+0006 C082              PUSH    DPL
+0008 C0D0              PUSH    PSW
+000A E8                MOV     A,R0
+000B C0E0              PUSH    ACC
+000D EC                MOV     A,R4
+000E C0E0              PUSH    ACC
+0010 ED                MOV     A,R5
+0011 C0E0              PUSH    ACC
+0013 EF                MOV     A,R7
+0014 C0E0              PUSH    ACC
+                                           ; SOURCE LINE # 70
+                                           ; SOURCE LINE # 74
+0016 758CFF            MOV     TH0,#0FFH
+                                           ; SOURCE LINE # 75
+0019 758AFF            MOV     TL0,#0FFH
+                                           ; SOURCE LINE # 77
+001C 900000      R     MOV     DPTR,#frequency
+001F E0                MOVX    A,@DPTR
+C51 COMPILER V9.00   FREQUENCY                                                             06/20/2014 09:02:40 PAGE 10  
+
+0020 C3                CLR     C
+0021 13                RRC     A
+0022 5403              ANL     A,#03H
+0024 FF                MOV     R7,A
+;---- Variable 'cnt' assigned to Register 'R7' ----
+                                           ; SOURCE LINE # 79
+0025 75F008            MOV     B,#08H
+0028 A4                MUL     AB
+0029 2400        R     ADD     A,#LOW frequency+046H
+002B F582              MOV     DPL,A
+002D E4                CLR     A
+002E 3400        R     ADDC    A,#HIGH frequency+046H
+0030 F583              MOV     DPH,A
+0032 E4                CLR     A
+0033 75F001            MOV     B,#01H
+0036 120000      E     LCALL   ?C?IILDX
+                                           ; SOURCE LINE # 80
+0039 900000      R     MOV     DPTR,#frequency
+003C E0                MOVX    A,@DPTR
+003D FC                MOV     R4,A
+003E A3                INC     DPTR
+003F E0                MOVX    A,@DPTR
+0040 FD                MOV     R5,A
+0041 EF                MOV     A,R7
+0042 75F008            MOV     B,#08H
+0045 A4                MUL     AB
+0046 2400        R     ADD     A,#LOW frequency+048H
+0048 F582              MOV     DPL,A
+004A E4                CLR     A
+004B 3400        R     ADDC    A,#HIGH frequency+048H
+004D F583              MOV     DPH,A
+004F EC                MOV     A,R4
+0050 F0                MOVX    @DPTR,A
+0051 A3                INC     DPTR
+0052 ED                MOV     A,R5
+0053 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 82
+0054         ?C0010:
+0054 D0E0              POP     ACC
+0056 FF                MOV     R7,A
+0057 D0E0              POP     ACC
+0059 FD                MOV     R5,A
+005A D0E0              POP     ACC
+005C FC                MOV     R4,A
+005D D0E0              POP     ACC
+005F F8                MOV     R0,A
+0060 D0D0              POP     PSW
+0062 D082              POP     DPL
+0064 D083              POP     DPH
+0066 D0F0              POP     B
+0068 D0E0              POP     ACC
+006A 32                RETI    
+             ; FUNCTION INT2_ISR (END)
+
+             ; FUNCTION Timer2_ISR (BEGIN)
+0000 C0E0              PUSH    ACC
+0002 C0F0              PUSH    B
+0004 C083              PUSH    DPH
+0006 C082              PUSH    DPL
+0008 C0D0              PUSH    PSW
+000A E8                MOV     A,R0
+000B C0E0              PUSH    ACC
+C51 COMPILER V9.00   FREQUENCY                                                             06/20/2014 09:02:40 PAGE 11  
+
+000D EC                MOV     A,R4
+000E C0E0              PUSH    ACC
+0010 ED                MOV     A,R5
+0011 C0E0              PUSH    ACC
+0013 EE                MOV     A,R6
+0014 C0E0              PUSH    ACC
+0016 EF                MOV     A,R7
+0017 C0E0              PUSH    ACC
+                                           ; SOURCE LINE # 84
+                                           ; SOURCE LINE # 86
+0019 C2CF              CLR     TF2
+                                           ; SOURCE LINE # 90
+001B 900000      R     MOV     DPTR,#frequency
+001E E0                MOVX    A,@DPTR
+001F FE                MOV     R6,A
+0020 A3                INC     DPTR
+0021 E0                MOVX    A,@DPTR
+0022 8EF0              MOV     B,R6
+0024 120000      E     LCALL   ?C?ICASE
+0027 0000        R     DW      ?C0012
+0029 01FF              DW      01FFH
+002B 0000        R     DW      ?C0013
+002D 03FF              DW      03FFH
+002F 0000        R     DW      ?C0014
+0031 05FF              DW      05FFH
+0033 0000        R     DW      ?C0015
+0035 07FF              DW      07FFH
+0037 0000              DW      00H
+0039 0000        R     DW      ?C0011
+                                           ; SOURCE LINE # 91
+                                           ; SOURCE LINE # 92
+003B         ?C0012:
+                                           ; SOURCE LINE # 93
+                                           ; SOURCE LINE # 94
+003B 900000      R     MOV     DPTR,#frequency+05H
+003E E0                MOVX    A,@DPTR
+003F 24FF              ADD     A,#0FFH
+0041 FF                MOV     R7,A
+0042 900000      R     MOV     DPTR,#frequency+04H
+0045 E0                MOVX    A,@DPTR
+0046 3407              ADDC    A,#07H
+0048 FE                MOV     R6,A
+0049 900000      R     MOV     DPTR,#frequency+01CH
+004C E0                MOVX    A,@DPTR
+004D FC                MOV     R4,A
+004E A3                INC     DPTR
+004F E0                MOVX    A,@DPTR
+0050 FD                MOV     R5,A
+0051 C3                CLR     C
+0052 EF                MOV     A,R7
+0053 9D                SUBB    A,R5
+0054 FF                MOV     R7,A
+0055 EE                MOV     A,R6
+0056 9C                SUBB    A,R4
+0057 900000      R     MOV     DPTR,#frequency+06H
+005A F0                MOVX    @DPTR,A
+005B A3                INC     DPTR
+005C EF                MOV     A,R7
+005D F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 95
+005E 900000      R     MOV     DPTR,#frequency+02H
+0061 E0                MOVX    A,@DPTR
+C51 COMPILER V9.00   FREQUENCY                                                             06/20/2014 09:02:40 PAGE 12  
+
+0062 FF                MOV     R7,A
+0063 A3                INC     DPTR
+0064 E0                MOVX    A,@DPTR
+0065 900000      R     MOV     DPTR,#frequency+08H
+0068 CF                XCH     A,R7
+0069 F0                MOVX    @DPTR,A
+006A A3                INC     DPTR
+006B EF                MOV     A,R7
+006C F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 98
+006D 900000      R     MOV     DPTR,#frequency+01AH
+0070 E4                CLR     A
+0071 F0                MOVX    @DPTR,A
+0072 A3                INC     DPTR
+0073 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 100
+0074 900000      R     MOV     DPTR,#frequency+027H
+0077 E0                MOVX    A,@DPTR
+0078 24FF              ADD     A,#0FFH
+007A FF                MOV     R7,A
+007B 900000      R     MOV     DPTR,#frequency+026H
+007E E0                MOVX    A,@DPTR
+007F 3407              ADDC    A,#07H
+0081 FE                MOV     R6,A
+0082 900000      R     MOV     DPTR,#frequency+03EH
+0085 E0                MOVX    A,@DPTR
+0086 FC                MOV     R4,A
+0087 A3                INC     DPTR
+0088 E0                MOVX    A,@DPTR
+0089 FD                MOV     R5,A
+008A C3                CLR     C
+008B EF                MOV     A,R7
+008C 9D                SUBB    A,R5
+008D FF                MOV     R7,A
+008E EE                MOV     A,R6
+008F 9C                SUBB    A,R4
+0090 900000      R     MOV     DPTR,#frequency+028H
+0093 F0                MOVX    @DPTR,A
+0094 A3                INC     DPTR
+0095 EF                MOV     A,R7
+0096 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 101
+0097 900000      R     MOV     DPTR,#frequency+024H
+009A E0                MOVX    A,@DPTR
+009B FF                MOV     R7,A
+009C A3                INC     DPTR
+009D E0                MOVX    A,@DPTR
+009E 900000      R     MOV     DPTR,#frequency+02AH
+00A1 CF                XCH     A,R7
+00A2 F0                MOVX    @DPTR,A
+00A3 A3                INC     DPTR
+00A4 EF                MOV     A,R7
+00A5 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 104
+00A6 900000      R     MOV     DPTR,#frequency+03CH
+00A9 E4                CLR     A
+00AA F0                MOVX    @DPTR,A
+00AB A3                INC     DPTR
+00AC F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 107
+00AD 900000      R     MOV     DPTR,#frequency+049H
+00B0 E0                MOVX    A,@DPTR
+C51 COMPILER V9.00   FREQUENCY                                                             06/20/2014 09:02:40 PAGE 13  
+
+00B1 24FF              ADD     A,#0FFH
+00B3 FF                MOV     R7,A
+00B4 900000      R     MOV     DPTR,#frequency+048H
+00B7 E0                MOVX    A,@DPTR
+00B8 3407              ADDC    A,#07H
+00BA FE                MOV     R6,A
+00BB 900000      R     MOV     DPTR,#frequency+060H
+00BE E0                MOVX    A,@DPTR
+00BF FC                MOV     R4,A
+00C0 A3                INC     DPTR
+00C1 E0                MOVX    A,@DPTR
+00C2 FD                MOV     R5,A
+00C3 C3                CLR     C
+00C4 EF                MOV     A,R7
+00C5 9D                SUBB    A,R5
+00C6 FF                MOV     R7,A
+00C7 EE                MOV     A,R6
+00C8 9C                SUBB    A,R4
+00C9 900000      R     MOV     DPTR,#frequency+04AH
+00CC F0                MOVX    @DPTR,A
+00CD A3                INC     DPTR
+00CE EF                MOV     A,R7
+00CF F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 108
+00D0 900000      R     MOV     DPTR,#frequency+046H
+00D3 E0                MOVX    A,@DPTR
+00D4 FF                MOV     R7,A
+00D5 A3                INC     DPTR
+00D6 E0                MOVX    A,@DPTR
+00D7 900000      R     MOV     DPTR,#frequency+04CH
+00DA CF                XCH     A,R7
+00DB F0                MOVX    @DPTR,A
+00DC A3                INC     DPTR
+00DD EF                MOV     A,R7
+00DE F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 111
+00DF 900000      R     MOV     DPTR,#frequency+05EH
+                                           ; SOURCE LINE # 113
+                                           ; SOURCE LINE # 114
+00E2 020000      R     LJMP    ?C0040
+                                           ; SOURCE LINE # 116
+00E5         ?C0013:
+                                           ; SOURCE LINE # 117
+                                           ; SOURCE LINE # 118
+00E5 900000      R     MOV     DPTR,#frequency+04H
+00E8 E0                MOVX    A,@DPTR
+00E9 FE                MOV     R6,A
+00EA A3                INC     DPTR
+00EB E0                MOVX    A,@DPTR
+00EC FF                MOV     R7,A
+00ED C3                CLR     C
+00EE 900000      R     MOV     DPTR,#frequency+0DH
+00F1 E0                MOVX    A,@DPTR
+00F2 9F                SUBB    A,R7
+00F3 FF                MOV     R7,A
+00F4 900000      R     MOV     DPTR,#frequency+0CH
+00F7 E0                MOVX    A,@DPTR
+00F8 9E                SUBB    A,R6
+00F9 900000      R     MOV     DPTR,#frequency+0EH
+00FC F0                MOVX    @DPTR,A
+00FD A3                INC     DPTR
+00FE EF                MOV     A,R7
+C51 COMPILER V9.00   FREQUENCY                                                             06/20/2014 09:02:40 PAGE 14  
+
+00FF F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 119
+0100 900000      R     MOV     DPTR,#frequency+0AH
+0103 E0                MOVX    A,@DPTR
+0104 FF                MOV     R7,A
+0105 A3                INC     DPTR
+0106 E0                MOVX    A,@DPTR
+0107 900000      R     MOV     DPTR,#frequency+010H
+010A CF                XCH     A,R7
+010B F0                MOVX    @DPTR,A
+010C A3                INC     DPTR
+010D EF                MOV     A,R7
+010E F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 121
+010F 900000      R     MOV     DPTR,#frequency+02H
+0112 E4                CLR     A
+0113 F0                MOVX    @DPTR,A
+0114 A3                INC     DPTR
+0115 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 123
+0116 900000      R     MOV     DPTR,#frequency+026H
+0119 E0                MOVX    A,@DPTR
+011A FE                MOV     R6,A
+011B A3                INC     DPTR
+011C E0                MOVX    A,@DPTR
+011D FF                MOV     R7,A
+011E C3                CLR     C
+011F 900000      R     MOV     DPTR,#frequency+02FH
+0122 E0                MOVX    A,@DPTR
+0123 9F                SUBB    A,R7
+0124 FF                MOV     R7,A
+0125 900000      R     MOV     DPTR,#frequency+02EH
+0128 E0                MOVX    A,@DPTR
+0129 9E                SUBB    A,R6
+012A 900000      R     MOV     DPTR,#frequency+030H
+012D F0                MOVX    @DPTR,A
+012E A3                INC     DPTR
+012F EF                MOV     A,R7
+0130 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 124
+0131 900000      R     MOV     DPTR,#frequency+02CH
+0134 E0                MOVX    A,@DPTR
+0135 FF                MOV     R7,A
+0136 A3                INC     DPTR
+0137 E0                MOVX    A,@DPTR
+0138 900000      R     MOV     DPTR,#frequency+032H
+013B CF                XCH     A,R7
+013C F0                MOVX    @DPTR,A
+013D A3                INC     DPTR
+013E EF                MOV     A,R7
+013F F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 126
+0140 900000      R     MOV     DPTR,#frequency+024H
+0143 E4                CLR     A
+0144 F0                MOVX    @DPTR,A
+0145 A3                INC     DPTR
+0146 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 128
+0147 900000      R     MOV     DPTR,#frequency+048H
+014A E0                MOVX    A,@DPTR
+014B FE                MOV     R6,A
+014C A3                INC     DPTR
+C51 COMPILER V9.00   FREQUENCY                                                             06/20/2014 09:02:40 PAGE 15  
+
+014D E0                MOVX    A,@DPTR
+014E FF                MOV     R7,A
+014F C3                CLR     C
+0150 900000      R     MOV     DPTR,#frequency+051H
+0153 E0                MOVX    A,@DPTR
+0154 9F                SUBB    A,R7
+0155 FF                MOV     R7,A
+0156 900000      R     MOV     DPTR,#frequency+050H
+0159 E0                MOVX    A,@DPTR
+015A 9E                SUBB    A,R6
+015B 900000      R     MOV     DPTR,#frequency+052H
+015E F0                MOVX    @DPTR,A
+015F A3                INC     DPTR
+0160 EF                MOV     A,R7
+0161 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 129
+0162 900000      R     MOV     DPTR,#frequency+04EH
+0165 E0                MOVX    A,@DPTR
+0166 FF                MOV     R7,A
+0167 A3                INC     DPTR
+0168 E0                MOVX    A,@DPTR
+0169 900000      R     MOV     DPTR,#frequency+054H
+016C CF                XCH     A,R7
+016D F0                MOVX    @DPTR,A
+016E A3                INC     DPTR
+016F EF                MOV     A,R7
+0170 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 131
+0171 900000      R     MOV     DPTR,#frequency+046H
+0174         ?C0039:
+                                           ; SOURCE LINE # 132
+                                           ; SOURCE LINE # 133
+0174 020000      R     LJMP    ?C0040
+                                           ; SOURCE LINE # 135
+0177         ?C0014:
+                                           ; SOURCE LINE # 136
+                                           ; SOURCE LINE # 137
+0177 900000      R     MOV     DPTR,#frequency+0CH
+017A E0                MOVX    A,@DPTR
+017B FE                MOV     R6,A
+017C A3                INC     DPTR
+017D E0                MOVX    A,@DPTR
+017E FF                MOV     R7,A
+017F C3                CLR     C
+0180 900000      R     MOV     DPTR,#frequency+015H
+0183 E0                MOVX    A,@DPTR
+0184 9F                SUBB    A,R7
+0185 FF                MOV     R7,A
+0186 900000      R     MOV     DPTR,#frequency+014H
+0189 E0                MOVX    A,@DPTR
+018A 9E                SUBB    A,R6
+018B 900000      R     MOV     DPTR,#frequency+016H
+018E F0                MOVX    @DPTR,A
+018F A3                INC     DPTR
+0190 EF                MOV     A,R7
+0191 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 138
+0192 900000      R     MOV     DPTR,#frequency+012H
+0195 E0                MOVX    A,@DPTR
+0196 FF                MOV     R7,A
+0197 A3                INC     DPTR
+0198 E0                MOVX    A,@DPTR
+C51 COMPILER V9.00   FREQUENCY                                                             06/20/2014 09:02:40 PAGE 16  
+
+0199 900000      R     MOV     DPTR,#frequency+018H
+019C CF                XCH     A,R7
+019D F0                MOVX    @DPTR,A
+019E A3                INC     DPTR
+019F EF                MOV     A,R7
+01A0 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 140
+01A1 900000      R     MOV     DPTR,#frequency+0AH
+01A4 E4                CLR     A
+01A5 F0                MOVX    @DPTR,A
+01A6 A3                INC     DPTR
+01A7 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 142
+01A8 900000      R     MOV     DPTR,#frequency+02EH
+01AB E0                MOVX    A,@DPTR
+01AC FE                MOV     R6,A
+01AD A3                INC     DPTR
+01AE E0                MOVX    A,@DPTR
+01AF FF                MOV     R7,A
+01B0 C3                CLR     C
+01B1 900000      R     MOV     DPTR,#frequency+037H
+01B4 E0                MOVX    A,@DPTR
+01B5 9F                SUBB    A,R7
+01B6 FF                MOV     R7,A
+01B7 900000      R     MOV     DPTR,#frequency+036H
+01BA E0                MOVX    A,@DPTR
+01BB 9E                SUBB    A,R6
+01BC 900000      R     MOV     DPTR,#frequency+038H
+01BF F0                MOVX    @DPTR,A
+01C0 A3                INC     DPTR
+01C1 EF                MOV     A,R7
+01C2 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 143
+01C3 900000      R     MOV     DPTR,#frequency+034H
+01C6 E0                MOVX    A,@DPTR
+01C7 FF                MOV     R7,A
+01C8 A3                INC     DPTR
+01C9 E0                MOVX    A,@DPTR
+01CA 900000      R     MOV     DPTR,#frequency+03AH
+01CD CF                XCH     A,R7
+01CE F0                MOVX    @DPTR,A
+01CF A3                INC     DPTR
+01D0 EF                MOV     A,R7
+01D1 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 145
+01D2 900000      R     MOV     DPTR,#frequency+02CH
+01D5 E4                CLR     A
+01D6 F0                MOVX    @DPTR,A
+01D7 A3                INC     DPTR
+01D8 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 147
+01D9 900000      R     MOV     DPTR,#frequency+050H
+01DC E0                MOVX    A,@DPTR
+01DD FE                MOV     R6,A
+01DE A3                INC     DPTR
+01DF E0                MOVX    A,@DPTR
+01E0 FF                MOV     R7,A
+01E1 C3                CLR     C
+01E2 900000      R     MOV     DPTR,#frequency+059H
+01E5 E0                MOVX    A,@DPTR
+01E6 9F                SUBB    A,R7
+01E7 FF                MOV     R7,A
+C51 COMPILER V9.00   FREQUENCY                                                             06/20/2014 09:02:40 PAGE 17  
+
+01E8 900000      R     MOV     DPTR,#frequency+058H
+01EB E0                MOVX    A,@DPTR
+01EC 9E                SUBB    A,R6
+01ED 900000      R     MOV     DPTR,#frequency+05AH
+01F0 F0                MOVX    @DPTR,A
+01F1 A3                INC     DPTR
+01F2 EF                MOV     A,R7
+01F3 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 148
+01F4 900000      R     MOV     DPTR,#frequency+056H
+01F7 E0                MOVX    A,@DPTR
+01F8 FF                MOV     R7,A
+01F9 A3                INC     DPTR
+01FA E0                MOVX    A,@DPTR
+01FB 900000      R     MOV     DPTR,#frequency+05CH
+01FE CF                XCH     A,R7
+01FF F0                MOVX    @DPTR,A
+0200 A3                INC     DPTR
+0201 EF                MOV     A,R7
+0202 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 150
+0203 900000      R     MOV     DPTR,#frequency+04EH
+0206         ?C0040:
+0206 E4                CLR     A
+                                           ; SOURCE LINE # 151
+                                           ; SOURCE LINE # 152
+0207 020000      R     LJMP    ?C0041
+                                           ; SOURCE LINE # 154
+020A         ?C0015:
+                                           ; SOURCE LINE # 155
+                                           ; SOURCE LINE # 156
+020A 900000      R     MOV     DPTR,#frequency+014H
+020D E0                MOVX    A,@DPTR
+020E FE                MOV     R6,A
+020F A3                INC     DPTR
+0210 E0                MOVX    A,@DPTR
+0211 FF                MOV     R7,A
+0212 C3                CLR     C
+0213 900000      R     MOV     DPTR,#frequency+01DH
+0216 E0                MOVX    A,@DPTR
+0217 9F                SUBB    A,R7
+0218 FF                MOV     R7,A
+0219 900000      R     MOV     DPTR,#frequency+01CH
+021C E0                MOVX    A,@DPTR
+021D 9E                SUBB    A,R6
+021E 900000      R     MOV     DPTR,#frequency+01EH
+0221 F0                MOVX    @DPTR,A
+0222 A3                INC     DPTR
+0223 EF                MOV     A,R7
+0224 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 157
+0225 900000      R     MOV     DPTR,#frequency+01AH
+0228 E0                MOVX    A,@DPTR
+0229 FF                MOV     R7,A
+022A A3                INC     DPTR
+022B E0                MOVX    A,@DPTR
+022C 900000      R     MOV     DPTR,#frequency+020H
+022F CF                XCH     A,R7
+0230 F0                MOVX    @DPTR,A
+0231 A3                INC     DPTR
+0232 EF                MOV     A,R7
+0233 F0                MOVX    @DPTR,A
+C51 COMPILER V9.00   FREQUENCY                                                             06/20/2014 09:02:40 PAGE 18  
+
+                                           ; SOURCE LINE # 159
+0234 900000      R     MOV     DPTR,#frequency+012H
+0237 E4                CLR     A
+0238 F0                MOVX    @DPTR,A
+0239 A3                INC     DPTR
+023A F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 161
+023B 900000      R     MOV     DPTR,#frequency+036H
+023E E0                MOVX    A,@DPTR
+023F FE                MOV     R6,A
+0240 A3                INC     DPTR
+0241 E0                MOVX    A,@DPTR
+0242 FF                MOV     R7,A
+0243 C3                CLR     C
+0244 900000      R     MOV     DPTR,#frequency+03FH
+0247 E0                MOVX    A,@DPTR
+0248 9F                SUBB    A,R7
+0249 FF                MOV     R7,A
+024A 900000      R     MOV     DPTR,#frequency+03EH
+024D E0                MOVX    A,@DPTR
+024E 9E                SUBB    A,R6
+024F 900000      R     MOV     DPTR,#frequency+040H
+0252 F0                MOVX    @DPTR,A
+0253 A3                INC     DPTR
+0254 EF                MOV     A,R7
+0255 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 162
+0256 900000      R     MOV     DPTR,#frequency+03CH
+0259 E0                MOVX    A,@DPTR
+025A FF                MOV     R7,A
+025B A3                INC     DPTR
+025C E0                MOVX    A,@DPTR
+025D 900000      R     MOV     DPTR,#frequency+042H
+0260 CF                XCH     A,R7
+0261 F0                MOVX    @DPTR,A
+0262 A3                INC     DPTR
+0263 EF                MOV     A,R7
+0264 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 164
+0265 900000      R     MOV     DPTR,#frequency+034H
+0268 E4                CLR     A
+0269 F0                MOVX    @DPTR,A
+026A A3                INC     DPTR
+026B F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 166
+026C 900000      R     MOV     DPTR,#frequency+058H
+026F E0                MOVX    A,@DPTR
+0270 FE                MOV     R6,A
+0271 A3                INC     DPTR
+0272 E0                MOVX    A,@DPTR
+0273 FF                MOV     R7,A
+0274 C3                CLR     C
+0275 900000      R     MOV     DPTR,#frequency+061H
+0278 E0                MOVX    A,@DPTR
+0279 9F                SUBB    A,R7
+027A FF                MOV     R7,A
+027B 900000      R     MOV     DPTR,#frequency+060H
+027E E0                MOVX    A,@DPTR
+027F 9E                SUBB    A,R6
+0280 900000      R     MOV     DPTR,#frequency+062H
+0283 F0                MOVX    @DPTR,A
+0284 A3                INC     DPTR
+C51 COMPILER V9.00   FREQUENCY                                                             06/20/2014 09:02:40 PAGE 19  
+
+0285 EF                MOV     A,R7
+0286 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 167
+0287 900000      R     MOV     DPTR,#frequency+05EH
+028A E0                MOVX    A,@DPTR
+028B FF                MOV     R7,A
+028C A3                INC     DPTR
+028D E0                MOVX    A,@DPTR
+028E 900000      R     MOV     DPTR,#frequency+064H
+0291 CF                XCH     A,R7
+0292 F0                MOVX    @DPTR,A
+0293 A3                INC     DPTR
+0294 EF                MOV     A,R7
+0295 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 169
+0296 900000      R     MOV     DPTR,#frequency+056H
+0299 E4                CLR     A
+029A F0                MOVX    @DPTR,A
+029B A3                INC     DPTR
+029C F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 171
+029D 900000      R     MOV     DPTR,#frequency
+02A0         ?C0041:
+02A0 F0                MOVX    @DPTR,A
+02A1 A3                INC     DPTR
+02A2 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 172
+                                           ; SOURCE LINE # 173
+                                           ; SOURCE LINE # 174
+02A3         ?C0011:
+                                           ; SOURCE LINE # 176
+02A3 900000      R     MOV     DPTR,#frequency+01H
+02A6 E0                MOVX    A,@DPTR
+02A7 04                INC     A
+02A8 F0                MOVX    @DPTR,A
+02A9 7006              JNZ     ?C0037
+02AB 900000      R     MOV     DPTR,#frequency
+02AE E0                MOVX    A,@DPTR
+02AF 04                INC     A
+02B0 F0                MOVX    @DPTR,A
+02B1         ?C0037:
+                                           ; SOURCE LINE # 177
+02B1 900000      R     MOV     DPTR,#frequency
+02B4 E0                MOVX    A,@DPTR
+02B5 5407              ANL     A,#07H
+02B7 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 180
+02B8         ?C0016:
+02B8 D0E0              POP     ACC
+02BA FF                MOV     R7,A
+02BB D0E0              POP     ACC
+02BD FE                MOV     R6,A
+02BE D0E0              POP     ACC
+02C0 FD                MOV     R5,A
+02C1 D0E0              POP     ACC
+02C3 FC                MOV     R4,A
+02C4 D0E0              POP     ACC
+02C6 F8                MOV     R0,A
+02C7 D0D0              POP     PSW
+02C9 D082              POP     DPL
+02CB D083              POP     DPH
+02CD D0F0              POP     B
+C51 COMPILER V9.00   FREQUENCY                                                             06/20/2014 09:02:40 PAGE 20  
+
+02CF D0E0              POP     ACC
+02D1 32                RETI    
+             ; FUNCTION Timer2_ISR (END)
+
+             ; FUNCTION _Frequency_Measure_Process (BEGIN)
+                                           ; SOURCE LINE # 183
+0000 900000      R     MOV     DPTR,#pt
+0003 EB                MOV     A,R3
+0004 F0                MOVX    @DPTR,A
+0005 A3                INC     DPTR
+0006 EA                MOV     A,R2
+0007 F0                MOVX    @DPTR,A
+0008 A3                INC     DPTR
+0009 E9                MOV     A,R1
+000A F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 184
+                                           ; SOURCE LINE # 187
+000B 900000      E     MOV     DPTR,#wdt_count+0CH
+000E E4                CLR     A
+000F F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 189
+0010 900000      R     MOV     DPTR,#PT_YIELD_FLAG
+0013 7401              MOV     A,#01H
+0015 F0                MOVX    @DPTR,A
+0016 900000      R     MOV     DPTR,#pt
+0019 E0                MOVX    A,@DPTR
+001A FB                MOV     R3,A
+001B A3                INC     DPTR
+001C E0                MOVX    A,@DPTR
+001D FA                MOV     R2,A
+001E A3                INC     DPTR
+001F E0                MOVX    A,@DPTR
+0020 F9                MOV     R1,A
+0021 120000      E     LCALL   ?C?ILDPTR
+0024 FF                MOV     R7,A
+0025 AEF0              MOV     R6,B
+0027 EF                MOV     A,R7
+0028 8EF0              MOV     B,R6
+002A 120000      E     LCALL   ?C?ICASE
+002D 0000        R     DW      ?C0019
+002F 0000              DW      00H
+0031 0000        R     DW      ?C0024
+0033 00C1              DW      0C1H
+0035 0000        R     DW      ?C0032
+0037 00C4              DW      0C4H
+0039 0000              DW      00H
+003B 0000        R     DW      ?C0017
+003D         ?C0018:
+003D         ?C0019:
+                                           ; SOURCE LINE # 191
+                                           ; SOURCE LINE # 192
+                                           ; SOURCE LINE # 193
+003D 900000      R     MOV     DPTR,#pt
+0040 E0                MOVX    A,@DPTR
+0041 FB                MOV     R3,A
+0042 A3                INC     DPTR
+0043 E0                MOVX    A,@DPTR
+0044 FA                MOV     R2,A
+0045 A3                INC     DPTR
+0046 E0                MOVX    A,@DPTR
+0047 F9                MOV     R1,A
+0048 758202            MOV     DPL,#02H
+C51 COMPILER V9.00   FREQUENCY                                                             06/20/2014 09:02:40 PAGE 21  
+
+004B 758300            MOV     DPH,#00H
+004E E4                CLR     A
+004F 75F000            MOV     B,#00H
+0052 120000      E     LCALL   ?C?ISTOPTR
+0055         ?C0023:
+0055 900000      R     MOV     DPTR,#pt
+0058 E0                MOVX    A,@DPTR
+0059 FB                MOV     R3,A
+005A A3                INC     DPTR
+005B E0                MOVX    A,@DPTR
+005C FA                MOV     R2,A
+005D A3                INC     DPTR
+005E E0                MOVX    A,@DPTR
+005F F9                MOV     R1,A
+0060 E4                CLR     A
+0061 75F0C1            MOV     B,#0C1H
+0064 120000      E     LCALL   ?C?ISTPTR
+0067         ?C0024:
+0067 900000      R     MOV     DPTR,#pt
+006A E0                MOVX    A,@DPTR
+006B FB                MOV     R3,A
+006C A3                INC     DPTR
+006D E0                MOVX    A,@DPTR
+006E FA                MOV     R2,A
+006F A3                INC     DPTR
+0070 E0                MOVX    A,@DPTR
+0071 F9                MOV     R1,A
+0072 758202            MOV     DPL,#02H
+0075 758300            MOV     DPH,#00H
+0078 120000      E     LCALL   ?C?ILDOPTR
+007B FF                MOV     R7,A
+007C AEF0              MOV     R6,B
+007E C3                CLR     C
+007F EF                MOV     A,R7
+0080 9414              SUBB    A,#014H
+0082 EE                MOV     A,R6
+0083 9400              SUBB    A,#00H
+0085 4003              JC      ?C0026
+0087 D3                SETB    C
+0088 8001              SJMP    ?C0027
+008A         ?C0026:
+008A C3                CLR     C
+008B         ?C0027:
+008B 4003              JC      ?C0022
+008D 7F00              MOV     R7,#00H
+008F 22                RET     
+0090         ?C0025:
+0090         ?C0021:
+0090         ?C0022:
+                                           ; SOURCE LINE # 194
+0090 900000      R     MOV     DPTR,#frq_chnl
+0093 E0                MOVX    A,@DPTR
+0094 FF                MOV     R7,A
+0095 EF                MOV     A,R7
+0096 75F022            MOV     B,#022H
+0099 A4                MUL     AB
+009A 2400        R     ADD     A,#LOW frequency+010H
+009C F582              MOV     DPL,A
+009E E4                CLR     A
+009F 3400        R     ADDC    A,#HIGH frequency+010H
+00A1 F583              MOV     DPH,A
+00A3 E0                MOVX    A,@DPTR
+C51 COMPILER V9.00   FREQUENCY                                                             06/20/2014 09:02:40 PAGE 22  
+
+00A4 FE                MOV     R6,A
+00A5 A3                INC     DPTR
+00A6 E0                MOVX    A,@DPTR
+00A7 FF                MOV     R7,A
+00A8 CB                XCH     A,R3
+00A9 EF                MOV     A,R7
+00AA CB                XCH     A,R3
+00AB CA                XCH     A,R2
+00AC EE                MOV     A,R6
+00AD CA                XCH     A,R2
+00AE E4                CLR     A
+00AF F9                MOV     R1,A
+00B0 F8                MOV     R0,A
+00B1 900000      R     MOV     DPTR,#frq_chnl
+00B4 E0                MOVX    A,@DPTR
+00B5 FF                MOV     R7,A
+00B6 EF                MOV     A,R7
+00B7 75F022            MOV     B,#022H
+00BA A4                MUL     AB
+00BB 2400        R     ADD     A,#LOW frequency+08H
+00BD F582              MOV     DPL,A
+00BF E4                CLR     A
+00C0 3400        R     ADDC    A,#HIGH frequency+08H
+00C2 F583              MOV     DPH,A
+00C4 E0                MOVX    A,@DPTR
+00C5 FE                MOV     R6,A
+00C6 A3                INC     DPTR
+00C7 E0                MOVX    A,@DPTR
+00C8 FF                MOV     R7,A
+00C9 E4                CLR     A
+00CA FC                MOV     R4,A
+00CB FD                MOV     R5,A
+00CC EF                MOV     A,R7
+00CD 2B                ADD     A,R3
+00CE FB                MOV     R3,A
+00CF EE                MOV     A,R6
+00D0 3A                ADDC    A,R2
+00D1 FA                MOV     R2,A
+00D2 ED                MOV     A,R5
+00D3 39                ADDC    A,R1
+00D4 F9                MOV     R1,A
+00D5 EC                MOV     A,R4
+00D6 38                ADDC    A,R0
+00D7 F8                MOV     R0,A
+00D8 900000      R     MOV     DPTR,#frq_chnl
+00DB E0                MOVX    A,@DPTR
+00DC FF                MOV     R7,A
+00DD EF                MOV     A,R7
+00DE 75F022            MOV     B,#022H
+00E1 A4                MUL     AB
+00E2 2400        R     ADD     A,#LOW frequency+018H
+00E4 F582              MOV     DPL,A
+00E6 E4                CLR     A
+00E7 3400        R     ADDC    A,#HIGH frequency+018H
+00E9 F583              MOV     DPH,A
+00EB E0                MOVX    A,@DPTR
+00EC FE                MOV     R6,A
+00ED A3                INC     DPTR
+00EE E0                MOVX    A,@DPTR
+00EF FF                MOV     R7,A
+00F0 E4                CLR     A
+00F1 FC                MOV     R4,A
+C51 COMPILER V9.00   FREQUENCY                                                             06/20/2014 09:02:40 PAGE 23  
+
+00F2 FD                MOV     R5,A
+00F3 EB                MOV     A,R3
+00F4 2F                ADD     A,R7
+00F5 FB                MOV     R3,A
+00F6 EA                MOV     A,R2
+00F7 3E                ADDC    A,R6
+00F8 FA                MOV     R2,A
+00F9 E9                MOV     A,R1
+00FA 3D                ADDC    A,R5
+00FB F9                MOV     R1,A
+00FC E8                MOV     A,R0
+00FD 3C                ADDC    A,R4
+00FE F8                MOV     R0,A
+00FF 900000      R     MOV     DPTR,#frq_chnl
+0102 E0                MOVX    A,@DPTR
+0103 FF                MOV     R7,A
+0104 EF                MOV     A,R7
+0105 75F022            MOV     B,#022H
+0108 A4                MUL     AB
+0109 2400        R     ADD     A,#LOW frequency+020H
+010B F582              MOV     DPL,A
+010D E4                CLR     A
+010E 3400        R     ADDC    A,#HIGH frequency+020H
+0110 F583              MOV     DPH,A
+0112 E0                MOVX    A,@DPTR
+0113 FE                MOV     R6,A
+0114 A3                INC     DPTR
+0115 E0                MOVX    A,@DPTR
+0116 FF                MOV     R7,A
+0117 E4                CLR     A
+0118 FC                MOV     R4,A
+0119 FD                MOV     R5,A
+011A EB                MOV     A,R3
+011B 2F                ADD     A,R7
+011C FF                MOV     R7,A
+011D EA                MOV     A,R2
+011E 3E                ADDC    A,R6
+011F FE                MOV     R6,A
+0120 E9                MOV     A,R1
+0121 3D                ADDC    A,R5
+0122 FD                MOV     R5,A
+0123 E8                MOV     A,R0
+0124 3C                ADDC    A,R4
+0125 FC                MOV     R4,A
+0126 7812              MOV     R0,#012H
+0128 120000      E     LCALL   ?C?LSHL
+012B EC                MOV     A,R4
+012C C0E0              PUSH    ACC
+012E ED                MOV     A,R5
+012F C0E0              PUSH    ACC
+0131 EE                MOV     A,R6
+0132 C0E0              PUSH    ACC
+0134 EF                MOV     A,R7
+0135 C0E0              PUSH    ACC
+0137 900000      R     MOV     DPTR,#frq_chnl
+013A E0                MOVX    A,@DPTR
+013B FF                MOV     R7,A
+013C EF                MOV     A,R7
+013D 75F022            MOV     B,#022H
+0140 A4                MUL     AB
+0141 2400        R     ADD     A,#LOW frequency+0EH
+0143 F582              MOV     DPL,A
+C51 COMPILER V9.00   FREQUENCY                                                             06/20/2014 09:02:40 PAGE 24  
+
+0145 E4                CLR     A
+0146 3400        R     ADDC    A,#HIGH frequency+0EH
+0148 F583              MOV     DPH,A
+014A E0                MOVX    A,@DPTR
+014B FE                MOV     R6,A
+014C A3                INC     DPTR
+014D E0                MOVX    A,@DPTR
+014E FF                MOV     R7,A
+014F 900000      R     MOV     DPTR,#frq_chnl
+0152 E0                MOVX    A,@DPTR
+0153 FD                MOV     R5,A
+0154 ED                MOV     A,R5
+0155 75F022            MOV     B,#022H
+0158 A4                MUL     AB
+0159 2400        R     ADD     A,#LOW frequency+06H
+015B F582              MOV     DPL,A
+015D E4                CLR     A
+015E 3400        R     ADDC    A,#HIGH frequency+06H
+0160 F583              MOV     DPH,A
+0162 E0                MOVX    A,@DPTR
+0163 FC                MOV     R4,A
+0164 A3                INC     DPTR
+0165 E0                MOVX    A,@DPTR
+0166 FD                MOV     R5,A
+0167 ED                MOV     A,R5
+0168 2F                ADD     A,R7
+0169 FF                MOV     R7,A
+016A EC                MOV     A,R4
+016B 3E                ADDC    A,R6
+016C FE                MOV     R6,A
+016D 900000      R     MOV     DPTR,#frq_chnl
+0170 E0                MOVX    A,@DPTR
+0171 FD                MOV     R5,A
+0172 ED                MOV     A,R5
+0173 75F022            MOV     B,#022H
+0176 A4                MUL     AB
+0177 2400        R     ADD     A,#LOW frequency+016H
+0179 F582              MOV     DPL,A
+017B E4                CLR     A
+017C 3400        R     ADDC    A,#HIGH frequency+016H
+017E F583              MOV     DPH,A
+0180 E0                MOVX    A,@DPTR
+0181 FC                MOV     R4,A
+0182 A3                INC     DPTR
+0183 E0                MOVX    A,@DPTR
+0184 FD                MOV     R5,A
+0185 EF                MOV     A,R7
+0186 2D                ADD     A,R5
+0187 FF                MOV     R7,A
+0188 EE                MOV     A,R6
+0189 3C                ADDC    A,R4
+018A FE                MOV     R6,A
+018B 900000      R     MOV     DPTR,#frq_chnl
+018E E0                MOVX    A,@DPTR
+018F FD                MOV     R5,A
+0190 ED                MOV     A,R5
+0191 75F022            MOV     B,#022H
+0194 A4                MUL     AB
+0195 2400        R     ADD     A,#LOW frequency+01EH
+0197 F582              MOV     DPL,A
+0199 E4                CLR     A
+019A 3400        R     ADDC    A,#HIGH frequency+01EH
+C51 COMPILER V9.00   FREQUENCY                                                             06/20/2014 09:02:40 PAGE 25  
+
+019C F583              MOV     DPH,A
+019E E0                MOVX    A,@DPTR
+019F FC                MOV     R4,A
+01A0 A3                INC     DPTR
+01A1 E0                MOVX    A,@DPTR
+01A2 FD                MOV     R5,A
+01A3 EF                MOV     A,R7
+01A4 2D                ADD     A,R5
+01A5 FF                MOV     R7,A
+01A6 EE                MOV     A,R6
+01A7 3C                ADDC    A,R4
+01A8 FE                MOV     R6,A
+01A9 CB                XCH     A,R3
+01AA EF                MOV     A,R7
+01AB CB                XCH     A,R3
+01AC CA                XCH     A,R2
+01AD EE                MOV     A,R6
+01AE CA                XCH     A,R2
+01AF E4                CLR     A
+01B0 F9                MOV     R1,A
+01B1 F8                MOV     R0,A
+01B2 D0E0              POP     ACC
+01B4 FF                MOV     R7,A
+01B5 D0E0              POP     ACC
+01B7 FE                MOV     R6,A
+01B8 D0E0              POP     ACC
+01BA FD                MOV     R5,A
+01BB D0E0              POP     ACC
+01BD FC                MOV     R4,A
+01BE 120000      E     LCALL   ?C?ULDIV
+01C1 900000      R     MOV     DPTR,#temp_freq
+01C4 120000      E     LCALL   ?C?LSTXDATA
+01C7         ?C0031:
+                                           ; SOURCE LINE # 196
+01C7 900000      R     MOV     DPTR,#PT_YIELD_FLAG
+01CA E4                CLR     A
+01CB F0                MOVX    @DPTR,A
+01CC 900000      R     MOV     DPTR,#pt
+01CF E0                MOVX    A,@DPTR
+01D0 FB                MOV     R3,A
+01D1 A3                INC     DPTR
+01D2 E0                MOVX    A,@DPTR
+01D3 FA                MOV     R2,A
+01D4 A3                INC     DPTR
+01D5 E0                MOVX    A,@DPTR
+01D6 F9                MOV     R1,A
+01D7 E4                CLR     A
+01D8 75F0C4            MOV     B,#0C4H
+01DB 120000      E     LCALL   ?C?ISTPTR
+01DE         ?C0032:
+01DE 900000      R     MOV     DPTR,#PT_YIELD_FLAG
+01E1 E0                MOVX    A,@DPTR
+01E2 FF                MOV     R7,A
+01E3 EF                MOV     A,R7
+01E4 7003              JNZ     ?C0030
+01E6 7F01              MOV     R7,#01H
+01E8 22                RET     
+01E9         ?C0033:
+01E9         ?C0029:
+01E9         ?C0030:
+                                           ; SOURCE LINE # 197
+01E9 7FFF              MOV     R7,#0FFH
+C51 COMPILER V9.00   FREQUENCY                                                             06/20/2014 09:02:40 PAGE 26  
+
+01EB 7EFF              MOV     R6,#0FFH
+01ED 7D00              MOV     R5,#00H
+01EF 7C00              MOV     R4,#00H
+01F1 900000      R     MOV     DPTR,#temp_freq
+01F4 E0                MOVX    A,@DPTR
+01F5 F8                MOV     R0,A
+01F6 A3                INC     DPTR
+01F7 E0                MOVX    A,@DPTR
+01F8 F9                MOV     R1,A
+01F9 A3                INC     DPTR
+01FA E0                MOVX    A,@DPTR
+01FB FA                MOV     R2,A
+01FC A3                INC     DPTR
+01FD E0                MOVX    A,@DPTR
+01FE FB                MOV     R3,A
+01FF D3                SETB    C
+0200 120000      E     LCALL   ?C?ULCMP
+0203 5027              JNC     ?C0034
+                                           ; SOURCE LINE # 198
+                                           ; SOURCE LINE # 199
+0205 900000      R     MOV     DPTR,#temp_freq
+0208 E0                MOVX    A,@DPTR
+0209 FC                MOV     R4,A
+020A A3                INC     DPTR
+020B E0                MOVX    A,@DPTR
+020C FD                MOV     R5,A
+020D A3                INC     DPTR
+020E E0                MOVX    A,@DPTR
+020F FE                MOV     R6,A
+0210 A3                INC     DPTR
+0211 E0                MOVX    A,@DPTR
+0212 FF                MOV     R7,A
+0213 900000      R     MOV     DPTR,#frq_chnl
+0216 E0                MOVX    A,@DPTR
+0217 FB                MOV     R3,A
+0218 75F019            MOV     B,#019H
+021B EB                MOV     A,R3
+021C A4                MUL     AB
+021D 2400        E     ADD     A,#LOW channels+0CDH
+021F F582              MOV     DPL,A
+0221 E5F0              MOV     A,B
+0223 3400        E     ADDC    A,#HIGH channels+0CDH
+0225 F583              MOV     DPH,A
+0227 120000      E     LCALL   ?C?LSTXDATA
+                                           ; SOURCE LINE # 200
+022A 801B              SJMP    ?C0035
+022C         ?C0034:
+                                           ; SOURCE LINE # 202
+                                           ; SOURCE LINE # 203
+022C 900000      R     MOV     DPTR,#frq_chnl
+022F E0                MOVX    A,@DPTR
+0230 FF                MOV     R7,A
+0231 75F019            MOV     B,#019H
+0234 EF                MOV     A,R7
+0235 A4                MUL     AB
+0236 2400        E     ADD     A,#LOW channels+0CDH
+0238 F582              MOV     DPL,A
+023A E5F0              MOV     A,B
+023C 3400        E     ADDC    A,#HIGH channels+0CDH
+023E F583              MOV     DPH,A
+0240 120000      E     LCALL   ?C?LSTKXDATA
+0243 00                DB      00H
+C51 COMPILER V9.00   FREQUENCY                                                             06/20/2014 09:02:40 PAGE 27  
+
+0244 00                DB      00H
+0245 FF                DB      0FFH
+0246 FF                DB      0FFH
+                                           ; SOURCE LINE # 204
+0247         ?C0035:
+                                           ; SOURCE LINE # 207
+0247 900000      R     MOV     DPTR,#frq_chnl
+024A E0                MOVX    A,@DPTR
+024B 04                INC     A
+024C F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 208
+024D 900000      R     MOV     DPTR,#frq_chnl
+0250 E0                MOVX    A,@DPTR
+0251 FF                MOV     R7,A
+0252 EF                MOV     A,R7
+0253 C3                CLR     C
+0254 9403              SUBB    A,#03H
+0256 4005              JC      ?C0036
+                                           ; SOURCE LINE # 209
+                                           ; SOURCE LINE # 210
+0258 900000      R     MOV     DPTR,#frq_chnl
+025B E4                CLR     A
+025C F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 211
+025D         ?C0036:
+                                           ; SOURCE LINE # 213
+025D 900000      E     MOV     DPTR,#wdt_count+0EH
+0260 E0                MOVX    A,@DPTR
+0261 04                INC     A
+0262 F0                MOVX    @DPTR,A
+0263 7006              JNZ     ?C0038
+0265 900000      E     MOV     DPTR,#wdt_count+0DH
+0268 E0                MOVX    A,@DPTR
+0269 04                INC     A
+026A F0                MOVX    @DPTR,A
+026B         ?C0038:
+                                           ; SOURCE LINE # 215
+026B 020000      R     LJMP    ?C0019
+026E         ?C0020:
+                                           ; SOURCE LINE # 216
+026E         ?C0017:
+026E 900000      R     MOV     DPTR,#PT_YIELD_FLAG
+0271 E4                CLR     A
+0272 F0                MOVX    @DPTR,A
+0273 900000      R     MOV     DPTR,#pt
+0276 E0                MOVX    A,@DPTR
+0277 FB                MOV     R3,A
+0278 A3                INC     DPTR
+0279 E0                MOVX    A,@DPTR
+027A FA                MOV     R2,A
+027B A3                INC     DPTR
+027C E0                MOVX    A,@DPTR
+027D F9                MOV     R1,A
+027E E4                CLR     A
+027F 75F000            MOV     B,#00H
+0282 120000      E     LCALL   ?C?ISTPTR
+0285 7F03              MOV     R7,#03H
+                                           ; SOURCE LINE # 218
+0287         ?C0028:
+0287 22                RET     
+             ; FUNCTION _Frequency_Measure_Process (END)
+
+C51 COMPILER V9.00   FREQUENCY                                                             06/20/2014 09:02:40 PAGE 28  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+TCON . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0088H  1
+TL0. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   008AH  1
+TH0. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   008CH  1
+SCON . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0098H  1
+P2 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A0H  1
+IE . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A8H  1
+P3 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B0H  1
+IP . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B8H  1
+WDCON. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C0H  1
+T2CON. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C8H  1
+PSW. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D0H  1
+ADCSTAT. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D8H  1
+I2CCON . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E8H  1
+DCON . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E8H  1
+SPICON . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F8H  1
+IT1. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      008AH  1
+IT0. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      0088H  1
+EX1. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00AAH  1
+EX0. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00A8H  1
+TF2. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00CFH  1
+Timer0_Initialize. . . . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+Timer2_Initialize. . . . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+Channel. . . . . . . . . . . . . . . .  * TAG *  -----  STRUCT   -----  25
+  number . . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
+  settings . . . . . . . . . . . . . .  MEMBER   -----  UNION    0001H  4
+  channel_data . . . . . . . . . . . .  MEMBER   -----  U_LONG   0005H  4
+  channel_data_calibrate . . . . . . .  MEMBER   -----  U_LONG   0009H  4
+  calibrate. . . . . . . . . . . . . .  MEMBER   -----  UNION    000DH  12
+lc_t . . . . . . . . . . . . . . . . .  TYPEDEF  -----  U_INT    -----  2
+pt . . . . . . . . . . . . . . . . . .  * TAG *  -----  STRUCT   -----  4
+  lc . . . . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0000H  2
+  pt_time. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0002H  2
+Proto_Proc . . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+Sort_Proc. . . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+Watch_Proc . . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+I2C_RepeatRead_Proc. . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+Frequency_Measure_Proc . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+I2C_Proc . . . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+RUN. . . . . . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+IDLE . . . . . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+watchdog . . . . . . . . . . . . . . .  * TAG *  -----  STRUCT   -----  3
+  process_state. . . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
+  count. . . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0001H  2
+wdt_count. . . . . . . . . . . . . . .  EXTERN   XDATA  ARRAY    -----  -----
+Frequency. . . . . . . . . . . . . . .  * TAG *  -----  STRUCT   -----  34
+  time_counter . . . . . . . . . . . .  MEMBER   -----  U_INT    0000H  2
+  frame. . . . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0002H  32
+Frequency_Init . . . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  i. . . . . . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0007H  1
+  j. . . . . . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0000H  1
+_Frequency_Measure_Process . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  pt . . . . . . . . . . . . . . . . .  AUTO     XDATA  PTR      0000H  3
+  PT_YIELD_FLAG. . . . . . . . . . . .  AUTO     XDATA  CHAR     0003H  1
+  frq_chnl . . . . . . . . . . . . . .  STATIC   XDATA  U_CHAR   0000H  1
+  temp_freq. . . . . . . . . . . . . .  STATIC   XDATA  U_LONG   0001H  4
+INT0_ISR . . . . . . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  cnt. . . . . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0007H  1
+C51 COMPILER V9.00   FREQUENCY                                                             06/20/2014 09:02:40 PAGE 29  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+INT1_ISR . . . . . . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  cnt. . . . . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0007H  1
+INT2_ISR . . . . . . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  cnt. . . . . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0007H  1
+Timer2_ISR . . . . . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+channels . . . . . . . . . . . . . . .  EXTERN   XDATA  ARRAY    -----  350
+frequency. . . . . . . . . . . . . . .  PUBLIC   XDATA  ARRAY    0005H  102
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   1871    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =    111       1
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

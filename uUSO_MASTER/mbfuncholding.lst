@@ -1,0 +1,1357 @@
+C51 COMPILER V9.00   MBFUNCHOLDING                                                         06/19/2014 16:55:31 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE MBFUNCHOLDING
+OBJECT MODULE PLACED IN mbfuncholding.obj
+COMPILER INVOKED BY: C:\Program Files\Keil\C51\BIN\C51.EXE modbus\functions\mbfuncholding.c LARGE OPTIMIZE(0,SPEED) BROW
+                    -SE MODAB2 INCDIR(.\modbus\include;.\modbus;.\port;.\modbus\ascii;.\modbus\rtu;..\uUSO_MASTER) DEBUG OBJECTEXTEND CODE SY
+                    -MBOLS PRINT(.\mbfuncholding.lst) OBJECT(mbfuncholding.obj)
+
+line level    source
+
+   1          /* 
+   2           * FreeModbus Libary: A portable Modbus implementation for Modbus ASCII/RTU.
+   3           * Copyright (c) 2006 Christian Walter <wolti@sil.at>
+   4           * All rights reserved.
+   5           *
+   6           * Redistribution and use in source and binary forms, with or without
+   7           * modification, are permitted provided that the following conditions
+   8           * are met:
+   9           * 1. Redistributions of source code must retain the above copyright
+  10           *    notice, this list of conditions and the following disclaimer.
+  11           * 2. Redistributions in binary form must reproduce the above copyright
+  12           *    notice, this list of conditions and the following disclaimer in the
+  13           *    documentation and/or other materials provided with the distribution.
+  14           * 3. The name of the author may not be used to endorse or promote products
+  15           *    derived from this software without specific prior written permission.
+  16           *
+  17           * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
+  18           * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+  19           * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+  20           * IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
+  21           * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  22           * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+  23           * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+  24           * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+  25           * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+  26           * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  27           *
+  28           * File: $Id: mbfuncholding.c,v 1.12 2007/02/18 23:48:22 wolti Exp $
+  29           */
+  30          
+  31          /* ----------------------- System includes ----------------------------------*/
+  32          #include "stdlib.h"
+  33          #include "string.h"
+  34          
+  35          /* ----------------------- Platform includes --------------------------------*/
+  36          #include "port.h"
+  37          
+  38          /* ----------------------- Modbus includes ----------------------------------*/
+  39          #include "mb.h"
+*** WARNING C258 IN LINE 41 OF .\MODBUS\RTU\MBRTU.H: 'pucFrame': mspace on parameter ignored
+*** WARNING C258 IN LINE 41 OF .\MODBUS\RTU\MBRTU.H: 'pusLength': mspace on parameter ignored
+  40          #include "mbframe.h"
+  41          #include "mbproto.h"
+  42          #include "mbconfig.h"
+  43          
+  44          /* ----------------------- Defines ------------------------------------------*/
+  45          #define MB_PDU_FUNC_READ_ADDR_OFF               ( MB_PDU_DATA_OFF + 0)
+  46          #define MB_PDU_FUNC_READ_REGCNT_OFF             ( MB_PDU_DATA_OFF + 2 )
+  47          #define MB_PDU_FUNC_READ_SIZE                   ( 4 )
+  48          #define MB_PDU_FUNC_READ_REGCNT_MAX             ( 0x007D )
+  49          
+  50          #define MB_PDU_FUNC_WRITE_ADDR_OFF              ( MB_PDU_DATA_OFF + 0)
+  51          #define MB_PDU_FUNC_WRITE_VALUE_OFF             ( MB_PDU_DATA_OFF + 2 )
+C51 COMPILER V9.00   MBFUNCHOLDING                                                         06/19/2014 16:55:31 PAGE 2   
+
+  52          #define MB_PDU_FUNC_WRITE_SIZE                  ( 4 )
+  53          
+  54          #define MB_PDU_FUNC_WRITE_MUL_ADDR_OFF          ( MB_PDU_DATA_OFF + 0 )
+  55          #define MB_PDU_FUNC_WRITE_MUL_REGCNT_OFF        ( MB_PDU_DATA_OFF + 2 )
+  56          #define MB_PDU_FUNC_WRITE_MUL_BYTECNT_OFF       ( MB_PDU_DATA_OFF + 4 )
+  57          #define MB_PDU_FUNC_WRITE_MUL_VALUES_OFF        ( MB_PDU_DATA_OFF + 5 )
+  58          #define MB_PDU_FUNC_WRITE_MUL_SIZE_MIN          ( 5 )
+  59          #define MB_PDU_FUNC_WRITE_MUL_REGCNT_MAX        ( 0x0078 )
+  60          
+  61          #define MB_PDU_FUNC_READWRITE_READ_ADDR_OFF     ( MB_PDU_DATA_OFF + 0 )
+  62          #define MB_PDU_FUNC_READWRITE_READ_REGCNT_OFF   ( MB_PDU_DATA_OFF + 2 )
+  63          #define MB_PDU_FUNC_READWRITE_WRITE_ADDR_OFF    ( MB_PDU_DATA_OFF + 4 )
+  64          #define MB_PDU_FUNC_READWRITE_WRITE_REGCNT_OFF  ( MB_PDU_DATA_OFF + 6 )
+  65          #define MB_PDU_FUNC_READWRITE_BYTECNT_OFF       ( MB_PDU_DATA_OFF + 8 )
+  66          #define MB_PDU_FUNC_READWRITE_WRITE_VALUES_OFF  ( MB_PDU_DATA_OFF + 9 )
+  67          #define MB_PDU_FUNC_READWRITE_SIZE_MIN          ( 9 )
+  68          
+  69          /* ----------------------- Static functions ---------------------------------*/
+  70          eMBException    prveMBError2Exception( eMBErrorCode eErrorCode );
+  71          
+  72          /* ----------------------- Start implementation -----------------------------*/
+  73          
+  74          #if MB_FUNC_WRITE_HOLDING_ENABLED > 0
+  75          
+  76          eMBException
+  77          eMBFuncWriteHoldingRegister( UCHAR * pucFrame, USHORT * usLen )
+  78          {
+  79   1          USHORT          usRegAddress;
+  80   1          eMBException    eStatus = MB_EX_NONE;
+  81   1          eMBErrorCode    eRegStatus;
+  82   1      
+  83   1          if( *usLen == ( MB_PDU_FUNC_WRITE_SIZE + MB_PDU_SIZE_MIN ) )
+  84   1          {
+  85   2              usRegAddress = ( USHORT )( pucFrame[MB_PDU_FUNC_WRITE_ADDR_OFF] << 8 );
+  86   2              usRegAddress |= ( USHORT )( pucFrame[MB_PDU_FUNC_WRITE_ADDR_OFF + 1] );
+  87   2              usRegAddress++;
+  88   2      
+  89   2              /* Make callback to update the value. */
+  90   2              eRegStatus = eMBRegHoldingCB( &pucFrame[MB_PDU_FUNC_WRITE_VALUE_OFF],
+  91   2                                            usRegAddress, 1, MB_REG_WRITE );
+  92   2      
+  93   2              /* If an error occured convert it into a Modbus exception. */
+  94   2              if( eRegStatus != MB_ENOERR )
+  95   2              {
+  96   3                  eStatus = prveMBError2Exception( eRegStatus );
+  97   3              }
+  98   2          }
+  99   1          else
+ 100   1          {
+ 101   2              /* Can't be a valid request because the length is incorrect. */
+ 102   2              eStatus = MB_EX_ILLEGAL_DATA_VALUE;
+ 103   2          }
+ 104   1          return eStatus;
+ 105   1      }
+ 106          #endif
+ 107          
+ 108          #if MB_FUNC_WRITE_MULTIPLE_HOLDING_ENABLED > 0
+ 109          eMBException
+ 110          eMBFuncWriteMultipleHoldingRegister( UCHAR * pucFrame, USHORT * usLen )
+ 111          {
+ 112   1          USHORT          usRegAddress;
+ 113   1          USHORT          usRegCount;
+C51 COMPILER V9.00   MBFUNCHOLDING                                                         06/19/2014 16:55:31 PAGE 3   
+
+ 114   1          UCHAR           ucRegByteCount;
+ 115   1      
+ 116   1          eMBException    eStatus = MB_EX_NONE;
+ 117   1          eMBErrorCode    eRegStatus;
+ 118   1      
+ 119   1          if( *usLen >= ( MB_PDU_FUNC_WRITE_MUL_SIZE_MIN + MB_PDU_SIZE_MIN ) )
+ 120   1          {
+ 121   2              usRegAddress = ( USHORT )( pucFrame[MB_PDU_FUNC_WRITE_MUL_ADDR_OFF] << 8 );
+ 122   2              usRegAddress |= ( USHORT )( pucFrame[MB_PDU_FUNC_WRITE_MUL_ADDR_OFF + 1] );
+ 123   2              usRegAddress++;
+ 124   2      
+ 125   2              usRegCount = ( USHORT )( pucFrame[MB_PDU_FUNC_WRITE_MUL_REGCNT_OFF] << 8 );
+ 126   2              usRegCount |= ( USHORT )( pucFrame[MB_PDU_FUNC_WRITE_MUL_REGCNT_OFF + 1] );
+ 127   2      
+ 128   2              ucRegByteCount = pucFrame[MB_PDU_FUNC_WRITE_MUL_BYTECNT_OFF];
+ 129   2      
+ 130   2              if( ( usRegCount >= 1 ) &&
+ 131   2                  ( usRegCount <= MB_PDU_FUNC_WRITE_MUL_REGCNT_MAX ) &&
+ 132   2                  ( ucRegByteCount == ( UCHAR ) ( 2 * usRegCount ) ) )
+ 133   2              {
+ 134   3                  /* Make callback to update the register values. */
+ 135   3                  eRegStatus =
+ 136   3                      eMBRegHoldingCB( &pucFrame[MB_PDU_FUNC_WRITE_MUL_VALUES_OFF],
+ 137   3                                       usRegAddress, usRegCount, MB_REG_WRITE );
+ 138   3      
+ 139   3                  /* If an error occured convert it into a Modbus exception. */
+ 140   3                  if( eRegStatus != MB_ENOERR )
+ 141   3                  {
+ 142   4                      eStatus = prveMBError2Exception( eRegStatus );
+ 143   4                  }
+ 144   3                  else
+ 145   3                  {
+ 146   4                      /* The response contains the function code, the starting
+ 147   4                       * address and the quantity of registers. We reuse the
+ 148   4                       * old values in the buffer because they are still valid.
+ 149   4                       */
+ 150   4                      *usLen = MB_PDU_FUNC_WRITE_MUL_BYTECNT_OFF;
+ 151   4                  }
+ 152   3              }
+ 153   2              else
+ 154   2              {
+ 155   3                  eStatus = MB_EX_ILLEGAL_DATA_VALUE;
+ 156   3              }
+ 157   2          }
+ 158   1          else
+ 159   1          {
+ 160   2              /* Can't be a valid request because the length is incorrect. */
+ 161   2              eStatus = MB_EX_ILLEGAL_DATA_VALUE;
+ 162   2          }
+ 163   1          return eStatus;
+ 164   1      }
+ 165          #endif
+ 166          
+ 167          #if MB_FUNC_READ_HOLDING_ENABLED > 0
+ 168          
+ 169          eMBException
+ 170          eMBFuncReadHoldingRegister( UCHAR * pucFrame, USHORT * usLen )
+ 171          {
+ 172   1          USHORT          usRegAddress;
+ 173   1          USHORT          usRegCount;
+ 174   1          UCHAR          *pucFrameCur;
+ 175   1      
+C51 COMPILER V9.00   MBFUNCHOLDING                                                         06/19/2014 16:55:31 PAGE 4   
+
+ 176   1          eMBException    eStatus = MB_EX_NONE;
+ 177   1          eMBErrorCode    eRegStatus;
+ 178   1      
+ 179   1          if( *usLen == ( MB_PDU_FUNC_READ_SIZE + MB_PDU_SIZE_MIN ) )
+ 180   1          {
+ 181   2              usRegAddress = ( USHORT )( pucFrame[MB_PDU_FUNC_READ_ADDR_OFF] << 8 );
+ 182   2              usRegAddress |= ( USHORT )( pucFrame[MB_PDU_FUNC_READ_ADDR_OFF + 1] );
+ 183   2              usRegAddress++;
+ 184   2      
+ 185   2              usRegCount = ( USHORT )( pucFrame[MB_PDU_FUNC_READ_REGCNT_OFF] << 8 );
+ 186   2              usRegCount = ( USHORT )( pucFrame[MB_PDU_FUNC_READ_REGCNT_OFF + 1] );
+ 187   2      
+ 188   2              /* Check if the number of registers to read is valid. If not
+ 189   2               * return Modbus illegal data value exception. 
+ 190   2               */
+ 191   2              if( ( usRegCount >= 1 ) && ( usRegCount <= MB_PDU_FUNC_READ_REGCNT_MAX ) )
+ 192   2              {
+ 193   3                  /* Set the current PDU data pointer to the beginning. */
+ 194   3                  pucFrameCur = &pucFrame[MB_PDU_FUNC_OFF];
+ 195   3                  *usLen = MB_PDU_FUNC_OFF;
+ 196   3      
+ 197   3                  /* First byte contains the function code. */
+ 198   3                  *pucFrameCur++ = MB_FUNC_READ_HOLDING_REGISTER;
+ 199   3                  *usLen += 1;
+ 200   3      
+ 201   3                  /* Second byte in the response contain the number of bytes. */
+ 202   3                  *pucFrameCur++ = ( UCHAR ) ( usRegCount * 2 );
+ 203   3                  *usLen += 1;
+ 204   3      
+ 205   3                  /* Make callback to fill the buffer. */
+ 206   3                  eRegStatus = eMBRegHoldingCB( pucFrameCur, usRegAddress, usRegCount, MB_REG_READ );
+ 207   3                  /* If an error occured convert it into a Modbus exception. */
+ 208   3                  if( eRegStatus != MB_ENOERR )
+ 209   3                  {
+ 210   4                      eStatus = prveMBError2Exception( eRegStatus );
+ 211   4                  }
+ 212   3                  else
+ 213   3                  {
+ 214   4                      *usLen += usRegCount * 2;
+ 215   4                  }
+ 216   3              }
+ 217   2              else
+ 218   2              {
+ 219   3                  eStatus = MB_EX_ILLEGAL_DATA_VALUE;
+ 220   3              }
+ 221   2          }
+ 222   1          else
+ 223   1          {
+ 224   2              /* Can't be a valid request because the length is incorrect. */
+ 225   2              eStatus = MB_EX_ILLEGAL_DATA_VALUE;
+ 226   2          }
+ 227   1          return eStatus;
+ 228   1      }
+ 229          
+ 230          #endif
+ 231          
+ 232          #if MB_FUNC_READWRITE_HOLDING_ENABLED > 0
+              
+              eMBException
+              eMBFuncReadWriteMultipleHoldingRegister( UCHAR * pucFrame, USHORT * usLen )
+              {
+                  USHORT          usRegReadAddress;
+C51 COMPILER V9.00   MBFUNCHOLDING                                                         06/19/2014 16:55:31 PAGE 5   
+
+                  USHORT          usRegReadCount;
+                  USHORT          usRegWriteAddress;
+                  USHORT          usRegWriteCount;
+                  UCHAR           ucRegWriteByteCount;
+                  UCHAR          *pucFrameCur;
+              
+                  eMBException    eStatus = MB_EX_NONE;
+                  eMBErrorCode    eRegStatus;
+              
+                  if( *usLen >= ( MB_PDU_FUNC_READWRITE_SIZE_MIN + MB_PDU_SIZE_MIN ) )
+                  {
+                      usRegReadAddress = ( USHORT )( pucFrame[MB_PDU_FUNC_READWRITE_READ_ADDR_OFF] << 8U );
+                      usRegReadAddress |= ( USHORT )( pucFrame[MB_PDU_FUNC_READWRITE_READ_ADDR_OFF + 1] );
+                      usRegReadAddress++;
+              
+                      usRegReadCount = ( USHORT )( pucFrame[MB_PDU_FUNC_READWRITE_READ_REGCNT_OFF] << 8U );
+                      usRegReadCount |= ( USHORT )( pucFrame[MB_PDU_FUNC_READWRITE_READ_REGCNT_OFF + 1] );
+              
+                      usRegWriteAddress = ( USHORT )( pucFrame[MB_PDU_FUNC_READWRITE_WRITE_ADDR_OFF] << 8U );
+                      usRegWriteAddress |= ( USHORT )( pucFrame[MB_PDU_FUNC_READWRITE_WRITE_ADDR_OFF + 1] );
+                      usRegWriteAddress++;
+              
+                      usRegWriteCount = ( USHORT )( pucFrame[MB_PDU_FUNC_READWRITE_WRITE_REGCNT_OFF] << 8U );
+                      usRegWriteCount |= ( USHORT )( pucFrame[MB_PDU_FUNC_READWRITE_WRITE_REGCNT_OFF + 1] );
+              
+                      ucRegWriteByteCount = pucFrame[MB_PDU_FUNC_READWRITE_BYTECNT_OFF];
+              
+                      if( ( usRegReadCount >= 1 ) && ( usRegReadCount <= 0x7D ) &&
+                          ( usRegWriteCount >= 1 ) && ( usRegWriteCount <= 0x79 ) &&
+                          ( ( 2 * usRegWriteCount ) == ucRegWriteByteCount ) )
+                      {
+                          /* Make callback to update the register values. */
+                          eRegStatus = eMBRegHoldingCB( &pucFrame[MB_PDU_FUNC_READWRITE_WRITE_VALUES_OFF],
+                                                        usRegWriteAddress, usRegWriteCount, MB_REG_WRITE );
+              
+                          if( eRegStatus == MB_ENOERR )
+                          {
+                              /* Set the current PDU data pointer to the beginning. */
+                              pucFrameCur = &pucFrame[MB_PDU_FUNC_OFF];
+                              *usLen = MB_PDU_FUNC_OFF;
+              
+                              /* First byte contains the function code. */
+                              *pucFrameCur++ = MB_FUNC_READWRITE_MULTIPLE_REGISTERS;
+                              *usLen += 1;
+              
+                              /* Second byte in the response contain the number of bytes. */
+                              *pucFrameCur++ = ( UCHAR ) ( usRegReadCount * 2 );
+                              *usLen += 1;
+              
+                              /* Make the read callback. */
+                              eRegStatus =
+                                  eMBRegHoldingCB( pucFrameCur, usRegReadAddress, usRegReadCount, MB_REG_READ );
+                              if( eRegStatus == MB_ENOERR )
+                              {
+                                  *usLen += 2 * usRegReadCount;
+                              }
+                          }
+                          if( eRegStatus != MB_ENOERR )
+                          {
+                              eStatus = prveMBError2Exception( eRegStatus );
+                          }
+                      }
+C51 COMPILER V9.00   MBFUNCHOLDING                                                         06/19/2014 16:55:31 PAGE 6   
+
+                      else
+                      {
+                          eStatus = MB_EX_ILLEGAL_DATA_VALUE;
+                      }
+                  }
+                  return eStatus;
+              }
+              
+              #endif
+C51 COMPILER V9.00   MBFUNCHOLDING                                                         06/19/2014 16:55:31 PAGE 7   
+
+ASSEMBLY LISTING OF GENERATED OBJECT CODE
+
+
+             ; FUNCTION _eMBFuncWriteHoldingRegister (BEGIN)
+                                           ; SOURCE LINE # 77
+0000 900000      R     MOV     DPTR,#pucFrame
+0003 EB                MOV     A,R3
+0004 F0                MOVX    @DPTR,A
+0005 A3                INC     DPTR
+0006 EA                MOV     A,R2
+0007 F0                MOVX    @DPTR,A
+0008 A3                INC     DPTR
+0009 E9                MOV     A,R1
+000A F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 78
+                                           ; SOURCE LINE # 80
+000B 900000      R     MOV     DPTR,#eStatus
+000E E4                CLR     A
+000F F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 83
+0010 900000      R     MOV     DPTR,#usLen
+0013 E0                MOVX    A,@DPTR
+0014 FB                MOV     R3,A
+0015 A3                INC     DPTR
+0016 E0                MOVX    A,@DPTR
+0017 FA                MOV     R2,A
+0018 A3                INC     DPTR
+0019 E0                MOVX    A,@DPTR
+001A F9                MOV     R1,A
+001B 120000      E     LCALL   ?C?ILDPTR
+001E FF                MOV     R7,A
+001F AEF0              MOV     R6,B
+0021 EF                MOV     A,R7
+0022 6405              XRL     A,#05H
+0024 4E                ORL     A,R6
+0025 6003              JZ      $ + 5H
+0027 020000      R     LJMP    ?C0001
+                                           ; SOURCE LINE # 84
+                                           ; SOURCE LINE # 85
+002A 900000      R     MOV     DPTR,#pucFrame
+002D E0                MOVX    A,@DPTR
+002E FB                MOV     R3,A
+002F A3                INC     DPTR
+0030 E0                MOVX    A,@DPTR
+0031 FA                MOV     R2,A
+0032 A3                INC     DPTR
+0033 E0                MOVX    A,@DPTR
+0034 F9                MOV     R1,A
+0035 758201            MOV     DPL,#01H
+0038 758300            MOV     DPH,#00H
+003B 120000      E     LCALL   ?C?CLDOPTR
+003E FF                MOV     R7,A
+003F 7E00              MOV     R6,#00H
+0041 EF                MOV     A,R7
+0042 7F00              MOV     R7,#00H
+0044 FE                MOV     R6,A
+0045 900000      R     MOV     DPTR,#usRegAddress
+0048 EE                MOV     A,R6
+0049 F0                MOVX    @DPTR,A
+004A A3                INC     DPTR
+004B EF                MOV     A,R7
+004C F0                MOVX    @DPTR,A
+C51 COMPILER V9.00   MBFUNCHOLDING                                                         06/19/2014 16:55:31 PAGE 8   
+
+                                           ; SOURCE LINE # 86
+004D 900000      R     MOV     DPTR,#usRegAddress
+0050 E0                MOVX    A,@DPTR
+0051 FE                MOV     R6,A
+0052 A3                INC     DPTR
+0053 E0                MOVX    A,@DPTR
+0054 FF                MOV     R7,A
+0055 900000      R     MOV     DPTR,#pucFrame
+0058 E0                MOVX    A,@DPTR
+0059 FB                MOV     R3,A
+005A A3                INC     DPTR
+005B E0                MOVX    A,@DPTR
+005C FA                MOV     R2,A
+005D A3                INC     DPTR
+005E E0                MOVX    A,@DPTR
+005F F9                MOV     R1,A
+0060 758202            MOV     DPL,#02H
+0063 758300            MOV     DPH,#00H
+0066 120000      E     LCALL   ?C?CLDOPTR
+0069 FD                MOV     R5,A
+006A 7C00              MOV     R4,#00H
+006C EE                MOV     A,R6
+006D 4C                ORL     A,R4
+006E FE                MOV     R6,A
+006F EF                MOV     A,R7
+0070 4D                ORL     A,R5
+0071 FF                MOV     R7,A
+0072 900000      R     MOV     DPTR,#usRegAddress
+0075 EE                MOV     A,R6
+0076 F0                MOVX    @DPTR,A
+0077 A3                INC     DPTR
+0078 EF                MOV     A,R7
+0079 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 87
+007A 900000      R     MOV     DPTR,#usRegAddress+01H
+007D E0                MOVX    A,@DPTR
+007E 04                INC     A
+007F F0                MOVX    @DPTR,A
+0080 7006              JNZ     ?C0019
+0082 900000      R     MOV     DPTR,#usRegAddress
+0085 E0                MOVX    A,@DPTR
+0086 04                INC     A
+0087 F0                MOVX    @DPTR,A
+0088         ?C0019:
+                                           ; SOURCE LINE # 90
+0088 900000      R     MOV     DPTR,#pucFrame
+008B E0                MOVX    A,@DPTR
+008C FB                MOV     R3,A
+008D A3                INC     DPTR
+008E E0                MOVX    A,@DPTR
+008F FA                MOV     R2,A
+0090 A3                INC     DPTR
+0091 E0                MOVX    A,@DPTR
+0092 F9                MOV     R1,A
+0093 E9                MOV     A,R1
+0094 2403              ADD     A,#03H
+0096 F9                MOV     R1,A
+0097 EA                MOV     A,R2
+0098 3400              ADDC    A,#00H
+009A FA                MOV     R2,A
+009B 900000      R     MOV     DPTR,#usRegAddress
+009E E0                MOVX    A,@DPTR
+C51 COMPILER V9.00   MBFUNCHOLDING                                                         06/19/2014 16:55:31 PAGE 9   
+
+009F FC                MOV     R4,A
+00A0 A3                INC     DPTR
+00A1 E0                MOVX    A,@DPTR
+00A2 FD                MOV     R5,A
+00A3 900000      E     MOV     DPTR,#?_eMBRegHoldingCB?BYTE+05H
+00A6 E4                CLR     A
+00A7 F0                MOVX    @DPTR,A
+00A8 A3                INC     DPTR
+00A9 7401              MOV     A,#01H
+00AB F0                MOVX    @DPTR,A
+00AC 900000      E     MOV     DPTR,#?_eMBRegHoldingCB?BYTE+07H
+00AF 7401              MOV     A,#01H
+00B1 F0                MOVX    @DPTR,A
+00B2 120000      E     LCALL   _eMBRegHoldingCB
+00B5 900000      R     MOV     DPTR,#eRegStatus
+00B8 EF                MOV     A,R7
+00B9 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 94
+00BA 900000      R     MOV     DPTR,#eRegStatus
+00BD E0                MOVX    A,@DPTR
+00BE FF                MOV     R7,A
+00BF EF                MOV     A,R7
+00C0 6015              JZ      ?C0003
+                                           ; SOURCE LINE # 95
+                                           ; SOURCE LINE # 96
+00C2 900000      R     MOV     DPTR,#eRegStatus
+00C5 E0                MOVX    A,@DPTR
+00C6 FF                MOV     R7,A
+00C7 120000      E     LCALL   _prveMBError2Exception
+00CA 900000      R     MOV     DPTR,#eStatus
+00CD EF                MOV     A,R7
+00CE F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 97
+00CF         ?C0002:
+                                           ; SOURCE LINE # 98
+00CF 8006              SJMP    ?C0003
+00D1         ?C0001:
+                                           ; SOURCE LINE # 100
+                                           ; SOURCE LINE # 102
+00D1 900000      R     MOV     DPTR,#eStatus
+00D4 7403              MOV     A,#03H
+00D6 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 103
+00D7         ?C0003:
+                                           ; SOURCE LINE # 104
+00D7 900000      R     MOV     DPTR,#eStatus
+00DA E0                MOVX    A,@DPTR
+00DB FF                MOV     R7,A
+                                           ; SOURCE LINE # 105
+00DC         ?C0004:
+00DC 22                RET     
+             ; FUNCTION _eMBFuncWriteHoldingRegister (END)
+
+             ; FUNCTION _eMBFuncWriteMultipleHoldingRegister (BEGIN)
+                                           ; SOURCE LINE # 110
+0000 900000      R     MOV     DPTR,#pucFrame
+0003 EB                MOV     A,R3
+0004 F0                MOVX    @DPTR,A
+0005 A3                INC     DPTR
+0006 EA                MOV     A,R2
+0007 F0                MOVX    @DPTR,A
+0008 A3                INC     DPTR
+C51 COMPILER V9.00   MBFUNCHOLDING                                                         06/19/2014 16:55:31 PAGE 10  
+
+0009 E9                MOV     A,R1
+000A F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 111
+                                           ; SOURCE LINE # 116
+000B 900000      R     MOV     DPTR,#eStatus
+000E E4                CLR     A
+000F F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 119
+0010 900000      R     MOV     DPTR,#usLen
+0013 E0                MOVX    A,@DPTR
+0014 FB                MOV     R3,A
+0015 A3                INC     DPTR
+0016 E0                MOVX    A,@DPTR
+0017 FA                MOV     R2,A
+0018 A3                INC     DPTR
+0019 E0                MOVX    A,@DPTR
+001A F9                MOV     R1,A
+001B 120000      E     LCALL   ?C?ILDPTR
+001E FF                MOV     R7,A
+001F AEF0              MOV     R6,B
+0021 C3                CLR     C
+0022 EF                MOV     A,R7
+0023 9406              SUBB    A,#06H
+0025 EE                MOV     A,R6
+0026 9400              SUBB    A,#00H
+0028 5003              JNC     $ + 5H
+002A 020000      R     LJMP    ?C0005
+                                           ; SOURCE LINE # 120
+                                           ; SOURCE LINE # 121
+002D 900000      R     MOV     DPTR,#pucFrame
+0030 E0                MOVX    A,@DPTR
+0031 FB                MOV     R3,A
+0032 A3                INC     DPTR
+0033 E0                MOVX    A,@DPTR
+0034 FA                MOV     R2,A
+0035 A3                INC     DPTR
+0036 E0                MOVX    A,@DPTR
+0037 F9                MOV     R1,A
+0038 758201            MOV     DPL,#01H
+003B 758300            MOV     DPH,#00H
+003E 120000      E     LCALL   ?C?CLDOPTR
+0041 FF                MOV     R7,A
+0042 7E00              MOV     R6,#00H
+0044 EF                MOV     A,R7
+0045 7F00              MOV     R7,#00H
+0047 FE                MOV     R6,A
+0048 900000      R     MOV     DPTR,#usRegAddress
+004B EE                MOV     A,R6
+004C F0                MOVX    @DPTR,A
+004D A3                INC     DPTR
+004E EF                MOV     A,R7
+004F F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 122
+0050 900000      R     MOV     DPTR,#usRegAddress
+0053 E0                MOVX    A,@DPTR
+0054 FE                MOV     R6,A
+0055 A3                INC     DPTR
+0056 E0                MOVX    A,@DPTR
+0057 FF                MOV     R7,A
+0058 900000      R     MOV     DPTR,#pucFrame
+005B E0                MOVX    A,@DPTR
+005C FB                MOV     R3,A
+C51 COMPILER V9.00   MBFUNCHOLDING                                                         06/19/2014 16:55:31 PAGE 11  
+
+005D A3                INC     DPTR
+005E E0                MOVX    A,@DPTR
+005F FA                MOV     R2,A
+0060 A3                INC     DPTR
+0061 E0                MOVX    A,@DPTR
+0062 F9                MOV     R1,A
+0063 758202            MOV     DPL,#02H
+0066 758300            MOV     DPH,#00H
+0069 120000      E     LCALL   ?C?CLDOPTR
+006C FD                MOV     R5,A
+006D 7C00              MOV     R4,#00H
+006F EE                MOV     A,R6
+0070 4C                ORL     A,R4
+0071 FE                MOV     R6,A
+0072 EF                MOV     A,R7
+0073 4D                ORL     A,R5
+0074 FF                MOV     R7,A
+0075 900000      R     MOV     DPTR,#usRegAddress
+0078 EE                MOV     A,R6
+0079 F0                MOVX    @DPTR,A
+007A A3                INC     DPTR
+007B EF                MOV     A,R7
+007C F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 123
+007D 900000      R     MOV     DPTR,#usRegAddress+01H
+0080 E0                MOVX    A,@DPTR
+0081 04                INC     A
+0082 F0                MOVX    @DPTR,A
+0083 7006              JNZ     ?C0020
+0085 900000      R     MOV     DPTR,#usRegAddress
+0088 E0                MOVX    A,@DPTR
+0089 04                INC     A
+008A F0                MOVX    @DPTR,A
+008B         ?C0020:
+                                           ; SOURCE LINE # 125
+008B 900000      R     MOV     DPTR,#pucFrame
+008E E0                MOVX    A,@DPTR
+008F FB                MOV     R3,A
+0090 A3                INC     DPTR
+0091 E0                MOVX    A,@DPTR
+0092 FA                MOV     R2,A
+0093 A3                INC     DPTR
+0094 E0                MOVX    A,@DPTR
+0095 F9                MOV     R1,A
+0096 758203            MOV     DPL,#03H
+0099 758300            MOV     DPH,#00H
+009C 120000      E     LCALL   ?C?CLDOPTR
+009F FF                MOV     R7,A
+00A0 7E00              MOV     R6,#00H
+00A2 EF                MOV     A,R7
+00A3 7F00              MOV     R7,#00H
+00A5 FE                MOV     R6,A
+00A6 900000      R     MOV     DPTR,#usRegCount
+00A9 EE                MOV     A,R6
+00AA F0                MOVX    @DPTR,A
+00AB A3                INC     DPTR
+00AC EF                MOV     A,R7
+00AD F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 126
+00AE 900000      R     MOV     DPTR,#usRegCount
+00B1 E0                MOVX    A,@DPTR
+00B2 FE                MOV     R6,A
+C51 COMPILER V9.00   MBFUNCHOLDING                                                         06/19/2014 16:55:31 PAGE 12  
+
+00B3 A3                INC     DPTR
+00B4 E0                MOVX    A,@DPTR
+00B5 FF                MOV     R7,A
+00B6 900000      R     MOV     DPTR,#pucFrame
+00B9 E0                MOVX    A,@DPTR
+00BA FB                MOV     R3,A
+00BB A3                INC     DPTR
+00BC E0                MOVX    A,@DPTR
+00BD FA                MOV     R2,A
+00BE A3                INC     DPTR
+00BF E0                MOVX    A,@DPTR
+00C0 F9                MOV     R1,A
+00C1 758204            MOV     DPL,#04H
+00C4 758300            MOV     DPH,#00H
+00C7 120000      E     LCALL   ?C?CLDOPTR
+00CA FD                MOV     R5,A
+00CB 7C00              MOV     R4,#00H
+00CD EE                MOV     A,R6
+00CE 4C                ORL     A,R4
+00CF FE                MOV     R6,A
+00D0 EF                MOV     A,R7
+00D1 4D                ORL     A,R5
+00D2 FF                MOV     R7,A
+00D3 900000      R     MOV     DPTR,#usRegCount
+00D6 EE                MOV     A,R6
+00D7 F0                MOVX    @DPTR,A
+00D8 A3                INC     DPTR
+00D9 EF                MOV     A,R7
+00DA F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 128
+00DB 900000      R     MOV     DPTR,#pucFrame
+00DE E0                MOVX    A,@DPTR
+00DF FB                MOV     R3,A
+00E0 A3                INC     DPTR
+00E1 E0                MOVX    A,@DPTR
+00E2 FA                MOV     R2,A
+00E3 A3                INC     DPTR
+00E4 E0                MOVX    A,@DPTR
+00E5 F9                MOV     R1,A
+00E6 758205            MOV     DPL,#05H
+00E9 758300            MOV     DPH,#00H
+00EC 120000      E     LCALL   ?C?CLDOPTR
+00EF FF                MOV     R7,A
+00F0 900000      R     MOV     DPTR,#ucRegByteCount
+00F3 EF                MOV     A,R7
+00F4 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 132
+00F5 900000      R     MOV     DPTR,#usRegCount
+00F8 E0                MOVX    A,@DPTR
+00F9 FE                MOV     R6,A
+00FA A3                INC     DPTR
+00FB E0                MOVX    A,@DPTR
+00FC FF                MOV     R7,A
+00FD C3                CLR     C
+00FE EF                MOV     A,R7
+00FF 9401              SUBB    A,#01H
+0101 EE                MOV     A,R6
+0102 9400              SUBB    A,#00H
+0104 5003              JNC     $ + 5H
+0106 020000      R     LJMP    ?C0006
+0109 900000      R     MOV     DPTR,#usRegCount
+010C E0                MOVX    A,@DPTR
+C51 COMPILER V9.00   MBFUNCHOLDING                                                         06/19/2014 16:55:31 PAGE 13  
+
+010D FE                MOV     R6,A
+010E A3                INC     DPTR
+010F E0                MOVX    A,@DPTR
+0110 FF                MOV     R7,A
+0111 D3                SETB    C
+0112 EF                MOV     A,R7
+0113 9478              SUBB    A,#078H
+0115 EE                MOV     A,R6
+0116 9400              SUBB    A,#00H
+0118 5079              JNC     ?C0006
+011A 900000      R     MOV     DPTR,#usRegCount
+011D E0                MOVX    A,@DPTR
+011E FE                MOV     R6,A
+011F A3                INC     DPTR
+0120 E0                MOVX    A,@DPTR
+0121 FF                MOV     R7,A
+0122 EF                MOV     A,R7
+0123 25E0              ADD     A,ACC
+0125 FF                MOV     R7,A
+0126 900000      R     MOV     DPTR,#ucRegByteCount
+0129 E0                MOVX    A,@DPTR
+012A FE                MOV     R6,A
+012B EF                MOV     A,R7
+012C 6E                XRL     A,R6
+012D 7064              JNZ     ?C0006
+                                           ; SOURCE LINE # 133
+                                           ; SOURCE LINE # 135
+012F 900000      R     MOV     DPTR,#pucFrame
+0132 E0                MOVX    A,@DPTR
+0133 FB                MOV     R3,A
+0134 A3                INC     DPTR
+0135 E0                MOVX    A,@DPTR
+0136 FA                MOV     R2,A
+0137 A3                INC     DPTR
+0138 E0                MOVX    A,@DPTR
+0139 F9                MOV     R1,A
+013A E9                MOV     A,R1
+013B 2406              ADD     A,#06H
+013D F9                MOV     R1,A
+013E EA                MOV     A,R2
+013F 3400              ADDC    A,#00H
+0141 FA                MOV     R2,A
+0142 900000      R     MOV     DPTR,#usRegAddress
+0145 E0                MOVX    A,@DPTR
+0146 FC                MOV     R4,A
+0147 A3                INC     DPTR
+0148 E0                MOVX    A,@DPTR
+0149 FD                MOV     R5,A
+014A 900000      R     MOV     DPTR,#usRegCount
+014D E0                MOVX    A,@DPTR
+014E FE                MOV     R6,A
+014F A3                INC     DPTR
+0150 E0                MOVX    A,@DPTR
+0151 FF                MOV     R7,A
+0152 900000      E     MOV     DPTR,#?_eMBRegHoldingCB?BYTE+05H
+0155 EE                MOV     A,R6
+0156 F0                MOVX    @DPTR,A
+0157 A3                INC     DPTR
+0158 EF                MOV     A,R7
+0159 F0                MOVX    @DPTR,A
+015A 900000      E     MOV     DPTR,#?_eMBRegHoldingCB?BYTE+07H
+015D 7401              MOV     A,#01H
+C51 COMPILER V9.00   MBFUNCHOLDING                                                         06/19/2014 16:55:31 PAGE 14  
+
+015F F0                MOVX    @DPTR,A
+0160 120000      E     LCALL   _eMBRegHoldingCB
+0163 900000      R     MOV     DPTR,#eRegStatus
+0166 EF                MOV     A,R7
+0167 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 140
+0168 900000      R     MOV     DPTR,#eRegStatus
+016B E0                MOVX    A,@DPTR
+016C FF                MOV     R7,A
+016D EF                MOV     A,R7
+016E 600F              JZ      ?C0007
+                                           ; SOURCE LINE # 141
+                                           ; SOURCE LINE # 142
+0170 900000      R     MOV     DPTR,#eRegStatus
+0173 E0                MOVX    A,@DPTR
+0174 FF                MOV     R7,A
+0175 120000      E     LCALL   _prveMBError2Exception
+0178 900000      R     MOV     DPTR,#eStatus
+017B EF                MOV     A,R7
+017C F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 143
+017D 8022              SJMP    ?C0010
+017F         ?C0007:
+                                           ; SOURCE LINE # 145
+                                           ; SOURCE LINE # 150
+017F 900000      R     MOV     DPTR,#usLen
+0182 E0                MOVX    A,@DPTR
+0183 FB                MOV     R3,A
+0184 A3                INC     DPTR
+0185 E0                MOVX    A,@DPTR
+0186 FA                MOV     R2,A
+0187 A3                INC     DPTR
+0188 E0                MOVX    A,@DPTR
+0189 F9                MOV     R1,A
+018A E4                CLR     A
+018B 75F005            MOV     B,#05H
+018E 120000      E     LCALL   ?C?ISTPTR
+                                           ; SOURCE LINE # 151
+0191         ?C0008:
+                                           ; SOURCE LINE # 152
+0191 800E              SJMP    ?C0010
+0193         ?C0006:
+                                           ; SOURCE LINE # 154
+                                           ; SOURCE LINE # 155
+0193 900000      R     MOV     DPTR,#eStatus
+0196 7403              MOV     A,#03H
+0198 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 156
+0199         ?C0009:
+                                           ; SOURCE LINE # 157
+0199 8006              SJMP    ?C0010
+019B         ?C0005:
+                                           ; SOURCE LINE # 159
+                                           ; SOURCE LINE # 161
+019B 900000      R     MOV     DPTR,#eStatus
+019E 7403              MOV     A,#03H
+01A0 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 162
+01A1         ?C0010:
+                                           ; SOURCE LINE # 163
+01A1 900000      R     MOV     DPTR,#eStatus
+01A4 E0                MOVX    A,@DPTR
+C51 COMPILER V9.00   MBFUNCHOLDING                                                         06/19/2014 16:55:31 PAGE 15  
+
+01A5 FF                MOV     R7,A
+                                           ; SOURCE LINE # 164
+01A6         ?C0011:
+01A6 22                RET     
+             ; FUNCTION _eMBFuncWriteMultipleHoldingRegister (END)
+
+             ; FUNCTION _eMBFuncReadHoldingRegister (BEGIN)
+                                           ; SOURCE LINE # 170
+0000 900000      R     MOV     DPTR,#pucFrame
+0003 EB                MOV     A,R3
+0004 F0                MOVX    @DPTR,A
+0005 A3                INC     DPTR
+0006 EA                MOV     A,R2
+0007 F0                MOVX    @DPTR,A
+0008 A3                INC     DPTR
+0009 E9                MOV     A,R1
+000A F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 171
+                                           ; SOURCE LINE # 176
+000B 900000      R     MOV     DPTR,#eStatus
+000E E4                CLR     A
+000F F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 179
+0010 900000      R     MOV     DPTR,#usLen
+0013 E0                MOVX    A,@DPTR
+0014 FB                MOV     R3,A
+0015 A3                INC     DPTR
+0016 E0                MOVX    A,@DPTR
+0017 FA                MOV     R2,A
+0018 A3                INC     DPTR
+0019 E0                MOVX    A,@DPTR
+001A F9                MOV     R1,A
+001B 120000      E     LCALL   ?C?ILDPTR
+001E FF                MOV     R7,A
+001F AEF0              MOV     R6,B
+0021 EF                MOV     A,R7
+0022 6405              XRL     A,#05H
+0024 4E                ORL     A,R6
+0025 6003              JZ      $ + 5H
+0027 020000      R     LJMP    ?C0012
+                                           ; SOURCE LINE # 180
+                                           ; SOURCE LINE # 181
+002A 900000      R     MOV     DPTR,#pucFrame
+002D E0                MOVX    A,@DPTR
+002E FB                MOV     R3,A
+002F A3                INC     DPTR
+0030 E0                MOVX    A,@DPTR
+0031 FA                MOV     R2,A
+0032 A3                INC     DPTR
+0033 E0                MOVX    A,@DPTR
+0034 F9                MOV     R1,A
+0035 758201            MOV     DPL,#01H
+0038 758300            MOV     DPH,#00H
+003B 120000      E     LCALL   ?C?CLDOPTR
+003E FF                MOV     R7,A
+003F 7E00              MOV     R6,#00H
+0041 EF                MOV     A,R7
+0042 7F00              MOV     R7,#00H
+0044 FE                MOV     R6,A
+0045 900000      R     MOV     DPTR,#usRegAddress
+0048 EE                MOV     A,R6
+0049 F0                MOVX    @DPTR,A
+C51 COMPILER V9.00   MBFUNCHOLDING                                                         06/19/2014 16:55:31 PAGE 16  
+
+004A A3                INC     DPTR
+004B EF                MOV     A,R7
+004C F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 182
+004D 900000      R     MOV     DPTR,#usRegAddress
+0050 E0                MOVX    A,@DPTR
+0051 FE                MOV     R6,A
+0052 A3                INC     DPTR
+0053 E0                MOVX    A,@DPTR
+0054 FF                MOV     R7,A
+0055 900000      R     MOV     DPTR,#pucFrame
+0058 E0                MOVX    A,@DPTR
+0059 FB                MOV     R3,A
+005A A3                INC     DPTR
+005B E0                MOVX    A,@DPTR
+005C FA                MOV     R2,A
+005D A3                INC     DPTR
+005E E0                MOVX    A,@DPTR
+005F F9                MOV     R1,A
+0060 758202            MOV     DPL,#02H
+0063 758300            MOV     DPH,#00H
+0066 120000      E     LCALL   ?C?CLDOPTR
+0069 FD                MOV     R5,A
+006A 7C00              MOV     R4,#00H
+006C EE                MOV     A,R6
+006D 4C                ORL     A,R4
+006E FE                MOV     R6,A
+006F EF                MOV     A,R7
+0070 4D                ORL     A,R5
+0071 FF                MOV     R7,A
+0072 900000      R     MOV     DPTR,#usRegAddress
+0075 EE                MOV     A,R6
+0076 F0                MOVX    @DPTR,A
+0077 A3                INC     DPTR
+0078 EF                MOV     A,R7
+0079 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 183
+007A 900000      R     MOV     DPTR,#usRegAddress+01H
+007D E0                MOVX    A,@DPTR
+007E 04                INC     A
+007F F0                MOVX    @DPTR,A
+0080 7006              JNZ     ?C0021
+0082 900000      R     MOV     DPTR,#usRegAddress
+0085 E0                MOVX    A,@DPTR
+0086 04                INC     A
+0087 F0                MOVX    @DPTR,A
+0088         ?C0021:
+                                           ; SOURCE LINE # 185
+0088 900000      R     MOV     DPTR,#pucFrame
+008B E0                MOVX    A,@DPTR
+008C FB                MOV     R3,A
+008D A3                INC     DPTR
+008E E0                MOVX    A,@DPTR
+008F FA                MOV     R2,A
+0090 A3                INC     DPTR
+0091 E0                MOVX    A,@DPTR
+0092 F9                MOV     R1,A
+0093 758203            MOV     DPL,#03H
+0096 758300            MOV     DPH,#00H
+0099 120000      E     LCALL   ?C?CLDOPTR
+009C FF                MOV     R7,A
+009D 7E00              MOV     R6,#00H
+C51 COMPILER V9.00   MBFUNCHOLDING                                                         06/19/2014 16:55:31 PAGE 17  
+
+009F EF                MOV     A,R7
+00A0 7F00              MOV     R7,#00H
+00A2 FE                MOV     R6,A
+00A3 900000      R     MOV     DPTR,#usRegCount
+00A6 EE                MOV     A,R6
+00A7 F0                MOVX    @DPTR,A
+00A8 A3                INC     DPTR
+00A9 EF                MOV     A,R7
+00AA F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 186
+00AB 900000      R     MOV     DPTR,#pucFrame
+00AE E0                MOVX    A,@DPTR
+00AF FB                MOV     R3,A
+00B0 A3                INC     DPTR
+00B1 E0                MOVX    A,@DPTR
+00B2 FA                MOV     R2,A
+00B3 A3                INC     DPTR
+00B4 E0                MOVX    A,@DPTR
+00B5 F9                MOV     R1,A
+00B6 758204            MOV     DPL,#04H
+00B9 758300            MOV     DPH,#00H
+00BC 120000      E     LCALL   ?C?CLDOPTR
+00BF FF                MOV     R7,A
+00C0 7E00              MOV     R6,#00H
+00C2 900000      R     MOV     DPTR,#usRegCount
+00C5 EE                MOV     A,R6
+00C6 F0                MOVX    @DPTR,A
+00C7 A3                INC     DPTR
+00C8 EF                MOV     A,R7
+00C9 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 191
+00CA 900000      R     MOV     DPTR,#usRegCount
+00CD E0                MOVX    A,@DPTR
+00CE FE                MOV     R6,A
+00CF A3                INC     DPTR
+00D0 E0                MOVX    A,@DPTR
+00D1 FF                MOV     R7,A
+00D2 C3                CLR     C
+00D3 EF                MOV     A,R7
+00D4 9401              SUBB    A,#01H
+00D6 EE                MOV     A,R6
+00D7 9400              SUBB    A,#00H
+00D9 5003              JNC     $ + 5H
+00DB 020000      R     LJMP    ?C0013
+00DE 900000      R     MOV     DPTR,#usRegCount
+00E1 E0                MOVX    A,@DPTR
+00E2 FE                MOV     R6,A
+00E3 A3                INC     DPTR
+00E4 E0                MOVX    A,@DPTR
+00E5 FF                MOV     R7,A
+00E6 D3                SETB    C
+00E7 EF                MOV     A,R7
+00E8 947D              SUBB    A,#07DH
+00EA EE                MOV     A,R6
+00EB 9400              SUBB    A,#00H
+00ED 4003              JC      $ + 5H
+00EF 020000      R     LJMP    ?C0013
+                                           ; SOURCE LINE # 192
+                                           ; SOURCE LINE # 194
+00F2 900000      R     MOV     DPTR,#pucFrame
+00F5 E0                MOVX    A,@DPTR
+00F6 FB                MOV     R3,A
+C51 COMPILER V9.00   MBFUNCHOLDING                                                         06/19/2014 16:55:31 PAGE 18  
+
+00F7 A3                INC     DPTR
+00F8 E0                MOVX    A,@DPTR
+00F9 FA                MOV     R2,A
+00FA A3                INC     DPTR
+00FB E0                MOVX    A,@DPTR
+00FC F9                MOV     R1,A
+00FD 900000      R     MOV     DPTR,#pucFrameCur
+0100 EB                MOV     A,R3
+0101 F0                MOVX    @DPTR,A
+0102 A3                INC     DPTR
+0103 EA                MOV     A,R2
+0104 F0                MOVX    @DPTR,A
+0105 A3                INC     DPTR
+0106 E9                MOV     A,R1
+0107 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 195
+0108 900000      R     MOV     DPTR,#usLen
+010B E0                MOVX    A,@DPTR
+010C FB                MOV     R3,A
+010D A3                INC     DPTR
+010E E0                MOVX    A,@DPTR
+010F FA                MOV     R2,A
+0110 A3                INC     DPTR
+0111 E0                MOVX    A,@DPTR
+0112 F9                MOV     R1,A
+0113 E4                CLR     A
+0114 75F000            MOV     B,#00H
+0117 120000      E     LCALL   ?C?ISTPTR
+                                           ; SOURCE LINE # 198
+011A 900000      R     MOV     DPTR,#pucFrameCur
+011D E0                MOVX    A,@DPTR
+011E FB                MOV     R3,A
+011F A3                INC     DPTR
+0120 E4                CLR     A
+0121 75F001            MOV     B,#01H
+0124 120000      E     LCALL   ?C?ILDIX
+0127 A9F0              MOV     R1,B
+0129 FA                MOV     R2,A
+012A 7403              MOV     A,#03H
+012C 120000      E     LCALL   ?C?CSTPTR
+                                           ; SOURCE LINE # 199
+012F 900000      R     MOV     DPTR,#usLen
+0132 E0                MOVX    A,@DPTR
+0133 FB                MOV     R3,A
+0134 A3                INC     DPTR
+0135 E0                MOVX    A,@DPTR
+0136 FA                MOV     R2,A
+0137 A3                INC     DPTR
+0138 E0                MOVX    A,@DPTR
+0139 F9                MOV     R1,A
+013A E4                CLR     A
+013B 75F001            MOV     B,#01H
+013E 120000      E     LCALL   ?C?IILDPTR
+                                           ; SOURCE LINE # 202
+0141 900000      R     MOV     DPTR,#usRegCount
+0144 E0                MOVX    A,@DPTR
+0145 FE                MOV     R6,A
+0146 A3                INC     DPTR
+0147 E0                MOVX    A,@DPTR
+0148 FF                MOV     R7,A
+0149 EF                MOV     A,R7
+014A 25E0              ADD     A,ACC
+C51 COMPILER V9.00   MBFUNCHOLDING                                                         06/19/2014 16:55:31 PAGE 19  
+
+014C FF                MOV     R7,A
+014D 900000      R     MOV     DPTR,#pucFrameCur
+0150 E0                MOVX    A,@DPTR
+0151 FB                MOV     R3,A
+0152 A3                INC     DPTR
+0153 E4                CLR     A
+0154 75F001            MOV     B,#01H
+0157 120000      E     LCALL   ?C?ILDIX
+015A A9F0              MOV     R1,B
+015C FA                MOV     R2,A
+015D EF                MOV     A,R7
+015E 120000      E     LCALL   ?C?CSTPTR
+                                           ; SOURCE LINE # 203
+0161 900000      R     MOV     DPTR,#usLen
+0164 E0                MOVX    A,@DPTR
+0165 FB                MOV     R3,A
+0166 A3                INC     DPTR
+0167 E0                MOVX    A,@DPTR
+0168 FA                MOV     R2,A
+0169 A3                INC     DPTR
+016A E0                MOVX    A,@DPTR
+016B F9                MOV     R1,A
+016C E4                CLR     A
+016D 75F001            MOV     B,#01H
+0170 120000      E     LCALL   ?C?IILDPTR
+                                           ; SOURCE LINE # 206
+0173 900000      R     MOV     DPTR,#pucFrameCur
+0176 E0                MOVX    A,@DPTR
+0177 FB                MOV     R3,A
+0178 A3                INC     DPTR
+0179 E0                MOVX    A,@DPTR
+017A FA                MOV     R2,A
+017B A3                INC     DPTR
+017C E0                MOVX    A,@DPTR
+017D F9                MOV     R1,A
+017E 900000      R     MOV     DPTR,#usRegAddress
+0181 E0                MOVX    A,@DPTR
+0182 FC                MOV     R4,A
+0183 A3                INC     DPTR
+0184 E0                MOVX    A,@DPTR
+0185 FD                MOV     R5,A
+0186 900000      R     MOV     DPTR,#usRegCount
+0189 E0                MOVX    A,@DPTR
+018A FE                MOV     R6,A
+018B A3                INC     DPTR
+018C E0                MOVX    A,@DPTR
+018D FF                MOV     R7,A
+018E 900000      E     MOV     DPTR,#?_eMBRegHoldingCB?BYTE+05H
+0191 EE                MOV     A,R6
+0192 F0                MOVX    @DPTR,A
+0193 A3                INC     DPTR
+0194 EF                MOV     A,R7
+0195 F0                MOVX    @DPTR,A
+0196 900000      E     MOV     DPTR,#?_eMBRegHoldingCB?BYTE+07H
+0199 E4                CLR     A
+019A F0                MOVX    @DPTR,A
+019B 120000      E     LCALL   _eMBRegHoldingCB
+019E 900000      R     MOV     DPTR,#eRegStatus
+01A1 EF                MOV     A,R7
+01A2 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 208
+01A3 900000      R     MOV     DPTR,#eRegStatus
+C51 COMPILER V9.00   MBFUNCHOLDING                                                         06/19/2014 16:55:31 PAGE 20  
+
+01A6 E0                MOVX    A,@DPTR
+01A7 FF                MOV     R7,A
+01A8 EF                MOV     A,R7
+01A9 600F              JZ      ?C0014
+                                           ; SOURCE LINE # 209
+                                           ; SOURCE LINE # 210
+01AB 900000      R     MOV     DPTR,#eRegStatus
+01AE E0                MOVX    A,@DPTR
+01AF FF                MOV     R7,A
+01B0 120000      E     LCALL   _prveMBError2Exception
+01B3 900000      R     MOV     DPTR,#eStatus
+01B6 EF                MOV     A,R7
+01B7 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 211
+01B8 8030              SJMP    ?C0017
+01BA         ?C0014:
+                                           ; SOURCE LINE # 213
+                                           ; SOURCE LINE # 214
+01BA 900000      R     MOV     DPTR,#usRegCount
+01BD E0                MOVX    A,@DPTR
+01BE FE                MOV     R6,A
+01BF A3                INC     DPTR
+01C0 E0                MOVX    A,@DPTR
+01C1 FF                MOV     R7,A
+01C2 EF                MOV     A,R7
+01C3 25E0              ADD     A,ACC
+01C5 FF                MOV     R7,A
+01C6 EE                MOV     A,R6
+01C7 33                RLC     A
+01C8 FE                MOV     R6,A
+01C9 900000      R     MOV     DPTR,#usLen
+01CC E0                MOVX    A,@DPTR
+01CD FB                MOV     R3,A
+01CE A3                INC     DPTR
+01CF E0                MOVX    A,@DPTR
+01D0 FA                MOV     R2,A
+01D1 A3                INC     DPTR
+01D2 E0                MOVX    A,@DPTR
+01D3 F9                MOV     R1,A
+01D4 EE                MOV     A,R6
+01D5 8FF0              MOV     B,R7
+01D7 120000      E     LCALL   ?C?IILDPTR
+                                           ; SOURCE LINE # 215
+01DA         ?C0015:
+                                           ; SOURCE LINE # 216
+01DA 800E              SJMP    ?C0017
+01DC         ?C0013:
+                                           ; SOURCE LINE # 218
+                                           ; SOURCE LINE # 219
+01DC 900000      R     MOV     DPTR,#eStatus
+01DF 7403              MOV     A,#03H
+01E1 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 220
+01E2         ?C0016:
+                                           ; SOURCE LINE # 221
+01E2 8006              SJMP    ?C0017
+01E4         ?C0012:
+                                           ; SOURCE LINE # 223
+                                           ; SOURCE LINE # 225
+01E4 900000      R     MOV     DPTR,#eStatus
+01E7 7403              MOV     A,#03H
+01E9 F0                MOVX    @DPTR,A
+C51 COMPILER V9.00   MBFUNCHOLDING                                                         06/19/2014 16:55:31 PAGE 21  
+
+                                           ; SOURCE LINE # 226
+01EA         ?C0017:
+                                           ; SOURCE LINE # 227
+01EA 900000      R     MOV     DPTR,#eStatus
+01ED E0                MOVX    A,@DPTR
+01EE FF                MOV     R7,A
+                                           ; SOURCE LINE # 228
+01EF         ?C0018:
+01EF 22                RET     
+             ; FUNCTION _eMBFuncReadHoldingRegister (END)
+
+C51 COMPILER V9.00   MBFUNCHOLDING                                                         06/19/2014 16:55:31 PAGE 22  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+eMBErrorCode . . . . . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+P2 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A0H  1
+P3 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B0H  1
+EV_FRAME_SENT. . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+ULONG. . . . . . . . . . . . . . . . .  TYPEDEF  -----  U_LONG   -----  4
+ADCSTAT. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D8H  1
+pxMBFunctionHandler. . . . . . . . . .  TYPEDEF  -----  PTR      -----  3
+MB_PAR_ODD . . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+IE . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A8H  1
+pvMBFrameStop. . . . . . . . . . . . .  TYPEDEF  -----  PTR      -----  3
+MB_EX_SLAVE_BUSY . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+EV_EXECUTE . . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+SHORT. . . . . . . . . . . . . . . . .  TYPEDEF  -----  INT      -----  2
+size_t . . . . . . . . . . . . . . . .  TYPEDEF  -----  U_INT    -----  2
+EV_FRAME_RECEIVED. . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+MB_EX_ACKNOWLEDGE. . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+xMBFunctionHandler . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  4
+  ucFunctionCode . . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
+  pxHandler. . . . . . . . . . . . . .  MEMBER   -----  PTR      0001H  3
+_eMBFuncReadHoldingRegister. . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  pucFrame . . . . . . . . . . . . . .  AUTO     XDATA  PTR      0000H  3
+  usLen. . . . . . . . . . . . . . . .  AUTO     XDATA  PTR      0003H  3
+  usRegAddress . . . . . . . . . . . .  AUTO     XDATA  U_INT    0006H  2
+  usRegCount . . . . . . . . . . . . .  AUTO     XDATA  U_INT    0008H  2
+  pucFrameCur. . . . . . . . . . . . .  AUTO     XDATA  PTR      000AH  3
+  eStatus. . . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   000DH  1
+  eRegStatus . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   000EH  1
+IP . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B8H  1
+MB_EX_GATEWAY_PATH_FAILED. . . . . . .  E_CONST  -----  U_CHAR   -----  1
+MB_EILLSTATE . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+peMBFrameReceive . . . . . . . . . . .  TYPEDEF  -----  PTR      -----  3
+MB_EX_NONE . . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+CHAR . . . . . . . . . . . . . . . . .  TYPEDEF  -----  CHAR     -----  1
+eMBEventType . . . . . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+I2CCON . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E8H  1
+MB_ETIMEDOUT . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+DCON . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E8H  1
+_eMBFuncWriteHoldingRegister . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  pucFrame . . . . . . . . . . . . . .  AUTO     XDATA  PTR      0000H  3
+  usLen. . . . . . . . . . . . . . . .  AUTO     XDATA  PTR      0003H  3
+  usRegAddress . . . . . . . . . . . .  AUTO     XDATA  U_INT    0006H  2
+  eStatus. . . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0008H  1
+  eRegStatus . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0009H  1
+eMBException . . . . . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+BOOL . . . . . . . . . . . . . . . . .  TYPEDEF  -----  CHAR     -----  1
+MB_EINVAL. . . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+LONG . . . . . . . . . . . . . . . . .  TYPEDEF  -----  LONG     -----  4
+MB_ENOREG. . . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+SCON . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0098H  1
+MB_EX_ILLEGAL_FUNCTION . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+TCON . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0088H  1
+MB_REG_WRITE . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+MB_ENOERR. . . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+MB_ENORES. . . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+_prveMBError2Exception . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+MB_EX_ILLEGAL_DATA_VALUE . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+eMBRegisterMode. . . . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+C51 COMPILER V9.00   MBFUNCHOLDING                                                         06/19/2014 16:55:31 PAGE 23  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+MB_REG_READ. . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+MB_EIO . . . . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+SPICON . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F8H  1
+MB_EX_ILLEGAL_DATA_ADDRESS . . . . . .  E_CONST  -----  U_CHAR   -----  1
+MB_TCP . . . . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+MB_ASCII . . . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+MB_EX_GATEWAY_TGT_FAILED . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+pvMBFrameClose . . . . . . . . . . . .  TYPEDEF  -----  PTR      -----  3
+peMBFrameSend. . . . . . . . . . . . .  TYPEDEF  -----  PTR      -----  3
+MB_PAR_EVEN. . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+_eMBRegHoldingCB . . . . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+MB_PAR_NONE. . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+MB_EPORTERR. . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+USHORT . . . . . . . . . . . . . . . .  TYPEDEF  -----  U_INT    -----  2
+T2CON. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C8H  1
+MB_EX_SLAVE_DEVICE_FAILURE . . . . . .  E_CONST  -----  U_CHAR   -----  1
+MB_RTU . . . . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+wchar_t. . . . . . . . . . . . . . . .  TYPEDEF  -----  CHAR     -----  1
+MB_EX_MEMORY_PARITY_ERROR. . . . . . .  E_CONST  -----  U_CHAR   -----  1
+eMBParity. . . . . . . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+EV_READY . . . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+UCHAR. . . . . . . . . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+pvMBFrameStart . . . . . . . . . . . .  TYPEDEF  -----  PTR      -----  3
+PSW. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D0H  1
+_eMBFuncWriteMultipleHoldingRegister .  PUBLIC   CODE   PROC     0000H  -----
+  pucFrame . . . . . . . . . . . . . .  AUTO     XDATA  PTR      0000H  3
+  usLen. . . . . . . . . . . . . . . .  AUTO     XDATA  PTR      0003H  3
+  usRegAddress . . . . . . . . . . . .  AUTO     XDATA  U_INT    0006H  2
+  usRegCount . . . . . . . . . . . . .  AUTO     XDATA  U_INT    0008H  2
+  ucRegByteCount . . . . . . . . . . .  AUTO     XDATA  U_CHAR   000AH  1
+  eStatus. . . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   000BH  1
+  eRegStatus . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   000CH  1
+eMBMode. . . . . . . . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+WDCON. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C0H  1
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   1140    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =     38    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  2 WARNING(S),  0 ERROR(S)

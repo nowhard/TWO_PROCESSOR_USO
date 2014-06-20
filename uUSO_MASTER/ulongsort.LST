@@ -1,0 +1,763 @@
+C51 COMPILER V9.00   ULONGSORT                                                             06/20/2014 09:02:40 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE ULONGSORT
+OBJECT MODULE PLACED IN ulongsort.OBJ
+COMPILER INVOKED BY: C:\Program Files\Keil\C51\BIN\C51.EXE ulongsort.c LARGE OPTIMIZE(6,SPEED) BROWSE ORDER NOAREGS DEBU
+                    -G OBJECTEXTEND CODE SYMBOLS
+
+line level    source
+
+   1          #include "ulongsort.h"
+   2          #include "watchdog.h"
+   3          
+   4          volatile unsigned long mas_copy[ADC_BUF_SIZE];
+   5          volatile unsigned char xdata mid_cycle_counter=0;
+   6          volatile unsigned long  temp;
+   7          
+   8          //------------------------------------------------
+   9          //#pragma OT(0,Speed) 
+  10           PT_THREAD(ulongsort_process(struct pt *pt))
+  11           {
+  12   1         static volatile  unsigned char counter=0,i=0,j=0;
+  13   1         wdt_count[Sort_Proc].process_state=RUN;
+  14   1         
+  15   1         PT_BEGIN(pt);
+  16   3      
+  17   3        while(1) 
+  18   3        {
+  19   4                 PT_DELAY(pt,1);
+  20   4                //------------ищем новое измерение-----------------
+  21   4      
+  22   4                      if(!adc_channels[mid_cycle_counter].new_measuring)
+  23   4                      {
+  24   5                              counter=0;
+  25   5                              while((!adc_channels[mid_cycle_counter].new_measuring) && (counter!=ADC_CHANNELS_NUM))
+  26   5                              {
+  27   6                                      mid_cycle_counter= (mid_cycle_counter+1)&0x7;
+  28   6                                      counter++;
+  29   6                                      PT_YIELD(pt);//отдаем другим процессам
+  30   6                              }
+  31   5                              
+  32   5                              if(counter==ADC_CHANNELS_NUM)//если нового измерения не найдено-рестарт процесса
+  33   5                              {
+  34   6                                  PT_RESTART(pt);
+  35   6                              }
+  36   5                      }
+  37   4              
+  38   4                //-----------------копируем во временный массив-----------------------------
+  39   4                      memcpy(mas_copy,adc_channels[mid_cycle_counter].ADC_BUF_UN,ADC_BUF_SIZE*sizeof(unsigned long)); 
+  40   4                      PT_YIELD(pt);//отдаем другим процессам
+  41   4                //--------------сортировка пузырьком--------------------------------
+  42   4                        for (i=ADC_BUF_SIZE-1;i>0;i--)
+  43   4                        {
+  44   5                          for (j=0;j<i;j++)
+  45   5                          {
+  46   6                              if(mas_copy[j]>mas_copy[j+1])
+  47   6                              {
+  48   7                                  temp=mas_copy[j];
+  49   7                                  mas_copy[j]=mas_copy[j+1];
+  50   7                                  mas_copy[j+1]=temp;
+  51   7                              }
+  52   6                                      PT_YIELD(pt);
+  53   6                           }
+  54   5                        }
+C51 COMPILER V9.00   ULONGSORT                                                             06/20/2014 09:02:40 PAGE 2   
+
+  55   4                 //-----------находим медиану--------------------
+  56   4                      channels[mid_cycle_counter].channel_data=(mas_copy[(ADC_BUF_SIZE>>1)-1]+mas_copy[ADC_BUF_SIZE>>1])>>1;
+  57   4      
+  58   4                      if(channels[mid_cycle_counter].calibrate.cal.calibrate)
+  59   4                      {
+  60   5                              channels[mid_cycle_counter].channel_data_calibrate=GetCalibrateVal(mid_cycle_counter,channels[mid_cycl
+             -e_counter].channel_data);     //калиброванная величина
+  61   5                      }
+  62   4      
+  63   4                      adc_channels[mid_cycle_counter].new_measuring=0;
+  64   4                      wdt_count[Sort_Proc].count++;
+  65   4                      PT_RESTART(pt);
+  66   4                //----------------------------------------------      
+  67   4         }
+  68   3         PT_END(pt);
+  69   1       }
+  70          
+C51 COMPILER V9.00   ULONGSORT                                                             06/20/2014 09:02:40 PAGE 3   
+
+ASSEMBLY LISTING OF GENERATED OBJECT CODE
+
+
+             ; FUNCTION _ulongsort_process (BEGIN)
+                                           ; SOURCE LINE # 10
+0000 900000      R     MOV     DPTR,#pt
+0003 EB                MOV     A,R3
+0004 F0                MOVX    @DPTR,A
+0005 A3                INC     DPTR
+0006 EA                MOV     A,R2
+0007 F0                MOVX    @DPTR,A
+0008 A3                INC     DPTR
+0009 E9                MOV     A,R1
+000A F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 11
+                                           ; SOURCE LINE # 13
+000B E4                CLR     A
+000C 900000      E     MOV     DPTR,#wdt_count+03H
+000F F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 15
+0010 900000      R     MOV     DPTR,#PT_YIELD_FLAG
+0013 04                INC     A
+0014 F0                MOVX    @DPTR,A
+0015 120000      E     LCALL   ?C?ILDPTR
+0018 FF                MOV     R7,A
+0019 AEF0              MOV     R6,B
+001B E5F0              MOV     A,B
+001D 6003              JZ      $ + 5H
+001F 020000      R     LJMP    ?C0001
+0022 EF                MOV     A,R7
+0023 24ED              ADD     A,#0EDH
+0025 6037              JZ      ?C0008
+0027 24F6              ADD     A,#0F6H
+0029 7003              JNZ     $ + 5H
+002B 020000      R     LJMP    ?C0019
+002E 24F5              ADD     A,#0F5H
+0030 7003              JNZ     $ + 5H
+0032 020000      R     LJMP    ?C0028
+0035 24F4              ADD     A,#0F4H
+0037 7003              JNZ     $ + 5H
+0039 020000      R     LJMP    ?C0040
+003C 2434              ADD     A,#034H
+003E 6003              JZ      $ + 5H
+0040 020000      R     LJMP    ?C0001
+0043         ?C0003:
+                                           ; SOURCE LINE # 17
+                                           ; SOURCE LINE # 18
+                                           ; SOURCE LINE # 19
+0043 900000      R     MOV     DPTR,#pt
+0046 E0                MOVX    A,@DPTR
+0047 FB                MOV     R3,A
+0048 A3                INC     DPTR
+0049 E0                MOVX    A,@DPTR
+004A FA                MOV     R2,A
+004B A3                INC     DPTR
+004C E0                MOVX    A,@DPTR
+004D F9                MOV     R1,A
+004E 900002            MOV     DPTR,#02H
+0051 E4                CLR     A
+0052 F5F0              MOV     B,A
+0054 120000      E     LCALL   ?C?ISTOPTR
+0057 E4                CLR     A
+C51 COMPILER V9.00   ULONGSORT                                                             06/20/2014 09:02:40 PAGE 4   
+
+0058 75F013            MOV     B,#013H
+005B 120000      E     LCALL   ?C?ISTPTR
+005E         ?C0008:
+005E 900000      R     MOV     DPTR,#pt
+0061 E0                MOVX    A,@DPTR
+0062 FB                MOV     R3,A
+0063 A3                INC     DPTR
+0064 E0                MOVX    A,@DPTR
+0065 FA                MOV     R2,A
+0066 A3                INC     DPTR
+0067 E0                MOVX    A,@DPTR
+0068 F9                MOV     R1,A
+0069 900002            MOV     DPTR,#02H
+006C 120000      E     LCALL   ?C?ILDOPTR
+006F C3                CLR     C
+0070 9401              SUBB    A,#01H
+0072 E5F0              MOV     A,B
+0074 9400              SUBB    A,#00H
+0076 4003              JC      ?C0010
+0078 D3                SETB    C
+0079 8001              SJMP    ?C0011
+007B         ?C0010:
+007B C3                CLR     C
+007C         ?C0011:
+007C 4003              JC      ?C0006
+007E 7F00              MOV     R7,#00H
+0080 22                RET     
+0081         ?C0006:
+                                           ; SOURCE LINE # 22
+0081 900000      R     MOV     DPTR,#mid_cycle_counter
+0084 E0                MOVX    A,@DPTR
+0085 75F026            MOV     B,#026H
+0088 A4                MUL     AB
+0089 2400        E     ADD     A,#LOW adc_channels+025H
+008B F582              MOV     DPL,A
+008D E5F0              MOV     A,B
+008F 3400        E     ADDC    A,#HIGH adc_channels+025H
+0091 F583              MOV     DPH,A
+0093 E0                MOVX    A,@DPTR
+0094 706A              JNZ     ?C0013
+                                           ; SOURCE LINE # 23
+                                           ; SOURCE LINE # 24
+0096 900000      R     MOV     DPTR,#counter
+0099 F0                MOVX    @DPTR,A
+009A         ?C0014:
+                                           ; SOURCE LINE # 25
+009A 900000      R     MOV     DPTR,#mid_cycle_counter
+009D E0                MOVX    A,@DPTR
+009E 75F026            MOV     B,#026H
+00A1 A4                MUL     AB
+00A2 2400        E     ADD     A,#LOW adc_channels+025H
+00A4 F582              MOV     DPL,A
+00A6 E5F0              MOV     A,B
+00A8 3400        E     ADDC    A,#HIGH adc_channels+025H
+00AA F583              MOV     DPH,A
+00AC E0                MOVX    A,@DPTR
+00AD 7036              JNZ     ?C0015
+00AF 900000      R     MOV     DPTR,#counter
+00B2 E0                MOVX    A,@DPTR
+00B3 6408              XRL     A,#08H
+00B5 602E              JZ      ?C0015
+                                           ; SOURCE LINE # 26
+C51 COMPILER V9.00   ULONGSORT                                                             06/20/2014 09:02:40 PAGE 5   
+
+                                           ; SOURCE LINE # 27
+00B7 900000      R     MOV     DPTR,#mid_cycle_counter
+00BA E0                MOVX    A,@DPTR
+00BB 04                INC     A
+00BC 5407              ANL     A,#07H
+00BE F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 28
+00BF 900000      R     MOV     DPTR,#counter
+00C2 E0                MOVX    A,@DPTR
+00C3 04                INC     A
+00C4 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 29
+00C5 E4                CLR     A
+00C6 900000      R     MOV     DPTR,#PT_YIELD_FLAG
+00C9 F0                MOVX    @DPTR,A
+00CA 900000      R     MOV     DPTR,#pt
+00CD E0                MOVX    A,@DPTR
+00CE FB                MOV     R3,A
+00CF A3                INC     DPTR
+00D0 E0                MOVX    A,@DPTR
+00D1 FA                MOV     R2,A
+00D2 A3                INC     DPTR
+00D3 E0                MOVX    A,@DPTR
+00D4 F9                MOV     R1,A
+00D5 E4                CLR     A
+00D6 75F01D            MOV     B,#01DH
+00D9 120000      E     LCALL   ?C?ISTPTR
+00DC         ?C0019:
+00DC 900000      R     MOV     DPTR,#PT_YIELD_FLAG
+00DF E0                MOVX    A,@DPTR
+00E0 70B8              JNZ     ?C0014
+00E2 7F01              MOV     R7,#01H
+00E4 22                RET     
+                                           ; SOURCE LINE # 30
+00E5         ?C0015:
+                                           ; SOURCE LINE # 32
+00E5 900000      R     MOV     DPTR,#counter
+00E8 E0                MOVX    A,@DPTR
+00E9 B40814            CJNE    A,#08H,?C0013
+                                           ; SOURCE LINE # 33
+                                           ; SOURCE LINE # 34
+00EC 900000      R     MOV     DPTR,#pt
+00EF E0                MOVX    A,@DPTR
+00F0 FB                MOV     R3,A
+00F1 A3                INC     DPTR
+00F2 E0                MOVX    A,@DPTR
+00F3 FA                MOV     R2,A
+00F4 A3                INC     DPTR
+00F5 E0                MOVX    A,@DPTR
+00F6 F9                MOV     R1,A
+00F7 E4                CLR     A
+00F8 F5F0              MOV     B,A
+00FA 120000      E     LCALL   ?C?ISTPTR
+00FD 7F00              MOV     R7,#00H
+00FF 22                RET     
+                                           ; SOURCE LINE # 35
+                                           ; SOURCE LINE # 36
+0100         ?C0013:
+                                           ; SOURCE LINE # 39
+0100 900000      R     MOV     DPTR,#mid_cycle_counter
+0103 E0                MOVX    A,@DPTR
+0104 75F026            MOV     B,#026H
+C51 COMPILER V9.00   ULONGSORT                                                             06/20/2014 09:02:40 PAGE 6   
+
+0107 A4                MUL     AB
+0108 2400        E     ADD     A,#LOW adc_channels
+010A F9                MOV     R1,A
+010B 7400        E     MOV     A,#HIGH adc_channels
+010D 35F0              ADDC    A,B
+010F FA                MOV     R2,A
+0110 7B01              MOV     R3,#01H
+0112 EA                MOV     A,R2
+0113 C0E0              PUSH    ACC
+0115 E9                MOV     A,R1
+0116 C0E0              PUSH    ACC
+0118 7A00        R     MOV     R2,#HIGH mas_copy
+011A 7900        R     MOV     R1,#LOW mas_copy
+011C 7800        R     MOV     R0,#LOW mas_copy
+011E 7C00        R     MOV     R4,#HIGH mas_copy
+0120 7D01              MOV     R5,#01H
+0122 D0E0              POP     ACC
+0124 F9                MOV     R1,A
+0125 D0E0              POP     ACC
+0127 FA                MOV     R2,A
+0128 7E00              MOV     R6,#00H
+012A 7F20              MOV     R7,#020H
+012C 120000      E     LCALL   ?C?COPY
+                                           ; SOURCE LINE # 40
+012F E4                CLR     A
+0130 900000      R     MOV     DPTR,#PT_YIELD_FLAG
+0133 F0                MOVX    @DPTR,A
+0134 900000      R     MOV     DPTR,#pt
+0137 E0                MOVX    A,@DPTR
+0138 FB                MOV     R3,A
+0139 A3                INC     DPTR
+013A E0                MOVX    A,@DPTR
+013B FA                MOV     R2,A
+013C A3                INC     DPTR
+013D E0                MOVX    A,@DPTR
+013E F9                MOV     R1,A
+013F E4                CLR     A
+0140 75F028            MOV     B,#028H
+0143 120000      E     LCALL   ?C?ISTPTR
+0146         ?C0028:
+0146 900000      R     MOV     DPTR,#PT_YIELD_FLAG
+0149 E0                MOVX    A,@DPTR
+014A 7003              JNZ     ?C0026
+014C 7F01              MOV     R7,#01H
+014E 22                RET     
+014F         ?C0026:
+                                           ; SOURCE LINE # 42
+014F 900000      R     MOV     DPTR,#i
+0152 7407              MOV     A,#07H
+0154 F0                MOVX    @DPTR,A
+0155         ?C0030:
+                                           ; SOURCE LINE # 43
+                                           ; SOURCE LINE # 44
+0155 E4                CLR     A
+0156 900000      R     MOV     DPTR,#j
+0159 F0                MOVX    @DPTR,A
+015A         ?C0033:
+015A 900000      R     MOV     DPTR,#i
+015D E0                MOVX    A,@DPTR
+015E FF                MOV     R7,A
+015F A3                INC     DPTR
+0160 E0                MOVX    A,@DPTR
+C51 COMPILER V9.00   ULONGSORT                                                             06/20/2014 09:02:40 PAGE 7   
+
+0161 C3                CLR     C
+0162 9F                SUBB    A,R7
+0163 4003              JC      $ + 5H
+0165 020000      R     LJMP    ?C0032
+                                           ; SOURCE LINE # 45
+                                           ; SOURCE LINE # 46
+0168 E0                MOVX    A,@DPTR
+0169 25E0              ADD     A,ACC
+016B 25E0              ADD     A,ACC
+016D 2400        R     ADD     A,#LOW mas_copy+04H
+016F F582              MOV     DPL,A
+0171 E4                CLR     A
+0172 3400        R     ADDC    A,#HIGH mas_copy+04H
+0174 F583              MOV     DPH,A
+0176 E0                MOVX    A,@DPTR
+0177 FC                MOV     R4,A
+0178 A3                INC     DPTR
+0179 E0                MOVX    A,@DPTR
+017A FD                MOV     R5,A
+017B A3                INC     DPTR
+017C E0                MOVX    A,@DPTR
+017D FE                MOV     R6,A
+017E A3                INC     DPTR
+017F E0                MOVX    A,@DPTR
+0180 FF                MOV     R7,A
+0181 900000      R     MOV     DPTR,#j
+0184 E0                MOVX    A,@DPTR
+0185 25E0              ADD     A,ACC
+0187 25E0              ADD     A,ACC
+0189 2400        R     ADD     A,#LOW mas_copy
+018B F582              MOV     DPL,A
+018D E4                CLR     A
+018E 3400        R     ADDC    A,#HIGH mas_copy
+0190 F583              MOV     DPH,A
+0192 E0                MOVX    A,@DPTR
+0193 F8                MOV     R0,A
+0194 A3                INC     DPTR
+0195 E0                MOVX    A,@DPTR
+0196 F9                MOV     R1,A
+0197 A3                INC     DPTR
+0198 E0                MOVX    A,@DPTR
+0199 FA                MOV     R2,A
+019A A3                INC     DPTR
+019B E0                MOVX    A,@DPTR
+019C FB                MOV     R3,A
+019D D3                SETB    C
+019E 120000      E     LCALL   ?C?ULCMP
+01A1 4074              JC      ?C0039
+                                           ; SOURCE LINE # 47
+                                           ; SOURCE LINE # 48
+01A3 900000      R     MOV     DPTR,#j
+01A6 E0                MOVX    A,@DPTR
+01A7 25E0              ADD     A,ACC
+01A9 25E0              ADD     A,ACC
+01AB 2400        R     ADD     A,#LOW mas_copy
+01AD F582              MOV     DPL,A
+01AF E4                CLR     A
+01B0 3400        R     ADDC    A,#HIGH mas_copy
+01B2 F583              MOV     DPH,A
+01B4 E0                MOVX    A,@DPTR
+01B5 FC                MOV     R4,A
+01B6 A3                INC     DPTR
+C51 COMPILER V9.00   ULONGSORT                                                             06/20/2014 09:02:40 PAGE 8   
+
+01B7 E0                MOVX    A,@DPTR
+01B8 FD                MOV     R5,A
+01B9 A3                INC     DPTR
+01BA E0                MOVX    A,@DPTR
+01BB FE                MOV     R6,A
+01BC A3                INC     DPTR
+01BD E0                MOVX    A,@DPTR
+01BE FF                MOV     R7,A
+01BF 900000      R     MOV     DPTR,#temp
+01C2 120000      E     LCALL   ?C?LSTXDATA
+                                           ; SOURCE LINE # 49
+01C5 900000      R     MOV     DPTR,#j
+01C8 E0                MOVX    A,@DPTR
+01C9 25E0              ADD     A,ACC
+01CB 25E0              ADD     A,ACC
+01CD 2400        R     ADD     A,#LOW mas_copy+04H
+01CF F582              MOV     DPL,A
+01D1 E4                CLR     A
+01D2 3400        R     ADDC    A,#HIGH mas_copy+04H
+01D4 F583              MOV     DPH,A
+01D6 E0                MOVX    A,@DPTR
+01D7 FC                MOV     R4,A
+01D8 A3                INC     DPTR
+01D9 E0                MOVX    A,@DPTR
+01DA FD                MOV     R5,A
+01DB A3                INC     DPTR
+01DC E0                MOVX    A,@DPTR
+01DD FE                MOV     R6,A
+01DE A3                INC     DPTR
+01DF E0                MOVX    A,@DPTR
+01E0 FF                MOV     R7,A
+01E1 900000      R     MOV     DPTR,#j
+01E4 E0                MOVX    A,@DPTR
+01E5 25E0              ADD     A,ACC
+01E7 25E0              ADD     A,ACC
+01E9 2400        R     ADD     A,#LOW mas_copy
+01EB F582              MOV     DPL,A
+01ED E4                CLR     A
+01EE 3400        R     ADDC    A,#HIGH mas_copy
+01F0 F583              MOV     DPH,A
+01F2 120000      E     LCALL   ?C?LSTXDATA
+                                           ; SOURCE LINE # 50
+01F5 900000      R     MOV     DPTR,#temp
+01F8 E0                MOVX    A,@DPTR
+01F9 FC                MOV     R4,A
+01FA A3                INC     DPTR
+01FB E0                MOVX    A,@DPTR
+01FC FD                MOV     R5,A
+01FD A3                INC     DPTR
+01FE E0                MOVX    A,@DPTR
+01FF FE                MOV     R6,A
+0200 A3                INC     DPTR
+0201 E0                MOVX    A,@DPTR
+0202 FF                MOV     R7,A
+0203 900000      R     MOV     DPTR,#j
+0206 E0                MOVX    A,@DPTR
+0207 25E0              ADD     A,ACC
+0209 25E0              ADD     A,ACC
+020B 2400        R     ADD     A,#LOW mas_copy+04H
+020D F582              MOV     DPL,A
+020F E4                CLR     A
+0210 3400        R     ADDC    A,#HIGH mas_copy+04H
+C51 COMPILER V9.00   ULONGSORT                                                             06/20/2014 09:02:40 PAGE 9   
+
+0212 F583              MOV     DPH,A
+0214 120000      E     LCALL   ?C?LSTXDATA
+                                           ; SOURCE LINE # 51
+0217         ?C0039:
+                                           ; SOURCE LINE # 52
+0217 E4                CLR     A
+0218 900000      R     MOV     DPTR,#PT_YIELD_FLAG
+021B F0                MOVX    @DPTR,A
+021C 900000      R     MOV     DPTR,#pt
+021F E0                MOVX    A,@DPTR
+0220 FB                MOV     R3,A
+0221 A3                INC     DPTR
+0222 E0                MOVX    A,@DPTR
+0223 FA                MOV     R2,A
+0224 A3                INC     DPTR
+0225 E0                MOVX    A,@DPTR
+0226 F9                MOV     R1,A
+0227 E4                CLR     A
+0228 75F034            MOV     B,#034H
+022B 120000      E     LCALL   ?C?ISTPTR
+022E         ?C0040:
+022E 900000      R     MOV     DPTR,#PT_YIELD_FLAG
+0231 E0                MOVX    A,@DPTR
+0232 7003              JNZ     ?C0035
+0234 7F01              MOV     R7,#01H
+0236 22                RET     
+                                           ; SOURCE LINE # 53
+0237         ?C0035:
+0237 900000      R     MOV     DPTR,#j
+023A E0                MOVX    A,@DPTR
+023B 04                INC     A
+023C F0                MOVX    @DPTR,A
+023D 020000      R     LJMP    ?C0033
+                                           ; SOURCE LINE # 54
+0240         ?C0032:
+0240 900000      R     MOV     DPTR,#i
+0243 E0                MOVX    A,@DPTR
+0244 14                DEC     A
+0245 F0                MOVX    @DPTR,A
+0246 E0                MOVX    A,@DPTR
+0247 6003              JZ      $ + 5H
+0249 020000      R     LJMP    ?C0030
+024C         ?C0031:
+                                           ; SOURCE LINE # 56
+024C 900000      R     MOV     DPTR,#mas_copy+010H
+024F E0                MOVX    A,@DPTR
+0250 FC                MOV     R4,A
+0251 A3                INC     DPTR
+0252 E0                MOVX    A,@DPTR
+0253 FD                MOV     R5,A
+0254 A3                INC     DPTR
+0255 E0                MOVX    A,@DPTR
+0256 FE                MOV     R6,A
+0257 A3                INC     DPTR
+0258 E0                MOVX    A,@DPTR
+0259 FF                MOV     R7,A
+025A 900000      R     MOV     DPTR,#mas_copy+0CH
+025D E0                MOVX    A,@DPTR
+025E F8                MOV     R0,A
+025F A3                INC     DPTR
+0260 E0                MOVX    A,@DPTR
+0261 F9                MOV     R1,A
+C51 COMPILER V9.00   ULONGSORT                                                             06/20/2014 09:02:40 PAGE 10  
+
+0262 A3                INC     DPTR
+0263 E0                MOVX    A,@DPTR
+0264 FA                MOV     R2,A
+0265 A3                INC     DPTR
+0266 E0                MOVX    A,@DPTR
+0267 2F                ADD     A,R7
+0268 FF                MOV     R7,A
+0269 EA                MOV     A,R2
+026A 3E                ADDC    A,R6
+026B FE                MOV     R6,A
+026C E9                MOV     A,R1
+026D 3D                ADDC    A,R5
+026E FD                MOV     R5,A
+026F E8                MOV     A,R0
+0270 3C                ADDC    A,R4
+0271 FC                MOV     R4,A
+0272 7801              MOV     R0,#01H
+0274 120000      E     LCALL   ?C?ULSHR
+0277 900000      R     MOV     DPTR,#mid_cycle_counter
+027A E0                MOVX    A,@DPTR
+027B 75F019            MOV     B,#019H
+027E A4                MUL     AB
+027F 2400        E     ADD     A,#LOW channels+05H
+0281 F582              MOV     DPL,A
+0283 E5F0              MOV     A,B
+0285 3400        E     ADDC    A,#HIGH channels+05H
+0287 F583              MOV     DPH,A
+0289 120000      E     LCALL   ?C?LSTXDATA
+                                           ; SOURCE LINE # 58
+028C 900000      R     MOV     DPTR,#mid_cycle_counter
+028F E0                MOVX    A,@DPTR
+0290 75F019            MOV     B,#019H
+0293 A4                MUL     AB
+0294 2400        E     ADD     A,#LOW channels+0DH
+0296 F582              MOV     DPL,A
+0298 E5F0              MOV     A,B
+029A 3400        E     ADDC    A,#HIGH channels+0DH
+029C F583              MOV     DPH,A
+029E E0                MOVX    A,@DPTR
+029F 6040              JZ      ?C0042
+                                           ; SOURCE LINE # 59
+                                           ; SOURCE LINE # 60
+02A1 900000      R     MOV     DPTR,#mid_cycle_counter
+02A4 E0                MOVX    A,@DPTR
+02A5 75F019            MOV     B,#019H
+02A8 A4                MUL     AB
+02A9 2400        E     ADD     A,#LOW channels+05H
+02AB F582              MOV     DPL,A
+02AD E5F0              MOV     A,B
+02AF 3400        E     ADDC    A,#HIGH channels+05H
+02B1 F583              MOV     DPH,A
+02B3 E0                MOVX    A,@DPTR
+02B4 FC                MOV     R4,A
+02B5 A3                INC     DPTR
+02B6 E0                MOVX    A,@DPTR
+02B7 FD                MOV     R5,A
+02B8 A3                INC     DPTR
+02B9 E0                MOVX    A,@DPTR
+02BA FE                MOV     R6,A
+02BB A3                INC     DPTR
+02BC E0                MOVX    A,@DPTR
+02BD FF                MOV     R7,A
+C51 COMPILER V9.00   ULONGSORT                                                             06/20/2014 09:02:40 PAGE 11  
+
+02BE 900000      E     MOV     DPTR,#?_GetCalibrateVal?BYTE+01H
+02C1 120000      E     LCALL   ?C?LSTXDATA
+02C4 900000      R     MOV     DPTR,#mid_cycle_counter
+02C7 E0                MOVX    A,@DPTR
+02C8 FF                MOV     R7,A
+02C9 120000      E     LCALL   _GetCalibrateVal
+02CC 900000      R     MOV     DPTR,#mid_cycle_counter
+02CF E0                MOVX    A,@DPTR
+02D0 75F019            MOV     B,#019H
+02D3 A4                MUL     AB
+02D4 2400        E     ADD     A,#LOW channels+09H
+02D6 F582              MOV     DPL,A
+02D8 E5F0              MOV     A,B
+02DA 3400        E     ADDC    A,#HIGH channels+09H
+02DC F583              MOV     DPH,A
+02DE 120000      E     LCALL   ?C?LSTXDATA
+                                           ; SOURCE LINE # 61
+02E1         ?C0042:
+                                           ; SOURCE LINE # 63
+02E1 900000      R     MOV     DPTR,#mid_cycle_counter
+02E4 E0                MOVX    A,@DPTR
+02E5 75F026            MOV     B,#026H
+02E8 A4                MUL     AB
+02E9 2400        E     ADD     A,#LOW adc_channels+025H
+02EB F582              MOV     DPL,A
+02ED E5F0              MOV     A,B
+02EF 3400        E     ADDC    A,#HIGH adc_channels+025H
+02F1 F583              MOV     DPH,A
+02F3 E4                CLR     A
+02F4 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 64
+02F5 900000      E     MOV     DPTR,#wdt_count+05H
+02F8 E0                MOVX    A,@DPTR
+02F9 04                INC     A
+02FA F0                MOVX    @DPTR,A
+02FB 7006              JNZ     ?C0046
+02FD 900000      E     MOV     DPTR,#wdt_count+04H
+0300 E0                MOVX    A,@DPTR
+0301 04                INC     A
+0302 F0                MOVX    @DPTR,A
+0303         ?C0046:
+                                           ; SOURCE LINE # 65
+0303 900000      R     MOV     DPTR,#pt
+0306 E0                MOVX    A,@DPTR
+0307 FB                MOV     R3,A
+0308 A3                INC     DPTR
+0309 E0                MOVX    A,@DPTR
+030A FA                MOV     R2,A
+030B A3                INC     DPTR
+030C E0                MOVX    A,@DPTR
+030D F9                MOV     R1,A
+030E E4                CLR     A
+030F F5F0              MOV     B,A
+0311 120000      E     LCALL   ?C?ISTPTR
+0314 7F00              MOV     R7,#00H
+0316 22                RET     
+                                           ; SOURCE LINE # 67
+                                           ; SOURCE LINE # 68
+0317         ?C0001:
+0317 E4                CLR     A
+0318 900000      R     MOV     DPTR,#PT_YIELD_FLAG
+031B F0                MOVX    @DPTR,A
+C51 COMPILER V9.00   ULONGSORT                                                             06/20/2014 09:02:40 PAGE 12  
+
+031C 900000      R     MOV     DPTR,#pt
+031F E0                MOVX    A,@DPTR
+0320 FB                MOV     R3,A
+0321 A3                INC     DPTR
+0322 E0                MOVX    A,@DPTR
+0323 FA                MOV     R2,A
+0324 A3                INC     DPTR
+0325 E0                MOVX    A,@DPTR
+0326 F9                MOV     R1,A
+0327 E4                CLR     A
+0328 F5F0              MOV     B,A
+032A 120000      E     LCALL   ?C?ISTPTR
+032D 7F03              MOV     R7,#03H
+                                           ; SOURCE LINE # 69
+032F         ?C0012:
+032F 22                RET     
+             ; FUNCTION _ulongsort_process (END)
+
+C51 COMPILER V9.00   ULONGSORT                                                             06/20/2014 09:02:40 PAGE 13  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+TCON . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0088H  1
+SCON . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0098H  1
+P2 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A0H  1
+IE . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A8H  1
+P3 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B0H  1
+IP . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B8H  1
+WDCON. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C0H  1
+T2CON. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C8H  1
+PSW. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D0H  1
+ADCSTAT. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D8H  1
+I2CCON . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E8H  1
+DCON . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E8H  1
+SPICON . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F8H  1
+Channel. . . . . . . . . . . . . . . .  * TAG *  -----  STRUCT   -----  25
+  number . . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
+  settings . . . . . . . . . . . . . .  MEMBER   -----  UNION    0001H  4
+  channel_data . . . . . . . . . . . .  MEMBER   -----  U_LONG   0005H  4
+  channel_data_calibrate . . . . . . .  MEMBER   -----  U_LONG   0009H  4
+  calibrate. . . . . . . . . . . . . .  MEMBER   -----  UNION    000DH  12
+ADC_Channels . . . . . . . . . . . . .  * TAG *  -----  STRUCT   -----  38
+  ADC_BUF_UN . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  32
+  adc_buf_counter. . . . . . . . . . .  MEMBER   -----  U_CHAR   0020H  1
+  ADC_SF . . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0021H  1
+  ADC_GAIN . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0022H  1
+  buffered . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0023H  1
+  unipolar . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0024H  1
+  new_measuring. . . . . . . . . . . .  MEMBER   -----  U_CHAR   0025H  1
+channels . . . . . . . . . . . . . . .  EXTERN   XDATA  ARRAY    -----  350
+lc_t . . . . . . . . . . . . . . . . .  TYPEDEF  -----  U_INT    -----  2
+pt . . . . . . . . . . . . . . . . . .  * TAG *  -----  STRUCT   -----  4
+  lc . . . . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0000H  2
+  pt_time. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0002H  2
+RESET. . . . . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+SET. . . . . . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+_GetCalibrateVal . . . . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+size_t . . . . . . . . . . . . . . . .  TYPEDEF  -----  U_INT    -----  2
+_ulongsort_process . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  pt . . . . . . . . . . . . . . . . .  AUTO     XDATA  PTR      0000H  3
+  PT_YIELD_FLAG. . . . . . . . . . . .  AUTO     XDATA  CHAR     0003H  1
+  counter. . . . . . . . . . . . . . .  STATIC   XDATA  U_CHAR   0000H  1
+  i. . . . . . . . . . . . . . . . . .  STATIC   XDATA  U_CHAR   0001H  1
+  j. . . . . . . . . . . . . . . . . .  STATIC   XDATA  U_CHAR   0002H  1
+adc_channels . . . . . . . . . . . . .  EXTERN   XDATA  ARRAY    -----  -----
+Proto_Proc . . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+Sort_Proc. . . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+Watch_Proc . . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+I2C_RepeatRead_Proc. . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+Frequency_Measure_Proc . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+I2C_Proc . . . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+RUN. . . . . . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+IDLE . . . . . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+watchdog . . . . . . . . . . . . . . .  * TAG *  -----  STRUCT   -----  3
+  process_state. . . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
+  count. . . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0001H  2
+wdt_count. . . . . . . . . . . . . . .  EXTERN   XDATA  ARRAY    -----  -----
+mas_copy . . . . . . . . . . . . . . .  PUBLIC   XDATA  ARRAY    0003H  32
+mid_cycle_counter. . . . . . . . . . .  PUBLIC   XDATA  U_CHAR   0023H  1
+C51 COMPILER V9.00   ULONGSORT                                                             06/20/2014 09:02:40 PAGE 14  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+temp . . . . . . . . . . . . . . . . .  PUBLIC   XDATA  U_LONG   0024H  4
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    816    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =     40       4
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

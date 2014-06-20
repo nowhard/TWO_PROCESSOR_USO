@@ -1,0 +1,109 @@
+C51 COMPILER V9.00   WATCHDOG                                                              10/29/2013 09:46:50 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE WATCHDOG
+OBJECT MODULE PLACED IN watchdog.OBJ
+COMPILER INVOKED BY: C:\Program Files\Keil\C51\BIN\C51.EXE watchdog.c LARGE OPTIMIZE(9,SPEED) BROWSE ORDER NOAREGS MODAB
+                    -2 DEBUG OBJECTEXTEND CODE SYMBOLS
+
+line level    source
+
+   1          #include "watchdog.h"
+   2          //---------------------global variables-----------------------------------
+   3          volatile unsigned char data wdt_intval;
+   4          //------------------------------------------------------------------------
+   5          void WDT_Init(unsigned char interval) //using 0//установка интервала срабатывания сторожевого таймера, зап
+             -уск        //небезопасная
+   6          {
+   7   1              wdt_intval=interval;    
+   8   1              WDWR=1;//WDWR=1-разрешение записи в регистр
+   9   1              WDCON=wdt_intval;
+  10   1              return;
+  11   1      }
+  12          //------------------------------------------------------------------------
+  13          void WDT_Clear(void) //using 0//сброс счетчика сторожевого таймера
+  14          {
+  15   1              EA=0;
+  16   1      
+  17   1              WDWR=1;//WDWR=1-разрешение записи в регистр
+  18   1              WDCON=wdt_intval;       
+  19   1      
+  20   1              EA=1;
+  21   1              return;
+  22   1      }
+  23          //------------------------------------------------------------------------
+C51 COMPILER V9.00   WATCHDOG                                                              10/29/2013 09:46:50 PAGE 2   
+
+ASSEMBLY LISTING OF GENERATED OBJECT CODE
+
+
+             ; FUNCTION _WDT_Init (BEGIN)
+                                           ; SOURCE LINE # 5
+;---- Variable 'interval' assigned to Register 'R7' ----
+                                           ; SOURCE LINE # 6
+                                           ; SOURCE LINE # 7
+0000 8F00        R     MOV     wdt_intval,R7
+                                           ; SOURCE LINE # 8
+0002 D2C0              SETB    WDWR
+                                           ; SOURCE LINE # 9
+0004 8500C0      R     MOV     WDCON,wdt_intval
+                                           ; SOURCE LINE # 11
+0007         ?C0001:
+0007 22                RET     
+             ; FUNCTION _WDT_Init (END)
+
+             ; FUNCTION WDT_Clear (BEGIN)
+                                           ; SOURCE LINE # 13
+                                           ; SOURCE LINE # 14
+                                           ; SOURCE LINE # 15
+0000 C2AF              CLR     EA
+                                           ; SOURCE LINE # 17
+0002 D2C0              SETB    WDWR
+                                           ; SOURCE LINE # 18
+0004 8500C0      R     MOV     WDCON,wdt_intval
+                                           ; SOURCE LINE # 20
+0007 D2AF              SETB    EA
+                                           ; SOURCE LINE # 22
+0009         ?C0002:
+0009 22                RET     
+             ; FUNCTION WDT_Clear (END)
+
+C51 COMPILER V9.00   WATCHDOG                                                              10/29/2013 09:46:50 PAGE 3   
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+TCON . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0088H  1
+SCON . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0098H  1
+P2 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A0H  1
+IE . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A8H  1
+P3 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B0H  1
+IP . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B8H  1
+WDCON. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C0H  1
+T2CON. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C8H  1
+PSW. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D0H  1
+ADCSTAT. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D8H  1
+I2CCON . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E8H  1
+DCON . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E8H  1
+SPICON . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F8H  1
+EA . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00AFH  1
+WDWR . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C0H  1
+_WDT_Init. . . . . . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  interval . . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0007H  1
+WDT_Clear. . . . . . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+wdt_intval . . . . . . . . . . . . . .  PUBLIC   DATA   U_CHAR   0000H  1
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     18    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      1    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

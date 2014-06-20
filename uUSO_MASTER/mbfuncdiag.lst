@@ -1,0 +1,65 @@
+C51 COMPILER V9.00   MBFUNCDIAG                                                            06/19/2014 16:55:31 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE MBFUNCDIAG
+OBJECT MODULE PLACED IN mbfuncdiag.obj
+COMPILER INVOKED BY: C:\Program Files\Keil\C51\BIN\C51.EXE modbus\functions\mbfuncdiag.c LARGE OPTIMIZE(0,SPEED) BROWSE 
+                    -MODAB2 INCDIR(.\modbus\include;.\modbus;.\port;.\modbus\ascii;.\modbus\rtu;..\uUSO_MASTER) DEBUG OBJECTEXTEND CODE SYMBO
+                    -LS PRINT(.\mbfuncdiag.lst) OBJECT(mbfuncdiag.obj)
+
+line level    source
+
+   1          /* 
+   2           * FreeModbus Libary: A portable Modbus implementation for Modbus ASCII/RTU.
+   3           * Copyright (c) 2006 Christian Walter <wolti@sil.at>
+   4           * All rights reserved.
+   5           *
+   6           * Redistribution and use in source and binary forms, with or without
+   7           * modification, are permitted provided that the following conditions
+   8           * are met:
+   9           * 1. Redistributions of source code must retain the above copyright
+  10           *    notice, this list of conditions and the following disclaimer.
+  11           * 2. Redistributions in binary form must reproduce the above copyright
+  12           *    notice, this list of conditions and the following disclaimer in the
+  13           *    documentation and/or other materials provided with the distribution.
+  14           * 3. The name of the author may not be used to endorse or promote products
+  15           *    derived from this software without specific prior written permission.
+  16           *
+  17           * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
+  18           * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+  19           * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+  20           * IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
+  21           * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  22           * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+  23           * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+  24           * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+  25           * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+  26           * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  27           *
+  28           * File: $Id: mbfuncdiag.c,v 1.3 2006/12/07 22:10:34 wolti Exp $
+  29           */
+C51 COMPILER V9.00   MBFUNCDIAG                                                            06/19/2014 16:55:31 PAGE 2   
+
+ASSEMBLY LISTING OF GENERATED OBJECT CODE
+
+
+C51 COMPILER V9.00   MBFUNCDIAG                                                            06/19/2014 16:55:31 PAGE 3   
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   ----    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

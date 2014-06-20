@@ -1,0 +1,1 @@
+"port\portserial.c" LARGE OPTIMIZE (0,SPEED) BROWSE MODAB2 INCDIR(.\modbus\include;.\modbus;.\port;.\modbus\ascii;.\modbus\rtu;..\uUSO_MASTER) DEBUG OBJECTEXTEND CODE SYMBOLS PRINT(.\portserial.lst) OBJECT(portserial.obj)

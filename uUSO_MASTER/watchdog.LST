@@ -1,0 +1,455 @@
+C51 COMPILER V9.00   WATCHDOG                                                              06/20/2014 09:02:39 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE WATCHDOG
+OBJECT MODULE PLACED IN watchdog.OBJ
+COMPILER INVOKED BY: C:\Program Files\Keil\C51\BIN\C51.EXE watchdog.c LARGE OPTIMIZE(6,SPEED) BROWSE ORDER NOAREGS DEBUG
+                    - OBJECTEXTEND CODE SYMBOLS
+
+line level    source
+
+   1          #include "watchdog.h"
+   2          
+   3          //---------------------global variables-----------------------------------
+   4          volatile unsigned char data wdt_intval;
+   5          struct watchdog wdt_count[PROCESS_NUM];
+   6          volatile struct pt pt_wdt;
+   7          //------------------------------------------------------------------------
+   8          void WDT_Init(unsigned char interval) //using 0//установка интервала срабатывания сторожевого таймера, зап
+             -уск        //небезопасная
+   9          {
+  10   1              unsigned char i=0;      
+  11   1      
+  12   1              wdt_intval=interval;    
+  13   1              WDWR=1;//WDWR=1-разрешение записи в регистр
+  14   1              WDCON=wdt_intval;
+  15   1      
+  16   1      //      wdt_count[Proto_Proc].process_state=IDLE;
+  17   1      //      wdt_count[Proto_Proc].count=0;
+  18   1      //      wdt_count[Sort_Proc].process_state=IDLE;
+  19   1      //      wdt_count[Sort_Proc].count=0;
+  20   1      //      wdt_count[Watch_Proc].process_state=IDLE;
+  21   1      //      wdt_count[Watch_Proc].count=0;
+  22   1      //
+  23   1      //      wdt_count[I2C_RepeatRead_Proc].process_state=IDLE;
+  24   1      //      wdt_count[I2C_RepeatRead_Proc].count=0;
+  25   1      //      wdt_count[Frequency_Measure_Proc].process_state=IDLE;
+  26   1      //      wdt_count[Frequency_Measure_Proc].count=0;
+  27   1      //      wdt_count[I2C_Proc].process_state=IDLE;
+  28   1      //      wdt_count[I2C_Proc].count=0;
+  29   1      
+  30   1              for(i=0;i<PROCESS_NUM;i++)
+  31   1              {
+  32   2                       wdt_count[i].count=0;
+  33   2                       wdt_count[i].process_state=IDLE;
+  34   2              }
+  35   1      
+  36   1              PT_INIT(&pt_wdt);
+  37   1              return;
+  38   1      }
+  39          //------------------------------------------------------------------------
+  40          void WDT_Clear(void) //using 0//сброс счетчика сторожевого таймера
+  41          {
+  42   1              EA=0;
+  43   1      
+  44   1              WDWR=1;//WDWR=1-разрешение записи в регистр
+  45   1              WDCON=wdt_intval;       
+  46   1      
+  47   1              EA=1;
+  48   1              return;
+  49   1      }
+  50          //------------------------------------------------------------------------
+  51           PT_THREAD(WDT_Process(struct pt *pt))
+  52           {
+  53   1         
+C51 COMPILER V9.00   WATCHDOG                                                              06/20/2014 09:02:39 PAGE 2   
+
+  54   1        volatile unsigned char i=0, process_error=0;
+  55   1        wdt_count[Watch_Proc].process_state=RUN;
+  56   1      
+  57   1        PT_BEGIN(pt);
+  58   3      
+  59   3        while(1) 
+  60   3        {
+  61   4                      PT_DELAY(pt,100);
+  62   4                      process_error=0;
+  63   4                      
+  64   4                      wdt_count[Watch_Proc].count++;
+  65   4      
+  66   4                      for(i=0;i<PROCESS_NUM;i++)
+  67   4                      {
+  68   5                              if((wdt_count[i].count|wdt_count[i].process_state)==0)
+  69   5                              {
+  70   6                                      process_error=1;
+  71   6                                      break;
+  72   6                              }
+  73   5                              else
+  74   5                              {
+  75   6                                      wdt_count[i].count=0;
+  76   6                              }
+  77   5                      }
+  78   4                      
+  79   4                      if(process_error==0)//все процессы работают
+  80   4                      {
+  81   5                                      WDT_Clear();    
+  82   5                      }       
+  83   4        }
+  84   3        PT_END(pt);
+  85   1      }
+C51 COMPILER V9.00   WATCHDOG                                                              06/20/2014 09:02:39 PAGE 3   
+
+ASSEMBLY LISTING OF GENERATED OBJECT CODE
+
+
+             ; FUNCTION _WDT_Init (BEGIN)
+                                           ; SOURCE LINE # 8
+;---- Variable 'interval' assigned to Register 'R7' ----
+                                           ; SOURCE LINE # 9
+                                           ; SOURCE LINE # 10
+;---- Variable 'i' assigned to Register 'R6' ----
+0000 E4                CLR     A
+0001 FE                MOV     R6,A
+                                           ; SOURCE LINE # 12
+0002 8F00        R     MOV     wdt_intval,R7
+                                           ; SOURCE LINE # 13
+0004 D2C0              SETB    WDWR
+                                           ; SOURCE LINE # 14
+0006 8500C0      R     MOV     WDCON,wdt_intval
+                                           ; SOURCE LINE # 30
+0009         ?C0001:
+                                           ; SOURCE LINE # 31
+                                           ; SOURCE LINE # 32
+0009 EE                MOV     A,R6
+000A 75F003            MOV     B,#03H
+000D A4                MUL     AB
+000E 2400        R     ADD     A,#LOW wdt_count+01H
+0010 F582              MOV     DPL,A
+0012 E4                CLR     A
+0013 3400        R     ADDC    A,#HIGH wdt_count+01H
+0015 F583              MOV     DPH,A
+0017 E4                CLR     A
+0018 F0                MOVX    @DPTR,A
+0019 A3                INC     DPTR
+001A F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 33
+001B EE                MOV     A,R6
+001C 75F003            MOV     B,#03H
+001F A4                MUL     AB
+0020 2400        R     ADD     A,#LOW wdt_count
+0022 F582              MOV     DPL,A
+0024 E4                CLR     A
+0025 3400        R     ADDC    A,#HIGH wdt_count
+0027 F583              MOV     DPH,A
+0029 7401              MOV     A,#01H
+002B F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 34
+002C 0E                INC     R6
+002D EE                MOV     A,R6
+002E B406D8            CJNE    A,#06H,?C0001
+0031         ?C0002:
+                                           ; SOURCE LINE # 36
+0031 E4                CLR     A
+0032 900000      R     MOV     DPTR,#pt_wdt
+0035 F0                MOVX    @DPTR,A
+0036 A3                INC     DPTR
+0037 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 38
+0038         ?C0004:
+0038 22                RET     
+             ; FUNCTION _WDT_Init (END)
+
+             ; FUNCTION WDT_Clear (BEGIN)
+                                           ; SOURCE LINE # 40
+C51 COMPILER V9.00   WATCHDOG                                                              06/20/2014 09:02:39 PAGE 4   
+
+                                           ; SOURCE LINE # 41
+                                           ; SOURCE LINE # 42
+0000 C2AF              CLR     EA
+                                           ; SOURCE LINE # 44
+0002 D2C0              SETB    WDWR
+                                           ; SOURCE LINE # 45
+0004 8500C0      R     MOV     WDCON,wdt_intval
+                                           ; SOURCE LINE # 47
+0007 D2AF              SETB    EA
+                                           ; SOURCE LINE # 49
+0009         ?C0005:
+0009 22                RET     
+             ; FUNCTION WDT_Clear (END)
+
+             ; FUNCTION _WDT_Process (BEGIN)
+                                           ; SOURCE LINE # 51
+0000 900000      R     MOV     DPTR,#pt
+0003 EB                MOV     A,R3
+0004 F0                MOVX    @DPTR,A
+0005 A3                INC     DPTR
+0006 EA                MOV     A,R2
+0007 F0                MOVX    @DPTR,A
+0008 A3                INC     DPTR
+0009 E9                MOV     A,R1
+000A F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 52
+                                           ; SOURCE LINE # 54
+000B E4                CLR     A
+000C A3                INC     DPTR
+000D F0                MOVX    @DPTR,A
+000E A3                INC     DPTR
+000F F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 55
+0010 900000      R     MOV     DPTR,#wdt_count+06H
+0013 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 57
+0014 900000      R     MOV     DPTR,#PT_YIELD_FLAG
+0017 04                INC     A
+0018 F0                MOVX    @DPTR,A
+0019 900000      R     MOV     DPTR,#pt
+001C E0                MOVX    A,@DPTR
+001D FB                MOV     R3,A
+001E A3                INC     DPTR
+001F E0                MOVX    A,@DPTR
+0020 FA                MOV     R2,A
+0021 A3                INC     DPTR
+0022 E0                MOVX    A,@DPTR
+0023 F9                MOV     R1,A
+0024 120000      E     LCALL   ?C?ILDPTR
+0027 FF                MOV     R7,A
+0028 AEF0              MOV     R6,B
+002A E5F0              MOV     A,B
+002C 6003              JZ      $ + 5H
+002E 020000      R     LJMP    ?C0006
+0031 EF                MOV     A,R7
+0032 24C3              ADD     A,#0C3H
+0034 6022              JZ      ?C0013
+0036 243D              ADD     A,#03DH
+0038 6003              JZ      $ + 5H
+003A 020000      R     LJMP    ?C0006
+003D         ?C0008:
+                                           ; SOURCE LINE # 59
+C51 COMPILER V9.00   WATCHDOG                                                              06/20/2014 09:02:39 PAGE 5   
+
+                                           ; SOURCE LINE # 60
+                                           ; SOURCE LINE # 61
+003D 900000      R     MOV     DPTR,#pt
+0040 E0                MOVX    A,@DPTR
+0041 FB                MOV     R3,A
+0042 A3                INC     DPTR
+0043 E0                MOVX    A,@DPTR
+0044 FA                MOV     R2,A
+0045 A3                INC     DPTR
+0046 E0                MOVX    A,@DPTR
+0047 F9                MOV     R1,A
+0048 900002            MOV     DPTR,#02H
+004B E4                CLR     A
+004C F5F0              MOV     B,A
+004E 120000      E     LCALL   ?C?ISTOPTR
+0051 E4                CLR     A
+0052 75F03D            MOV     B,#03DH
+0055 120000      E     LCALL   ?C?ISTPTR
+0058         ?C0013:
+0058 900000      R     MOV     DPTR,#pt
+005B E0                MOVX    A,@DPTR
+005C FB                MOV     R3,A
+005D A3                INC     DPTR
+005E E0                MOVX    A,@DPTR
+005F FA                MOV     R2,A
+0060 A3                INC     DPTR
+0061 E0                MOVX    A,@DPTR
+0062 F9                MOV     R1,A
+0063 900002            MOV     DPTR,#02H
+0066 120000      E     LCALL   ?C?ILDOPTR
+0069 C3                CLR     C
+006A 9464              SUBB    A,#064H
+006C E5F0              MOV     A,B
+006E 9400              SUBB    A,#00H
+0070 4003              JC      ?C0015
+0072 D3                SETB    C
+0073 8001              SJMP    ?C0016
+0075         ?C0015:
+0075 C3                CLR     C
+0076         ?C0016:
+0076 4003              JC      ?C0011
+0078 7F00              MOV     R7,#00H
+007A 22                RET     
+007B         ?C0011:
+                                           ; SOURCE LINE # 62
+007B E4                CLR     A
+007C 900000      R     MOV     DPTR,#process_error
+007F F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 64
+0080 900000      R     MOV     DPTR,#wdt_count+08H
+0083 E0                MOVX    A,@DPTR
+0084 04                INC     A
+0085 F0                MOVX    @DPTR,A
+0086 7006              JNZ     ?C0024
+0088 900000      R     MOV     DPTR,#wdt_count+07H
+008B E0                MOVX    A,@DPTR
+008C 04                INC     A
+008D F0                MOVX    @DPTR,A
+008E         ?C0024:
+                                           ; SOURCE LINE # 66
+008E E4                CLR     A
+008F 900000      R     MOV     DPTR,#i
+C51 COMPILER V9.00   WATCHDOG                                                              06/20/2014 09:02:39 PAGE 6   
+
+0092 F0                MOVX    @DPTR,A
+0093         ?C0018:
+                                           ; SOURCE LINE # 67
+                                           ; SOURCE LINE # 68
+0093 900000      R     MOV     DPTR,#i
+0096 E0                MOVX    A,@DPTR
+0097 75F003            MOV     B,#03H
+009A A4                MUL     AB
+009B 2400        R     ADD     A,#LOW wdt_count
+009D F582              MOV     DPL,A
+009F E4                CLR     A
+00A0 3400        R     ADDC    A,#HIGH wdt_count
+00A2 F583              MOV     DPH,A
+00A4 E0                MOVX    A,@DPTR
+00A5 FF                MOV     R7,A
+00A6 900000      R     MOV     DPTR,#i
+00A9 E0                MOVX    A,@DPTR
+00AA 75F003            MOV     B,#03H
+00AD A4                MUL     AB
+00AE 2400        R     ADD     A,#LOW wdt_count+01H
+00B0 F582              MOV     DPL,A
+00B2 E4                CLR     A
+00B3 3400        R     ADDC    A,#HIGH wdt_count+01H
+00B5 F583              MOV     DPH,A
+00B7 E0                MOVX    A,@DPTR
+00B8 FE                MOV     R6,A
+00B9 A3                INC     DPTR
+00BA E0                MOVX    A,@DPTR
+00BB 4F                ORL     A,R7
+00BC 4E                ORL     A,R6
+00BD 7007              JNZ     ?C0021
+                                           ; SOURCE LINE # 69
+                                           ; SOURCE LINE # 70
+00BF 900000      R     MOV     DPTR,#process_error
+00C2 04                INC     A
+00C3 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 71
+00C4 801F              SJMP    ?C0019
+                                           ; SOURCE LINE # 72
+00C6         ?C0021:
+                                           ; SOURCE LINE # 74
+                                           ; SOURCE LINE # 75
+00C6 900000      R     MOV     DPTR,#i
+00C9 E0                MOVX    A,@DPTR
+00CA 75F003            MOV     B,#03H
+00CD A4                MUL     AB
+00CE 2400        R     ADD     A,#LOW wdt_count+01H
+00D0 F582              MOV     DPL,A
+00D2 E4                CLR     A
+00D3 3400        R     ADDC    A,#HIGH wdt_count+01H
+00D5 F583              MOV     DPH,A
+00D7 E4                CLR     A
+00D8 F0                MOVX    @DPTR,A
+00D9 A3                INC     DPTR
+00DA F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 76
+                                           ; SOURCE LINE # 77
+00DB         ?C0020:
+00DB 900000      R     MOV     DPTR,#i
+00DE E0                MOVX    A,@DPTR
+00DF 04                INC     A
+00E0 F0                MOVX    @DPTR,A
+C51 COMPILER V9.00   WATCHDOG                                                              06/20/2014 09:02:39 PAGE 7   
+
+00E1 E0                MOVX    A,@DPTR
+00E2 B406AE            CJNE    A,#06H,?C0018
+00E5         ?C0019:
+                                           ; SOURCE LINE # 79
+00E5 900000      R     MOV     DPTR,#process_error
+00E8 E0                MOVX    A,@DPTR
+00E9 6003              JZ      $ + 5H
+00EB 020000      R     LJMP    ?C0008
+                                           ; SOURCE LINE # 80
+                                           ; SOURCE LINE # 81
+00EE 120000      R     LCALL   WDT_Clear
+                                           ; SOURCE LINE # 82
+                                           ; SOURCE LINE # 83
+00F1 020000      R     LJMP    ?C0008
+                                           ; SOURCE LINE # 84
+00F4         ?C0006:
+00F4 E4                CLR     A
+00F5 900000      R     MOV     DPTR,#PT_YIELD_FLAG
+00F8 F0                MOVX    @DPTR,A
+00F9 900000      R     MOV     DPTR,#pt
+00FC E0                MOVX    A,@DPTR
+00FD FB                MOV     R3,A
+00FE A3                INC     DPTR
+00FF E0                MOVX    A,@DPTR
+0100 FA                MOV     R2,A
+0101 A3                INC     DPTR
+0102 E0                MOVX    A,@DPTR
+0103 F9                MOV     R1,A
+0104 E4                CLR     A
+0105 F5F0              MOV     B,A
+0107 120000      E     LCALL   ?C?ISTPTR
+010A 7F03              MOV     R7,#03H
+                                           ; SOURCE LINE # 85
+010C         ?C0017:
+010C 22                RET     
+             ; FUNCTION _WDT_Process (END)
+
+C51 COMPILER V9.00   WATCHDOG                                                              06/20/2014 09:02:39 PAGE 8   
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+TCON . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0088H  1
+SCON . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0098H  1
+P2 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A0H  1
+IE . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A8H  1
+P3 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B0H  1
+IP . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B8H  1
+WDCON. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C0H  1
+T2CON. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C8H  1
+PSW. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D0H  1
+ADCSTAT. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D8H  1
+I2CCON . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E8H  1
+DCON . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E8H  1
+SPICON . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F8H  1
+EA . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00AFH  1
+WDWR . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00C0H  1
+lc_t . . . . . . . . . . . . . . . . .  TYPEDEF  -----  U_INT    -----  2
+pt . . . . . . . . . . . . . . . . . .  * TAG *  -----  STRUCT   -----  4
+  lc . . . . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0000H  2
+  pt_time. . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0002H  2
+Proto_Proc . . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+Sort_Proc. . . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+Watch_Proc . . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+I2C_RepeatRead_Proc. . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+Frequency_Measure_Proc . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+I2C_Proc . . . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+RUN. . . . . . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+IDLE . . . . . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+watchdog . . . . . . . . . . . . . . .  * TAG *  -----  STRUCT   -----  3
+  process_state. . . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
+  count. . . . . . . . . . . . . . . .  MEMBER   -----  U_INT    0001H  2
+wdt_count. . . . . . . . . . . . . . .  PUBLIC   XDATA  ARRAY    0000H  18
+_WDT_Init. . . . . . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  interval . . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0007H  1
+  i. . . . . . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0006H  1
+WDT_Clear. . . . . . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+_WDT_Process . . . . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  pt . . . . . . . . . . . . . . . . .  AUTO     XDATA  PTR      0000H  3
+  PT_YIELD_FLAG. . . . . . . . . . . .  AUTO     XDATA  CHAR     0005H  1
+  i. . . . . . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0003H  1
+  process_error. . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0004H  1
+wdt_intval . . . . . . . . . . . . . .  PUBLIC   DATA   U_CHAR   0000H  1
+pt_wdt . . . . . . . . . . . . . . . .  PUBLIC   XDATA  STRUCT   0012H  4
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    336    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =     22       6
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      1    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

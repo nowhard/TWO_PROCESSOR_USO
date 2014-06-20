@@ -1,0 +1,295 @@
+C51 COMPILER V9.00   MBFUNCINPUT                                                           06/20/2014 08:35:07 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE MBFUNCINPUT
+OBJECT MODULE PLACED IN mbfuncinput.obj
+COMPILER INVOKED BY: C:\Program Files\Keil\C51\BIN\C51.EXE modbus\functions\mbfuncinput.c LARGE OPTIMIZE(0,SPEED) BROWSE
+                    - MODAB2 INCDIR(.\modbus\include;.\modbus;.\port;.\modbus\ascii;.\modbus\rtu;..\uUSO_MASTER) DEBUG OBJECTEXTEND CODE SYMB
+                    -OLS PRINT(.\mbfuncinput.lst) OBJECT(mbfuncinput.obj)
+
+line level    source
+
+   1          /* 
+   2           * FreeModbus Libary: A portable Modbus implementation for Modbus ASCII/RTU.
+   3           * Copyright (c) 2006 Christian Walter <wolti@sil.at>
+   4           * All rights reserved.
+   5           *
+   6           * Redistribution and use in source and binary forms, with or without
+   7           * modification, are permitted provided that the following conditions
+   8           * are met:
+   9           * 1. Redistributions of source code must retain the above copyright
+  10           *    notice, this list of conditions and the following disclaimer.
+  11           * 2. Redistributions in binary form must reproduce the above copyright
+  12           *    notice, this list of conditions and the following disclaimer in the
+  13           *    documentation and/or other materials provided with the distribution.
+  14           * 3. The name of the author may not be used to endorse or promote products
+  15           *    derived from this software without specific prior written permission.
+  16           *
+  17           * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
+  18           * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+  19           * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+  20           * IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
+  21           * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  22           * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+  23           * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+  24           * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+  25           * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+  26           * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  27           *
+  28           * File: $Id: mbfuncinput.c,v 1.10 2007/09/12 10:15:56 wolti Exp $
+  29           */
+  30          
+  31          /* ----------------------- System includes ----------------------------------*/
+  32          #include "stdlib.h"
+  33          #include "string.h"
+  34          
+  35          /* ----------------------- Platform includes --------------------------------*/
+  36          #include "port.h"
+  37          
+  38          /* ----------------------- Modbus includes ----------------------------------*/
+  39          #include "mb.h"
+*** WARNING C258 IN LINE 41 OF .\MODBUS\RTU\MBRTU.H: 'pucFrame': mspace on parameter ignored
+*** WARNING C258 IN LINE 41 OF .\MODBUS\RTU\MBRTU.H: 'pusLength': mspace on parameter ignored
+  40          #include "mbframe.h"
+  41          #include "mbproto.h"
+  42          #include "mbconfig.h"
+  43          
+  44          /* ----------------------- Defines ------------------------------------------*/
+  45          #define MB_PDU_FUNC_READ_ADDR_OFF           ( MB_PDU_DATA_OFF )
+  46          #define MB_PDU_FUNC_READ_REGCNT_OFF         ( MB_PDU_DATA_OFF + 2 )
+  47          #define MB_PDU_FUNC_READ_SIZE               ( 4 )
+  48          #define MB_PDU_FUNC_READ_REGCNT_MAX         ( 0x007D )
+  49          
+  50          #define MB_PDU_FUNC_READ_RSP_BYTECNT_OFF    ( MB_PDU_DATA_OFF )
+  51          
+C51 COMPILER V9.00   MBFUNCINPUT                                                           06/20/2014 08:35:07 PAGE 2   
+
+  52          /* ----------------------- Static functions ---------------------------------*/
+  53          eMBException    prveMBError2Exception( eMBErrorCode eErrorCode );
+  54          
+  55          /* ----------------------- Start implementation -----------------------------*/
+  56          #if MB_FUNC_READ_INPUT_ENABLED > 0
+  57          
+  58          sbit TEST_RECIEVED=P3^7;
+  59          
+  60          eMBException
+  61          eMBFuncReadInputRegister( /*UCHAR xdata *  pucFrame, USHORT xdata * usLen*/void )  
+  62          {
+  63   1          USHORT          usRegAddress;
+  64   1      //    USHORT          usRegCount;
+  65   1      //    UCHAR          *pucFrameCur;
+  66   1      //
+  67   1      //    eMBException    eStatus = MB_EX_NONE;
+  68   1      //    eMBErrorCode    eRegStatus;
+  69   1      
+  70   1                      usRegAddress=0x100;
+  71   1                      if((unsigned int)usRegAddress==0x100)
+  72   1                      {
+  73   2                              TEST_RECIEVED=~TEST_RECIEVED;
+  74   2                      }
+  75   1              
+  76   1      
+  77   1      //    if( *usLen == ( MB_PDU_FUNC_READ_SIZE + MB_PDU_SIZE_MIN ) )
+  78   1      //    {
+  79   1      //
+  80   1      //                                      
+  81   1      //                                      
+  82   1      //        usRegAddress = (( USHORT )( pucFrame[MB_PDU_FUNC_READ_ADDR_OFF] << 8 )&0xFF00);
+  83   1      //        usRegAddress |= ( USHORT )( pucFrame[MB_PDU_FUNC_READ_ADDR_OFF + 1] );
+  84   1      //        
+  85   1      //              usRegAddress++;
+  86   1      //              
+  87   1      //
+  88   1      //
+  89   1      //        usRegCount = ( USHORT )( pucFrame[MB_PDU_FUNC_READ_REGCNT_OFF] << 8 );
+  90   1      //        usRegCount |= ( USHORT )( pucFrame[MB_PDU_FUNC_READ_REGCNT_OFF + 1] );
+  91   1      //
+  92   1      //        /* Check if the number of registers to read is valid. If not
+  93   1      //         * return Modbus illegal data value exception. 
+  94   1      //         */
+  95   1      //        if( ( usRegCount >= 1 )
+  96   1      //            && ( usRegCount < MB_PDU_FUNC_READ_REGCNT_MAX ) )
+  97   1      //        {
+  98   1      //            /* Set the current PDU data pointer to the beginning. */
+  99   1      //            pucFrameCur = &pucFrame[MB_PDU_FUNC_OFF];
+ 100   1      //            *usLen = MB_PDU_FUNC_OFF;
+ 101   1      //
+ 102   1      //            /* First byte contains the function code. */
+ 103   1      //            *pucFrameCur++ = MB_FUNC_READ_INPUT_REGISTER;
+ 104   1      //            *usLen += 1;
+ 105   1      //
+ 106   1      //            /* Second byte in the response contain the number of bytes. */
+ 107   1      //            *pucFrameCur++ = ( UCHAR )( usRegCount * 2 );
+ 108   1      //            *usLen += 1;
+ 109   1      //
+ 110   1      //
+ 111   1      //
+ 112   1      //            eRegStatus =
+ 113   1      //                eMBRegInputCB( pucFrameCur, usRegAddress, usRegCount);
+C51 COMPILER V9.00   MBFUNCINPUT                                                           06/20/2014 08:35:07 PAGE 3   
+
+ 114   1      //                       //eRegStatus = MB_ENOERR;
+ 115   1      //
+ 116   1      //            /* If an error occured convert it into a Modbus exception. */
+ 117   1      //            if( eRegStatus != MB_ENOERR )
+ 118   1      //            {
+ 119   1      //                eStatus = prveMBError2Exception( eRegStatus );        
+ 120   1      //                                              
+ 121   1      //            }
+ 122   1      //            else
+ 123   1      //            {
+ 124   1      //                *usLen += usRegCount * 2;
+ 125   1      //
+ 126   1      //            }                 
+ 127   1      //        }
+ 128   1      //        else
+ 129   1      //        {
+ 130   1      //            eStatus = MB_EX_ILLEGAL_DATA_VALUE;                       
+ 131   1      //        }
+ 132   1      //    }
+ 133   1      //    else
+ 134   1      //    {
+ 135   1      //        /* Can't be a valid read input register request because the length
+ 136   1      //         * is incorrect. */
+ 137   1      //                                                                      TEST_RECIEVED=~TEST_RECIEVED;
+ 138   1      //        eStatus = MB_EX_ILLEGAL_DATA_VALUE;
+ 139   1      //              
+ 140   1      //    }
+ 141   1      //    return eStatus;
+ 142   1      }
+*** WARNING C173 IN LINE 142 OF MODBUS\FUNCTIONS\MBFUNCINPUT.C: missing return-expression
+ 143          
+ 144          #endif
+*** WARNING C290 IN LINE 142 OF MODBUS\FUNCTIONS\MBFUNCINPUT.C: missing return value
+C51 COMPILER V9.00   MBFUNCINPUT                                                           06/20/2014 08:35:07 PAGE 4   
+
+ASSEMBLY LISTING OF GENERATED OBJECT CODE
+
+
+             ; FUNCTION eMBFuncReadInputRegister (BEGIN)
+                                           ; SOURCE LINE # 61
+                                           ; SOURCE LINE # 62
+                                           ; SOURCE LINE # 70
+0000 900000      R     MOV     DPTR,#usRegAddress
+0003 7401              MOV     A,#01H
+0005 F0                MOVX    @DPTR,A
+0006 A3                INC     DPTR
+0007 E4                CLR     A
+0008 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 71
+0009 900000      R     MOV     DPTR,#usRegAddress
+000C E0                MOVX    A,@DPTR
+000D FE                MOV     R6,A
+000E A3                INC     DPTR
+000F E0                MOVX    A,@DPTR
+0010 FF                MOV     R7,A
+0011 EF                MOV     A,R7
+0012 B40006            CJNE    A,#00H,?C0002
+0015 EE                MOV     A,R6
+0016 B40102            CJNE    A,#01H,?C0002
+                                           ; SOURCE LINE # 72
+                                           ; SOURCE LINE # 73
+0019 B2B7              CPL     TEST_RECIEVED
+                                           ; SOURCE LINE # 74
+001B         ?C0001:
+                                           ; SOURCE LINE # 142
+001B         ?C0002:
+001B 22                RET     
+             ; FUNCTION eMBFuncReadInputRegister (END)
+
+C51 COMPILER V9.00   MBFUNCINPUT                                                           06/20/2014 08:35:07 PAGE 5   
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+eMBErrorCode . . . . . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+P2 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A0H  1
+P3 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B0H  1
+EV_FRAME_SENT. . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+ULONG. . . . . . . . . . . . . . . . .  TYPEDEF  -----  U_LONG   -----  4
+ADCSTAT. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D8H  1
+pxMBFunctionHandler. . . . . . . . . .  TYPEDEF  -----  PTR      -----  3
+MB_PAR_ODD . . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+IE . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A8H  1
+pvMBFrameStop. . . . . . . . . . . . .  TYPEDEF  -----  PTR      -----  3
+MB_EX_SLAVE_BUSY . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+EV_EXECUTE . . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+SHORT. . . . . . . . . . . . . . . . .  TYPEDEF  -----  INT      -----  2
+size_t . . . . . . . . . . . . . . . .  TYPEDEF  -----  U_INT    -----  2
+EV_FRAME_RECEIVED. . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+MB_EX_ACKNOWLEDGE. . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+xMBFunctionHandler . . . . . . . . . .  TYPEDEF  -----  STRUCT   -----  4
+  ucFunctionCode . . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
+  pxHandler. . . . . . . . . . . . . .  MEMBER   -----  PTR      0001H  3
+IP . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B8H  1
+MB_EX_GATEWAY_PATH_FAILED. . . . . . .  E_CONST  -----  U_CHAR   -----  1
+MB_EILLSTATE . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+peMBFrameReceive . . . . . . . . . . .  TYPEDEF  -----  PTR      -----  3
+MB_EX_NONE . . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+CHAR . . . . . . . . . . . . . . . . .  TYPEDEF  -----  CHAR     -----  1
+eMBEventType . . . . . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+I2CCON . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E8H  1
+MB_ETIMEDOUT . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+DCON . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E8H  1
+eMBException . . . . . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+BOOL . . . . . . . . . . . . . . . . .  TYPEDEF  -----  CHAR     -----  1
+MB_EINVAL. . . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+LONG . . . . . . . . . . . . . . . . .  TYPEDEF  -----  LONG     -----  4
+MB_ENOREG. . . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+SCON . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0098H  1
+MB_EX_ILLEGAL_FUNCTION . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+TCON . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0088H  1
+MB_REG_WRITE . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+MB_ENOERR. . . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+MB_ENORES. . . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+MB_EX_ILLEGAL_DATA_VALUE . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+eMBRegisterMode. . . . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+MB_REG_READ. . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+MB_EIO . . . . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+SPICON . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F8H  1
+MB_EX_ILLEGAL_DATA_ADDRESS . . . . . .  E_CONST  -----  U_CHAR   -----  1
+MB_TCP . . . . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+MB_ASCII . . . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+MB_EX_GATEWAY_TGT_FAILED . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+pvMBFrameClose . . . . . . . . . . . .  TYPEDEF  -----  PTR      -----  3
+peMBFrameSend. . . . . . . . . . . . .  TYPEDEF  -----  PTR      -----  3
+eMBFuncReadInputRegister . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  usRegAddress . . . . . . . . . . . .  AUTO     XDATA  U_INT    0000H  2
+MB_PAR_EVEN. . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+MB_PAR_NONE. . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+MB_EPORTERR. . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+USHORT . . . . . . . . . . . . . . . .  TYPEDEF  -----  U_INT    -----  2
+C51 COMPILER V9.00   MBFUNCINPUT                                                           06/20/2014 08:35:07 PAGE 6   
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+T2CON. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C8H  1
+MB_EX_SLAVE_DEVICE_FAILURE . . . . . .  E_CONST  -----  U_CHAR   -----  1
+MB_RTU . . . . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+TEST_RECIEVED. . . . . . . . . . . . .  ABSBIT   -----  BIT      00B7H  1
+wchar_t. . . . . . . . . . . . . . . .  TYPEDEF  -----  CHAR     -----  1
+MB_EX_MEMORY_PARITY_ERROR. . . . . . .  E_CONST  -----  U_CHAR   -----  1
+eMBParity. . . . . . . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+EV_READY . . . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+UCHAR. . . . . . . . . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+pvMBFrameStart . . . . . . . . . . . .  TYPEDEF  -----  PTR      -----  3
+PSW. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D0H  1
+eMBMode. . . . . . . . . . . . . . . .  TYPEDEF  -----  U_CHAR   -----  1
+WDCON. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C0H  1
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     28    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =      2    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  4 WARNING(S),  0 ERROR(S)

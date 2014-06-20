@@ -1,0 +1,523 @@
+C51 COMPILER V9.00   EEPROM                                                                06/20/2014 09:02:39 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE EEPROM
+OBJECT MODULE PLACED IN eeprom.obj
+COMPILER INVOKED BY: C:\Program Files\Keil\C51\BIN\C51.EXE eeprom\eeprom.c LARGE OPTIMIZE(6,SPEED) BROWSE ORDER NOAREGS 
+                    -DEBUG OBJECTEXTEND CODE SYMBOLS PRINT(.\eeprom.lst) OBJECT(eeprom.obj)
+
+line level    source
+
+   1          #include "eeprom.h"
+   2          
+   3           //----------------------------------------------------------------------------------
+   4          unsigned int  EEPROM_Write(void *buffer,unsigned int len,unsigned int addr) //using 0//записать буфер по а
+             -дресу
+   5          {
+   6   1      //небезопасная
+   7   1        unsigned int i=0;
+   8   1        unsigned char *buf;
+   9   1      
+  10   1        unsigned char ea_temp=0;//сохраним EA
+  11   1                                                         
+  12   1        if (addr+len>= EEMEM_SIZE) //если адрес выходит за границы
+  13   1              return (0UL);
+  14   1      
+  15   1              buf=buffer;
+  16   1      
+  17   1         for(i=0;i<len;i++)
+  18   1         {
+  19   2                      ea_temp=EA;
+  20   2                      EA=0;      
+  21   2                 
+  22   2                 EDATA1=buf[i*4]; 
+  23   2                 EDATA2=buf[i*4+1]; 
+  24   2                 EDATA3=buf[i*4+2]; 
+  25   2                 EDATA4=buf[i*4+3]; 
+  26   2                
+  27   2                 EADR=addr;
+  28   2      
+  29   2                 ECON=EE_ERASE_PAGE;
+  30   2                 ECON=EE_WRITE_PAGE;
+  31   2      
+  32   2                 EA=ea_temp;
+  33   2                
+  34   2                 addr++;
+  35   2         }
+  36   1      
+  37   1         return i;
+  38   1      }
+  39          //----------------------------------------------------------------------------------
+  40          unsigned int EEPROM_Read(void *buffer,unsigned int len,unsigned int addr) //using 0//прочитать несколько с
+             -траниц с адреса
+  41          {
+  42   1      //небезопасная
+  43   1      
+  44   1        unsigned int  i=0;
+  45   1        unsigned char *buf;
+  46   1      
+  47   1         unsigned char ea_temp=0;//сохраним EA
+  48   1      
+  49   1        if (addr+len>= EEMEM_SIZE) //если адрес выходит за границы
+  50   1              return (0UL);
+  51   1      
+  52   1         buf=buffer;
+C51 COMPILER V9.00   EEPROM                                                                06/20/2014 09:02:39 PAGE 2   
+
+  53   1              
+  54   1         for(i=0;i<len;i++)
+  55   1         {
+  56   2                ea_temp=EA;
+  57   2                EA=0;
+  58   2                
+  59   2                 EADR=addr;
+  60   2                 ECON=EE_READ_PAGE;
+  61   2                 
+  62   2                 buf[i*4]  =EDATA1; 
+  63   2                 buf[i*4+1]=EDATA2; 
+  64   2                 buf[i*4+2]=EDATA3; 
+  65   2                 buf[i*4+3]=EDATA4; 
+  66   2      
+  67   2                 EA=ea_temp;
+  68   2      
+  69   2                 addr++;
+  70   2         }  
+  71   1      
+  72   1         return i;
+  73   1      }
+  74          
+  75          //----------------------------------------------------------------------------------
+C51 COMPILER V9.00   EEPROM                                                                06/20/2014 09:02:39 PAGE 3   
+
+ASSEMBLY LISTING OF GENERATED OBJECT CODE
+
+
+             ; FUNCTION _EEPROM_Write (BEGIN)
+                                           ; SOURCE LINE # 4
+0000 900000      R     MOV     DPTR,#len
+0003 EC                MOV     A,R4
+0004 F0                MOVX    @DPTR,A
+0005 A3                INC     DPTR
+0006 ED                MOV     A,R5
+0007 F0                MOVX    @DPTR,A
+;---- Variable 'buffer' assigned to Register 'R1/R2/R3' ----
+                                           ; SOURCE LINE # 5
+                                           ; SOURCE LINE # 7
+0008 E4                CLR     A
+0009 900000      R     MOV     DPTR,#i
+000C F0                MOVX    @DPTR,A
+000D A3                INC     DPTR
+000E F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 10
+000F A3                INC     DPTR
+0010 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 12
+0011 900000      R     MOV     DPTR,#len
+0014 E0                MOVX    A,@DPTR
+0015 FE                MOV     R6,A
+0016 A3                INC     DPTR
+0017 E0                MOVX    A,@DPTR
+0018 FF                MOV     R7,A
+0019 900000      R     MOV     DPTR,#addr+01H
+001C E0                MOVX    A,@DPTR
+001D 2F                ADD     A,R7
+001E 900000      R     MOV     DPTR,#addr
+0021 E0                MOVX    A,@DPTR
+0022 3E                ADDC    A,R6
+0023 C3                CLR     C
+0024 9404              SUBB    A,#04H
+0026 4004              JC      ?C0001
+                                           ; SOURCE LINE # 13
+0028 E4                CLR     A
+0029 FE                MOV     R6,A
+002A FF                MOV     R7,A
+002B 22                RET     
+002C         ?C0001:
+                                           ; SOURCE LINE # 15
+;---- Variable 'buf' assigned to Register 'R1/R2/R3' ----
+                                           ; SOURCE LINE # 17
+002C E4                CLR     A
+002D 900000      R     MOV     DPTR,#i
+0030 F0                MOVX    @DPTR,A
+0031 A3                INC     DPTR
+0032 F0                MOVX    @DPTR,A
+0033         ?C0003:
+0033 900000      R     MOV     DPTR,#len
+0036 E0                MOVX    A,@DPTR
+0037 FE                MOV     R6,A
+0038 A3                INC     DPTR
+0039 E0                MOVX    A,@DPTR
+003A FF                MOV     R7,A
+003B C3                CLR     C
+003C 900000      R     MOV     DPTR,#i+01H
+003F E0                MOVX    A,@DPTR
+C51 COMPILER V9.00   EEPROM                                                                06/20/2014 09:02:39 PAGE 4   
+
+0040 9F                SUBB    A,R7
+0041 900000      R     MOV     DPTR,#i
+0044 E0                MOVX    A,@DPTR
+0045 9E                SUBB    A,R6
+0046 4003              JC      $ + 5H
+0048 020000      R     LJMP    ?C0004
+                                           ; SOURCE LINE # 18
+                                           ; SOURCE LINE # 19
+004B A2AF              MOV     C,EA
+004D E4                CLR     A
+004E 33                RLC     A
+004F 900000      R     MOV     DPTR,#ea_temp
+0052 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 20
+0053 C2AF              CLR     EA
+                                           ; SOURCE LINE # 22
+0055 900000      R     MOV     DPTR,#i
+0058 E0                MOVX    A,@DPTR
+0059 FE                MOV     R6,A
+005A A3                INC     DPTR
+005B E0                MOVX    A,@DPTR
+005C 7802              MOV     R0,#02H
+005E         ?C0011:
+005E C3                CLR     C
+005F 33                RLC     A
+0060 CE                XCH     A,R6
+0061 33                RLC     A
+0062 CE                XCH     A,R6
+0063 D8F9              DJNZ    R0,?C0011
+0065 FF                MOV     R7,A
+0066 F582              MOV     DPL,A
+0068 8E83              MOV     DPH,R6
+006A 120000      E     LCALL   ?C?CLDOPTR
+006D F5BC              MOV     EDATA1,A
+                                           ; SOURCE LINE # 23
+006F 8F82              MOV     DPL,R7
+0071 8E83              MOV     DPH,R6
+0073 A3                INC     DPTR
+0074 120000      E     LCALL   ?C?CLDOPTR
+0077 F5BD              MOV     EDATA2,A
+                                           ; SOURCE LINE # 24
+0079 900000      R     MOV     DPTR,#i
+007C E0                MOVX    A,@DPTR
+007D FE                MOV     R6,A
+007E A3                INC     DPTR
+007F E0                MOVX    A,@DPTR
+0080 7802              MOV     R0,#02H
+0082         ?C0012:
+0082 C3                CLR     C
+0083 33                RLC     A
+0084 CE                XCH     A,R6
+0085 33                RLC     A
+0086 CE                XCH     A,R6
+0087 D8F9              DJNZ    R0,?C0012
+0089 FF                MOV     R7,A
+008A F582              MOV     DPL,A
+008C 8E83              MOV     DPH,R6
+008E A3                INC     DPTR
+008F A3                INC     DPTR
+0090 120000      E     LCALL   ?C?CLDOPTR
+0093 F5BE              MOV     EDATA3,A
+                                           ; SOURCE LINE # 25
+C51 COMPILER V9.00   EEPROM                                                                06/20/2014 09:02:39 PAGE 5   
+
+0095 8F82              MOV     DPL,R7
+0097 8E83              MOV     DPH,R6
+0099 A3                INC     DPTR
+009A A3                INC     DPTR
+009B A3                INC     DPTR
+009C 120000      E     LCALL   ?C?CLDOPTR
+009F F5BF              MOV     EDATA4,A
+                                           ; SOURCE LINE # 27
+00A1 900000      R     MOV     DPTR,#addr
+00A4 E0                MOVX    A,@DPTR
+00A5 FE                MOV     R6,A
+00A6 A3                INC     DPTR
+00A7 E0                MOVX    A,@DPTR
+00A8 FF                MOV     R7,A
+00A9 8EC7              MOV     EADR+01H,R6
+00AB 8FC6              MOV     EADR,R7
+                                           ; SOURCE LINE # 29
+00AD 75B905            MOV     ECON,#05H
+                                           ; SOURCE LINE # 30
+00B0 75B902            MOV     ECON,#02H
+                                           ; SOURCE LINE # 32
+00B3 900000      R     MOV     DPTR,#ea_temp
+00B6 E0                MOVX    A,@DPTR
+00B7 24FF              ADD     A,#0FFH
+00B9 92AF              MOV     EA,C
+                                           ; SOURCE LINE # 34
+00BB 900000      R     MOV     DPTR,#addr+01H
+00BE E0                MOVX    A,@DPTR
+00BF 04                INC     A
+00C0 F0                MOVX    @DPTR,A
+00C1 7006              JNZ     ?C0013
+00C3 900000      R     MOV     DPTR,#addr
+00C6 E0                MOVX    A,@DPTR
+00C7 04                INC     A
+00C8 F0                MOVX    @DPTR,A
+00C9         ?C0013:
+                                           ; SOURCE LINE # 35
+00C9 900000      R     MOV     DPTR,#i+01H
+00CC E0                MOVX    A,@DPTR
+00CD 04                INC     A
+00CE F0                MOVX    @DPTR,A
+00CF 7006              JNZ     ?C0014
+00D1 900000      R     MOV     DPTR,#i
+00D4 E0                MOVX    A,@DPTR
+00D5 04                INC     A
+00D6 F0                MOVX    @DPTR,A
+00D7         ?C0014:
+00D7 020000      R     LJMP    ?C0003
+00DA         ?C0004:
+                                           ; SOURCE LINE # 37
+00DA 900000      R     MOV     DPTR,#i
+00DD E0                MOVX    A,@DPTR
+00DE FE                MOV     R6,A
+00DF A3                INC     DPTR
+00E0 E0                MOVX    A,@DPTR
+00E1 FF                MOV     R7,A
+                                           ; SOURCE LINE # 38
+00E2         ?C0002:
+00E2 22                RET     
+             ; FUNCTION _EEPROM_Write (END)
+
+             ; FUNCTION _EEPROM_Read (BEGIN)
+C51 COMPILER V9.00   EEPROM                                                                06/20/2014 09:02:39 PAGE 6   
+
+                                           ; SOURCE LINE # 40
+0000 900000      R     MOV     DPTR,#len
+0003 EC                MOV     A,R4
+0004 F0                MOVX    @DPTR,A
+0005 A3                INC     DPTR
+0006 ED                MOV     A,R5
+0007 F0                MOVX    @DPTR,A
+;---- Variable 'buffer' assigned to Register 'R1/R2/R3' ----
+                                           ; SOURCE LINE # 41
+                                           ; SOURCE LINE # 44
+0008 E4                CLR     A
+0009 900000      R     MOV     DPTR,#i
+000C F0                MOVX    @DPTR,A
+000D A3                INC     DPTR
+000E F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 47
+000F A3                INC     DPTR
+0010 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 49
+0011 900000      R     MOV     DPTR,#len
+0014 E0                MOVX    A,@DPTR
+0015 FE                MOV     R6,A
+0016 A3                INC     DPTR
+0017 E0                MOVX    A,@DPTR
+0018 FF                MOV     R7,A
+0019 900000      R     MOV     DPTR,#addr+01H
+001C E0                MOVX    A,@DPTR
+001D 2F                ADD     A,R7
+001E 900000      R     MOV     DPTR,#addr
+0021 E0                MOVX    A,@DPTR
+0022 3E                ADDC    A,R6
+0023 C3                CLR     C
+0024 9404              SUBB    A,#04H
+0026 4004              JC      ?C0006
+                                           ; SOURCE LINE # 50
+0028 E4                CLR     A
+0029 FE                MOV     R6,A
+002A FF                MOV     R7,A
+002B 22                RET     
+002C         ?C0006:
+                                           ; SOURCE LINE # 52
+;---- Variable 'buf' assigned to Register 'R1/R2/R3' ----
+                                           ; SOURCE LINE # 54
+002C E4                CLR     A
+002D 900000      R     MOV     DPTR,#i
+0030 F0                MOVX    @DPTR,A
+0031 A3                INC     DPTR
+0032 F0                MOVX    @DPTR,A
+0033         ?C0008:
+0033 900000      R     MOV     DPTR,#len
+0036 E0                MOVX    A,@DPTR
+0037 FE                MOV     R6,A
+0038 A3                INC     DPTR
+0039 E0                MOVX    A,@DPTR
+003A FF                MOV     R7,A
+003B C3                CLR     C
+003C 900000      R     MOV     DPTR,#i+01H
+003F E0                MOVX    A,@DPTR
+0040 9F                SUBB    A,R7
+0041 900000      R     MOV     DPTR,#i
+0044 E0                MOVX    A,@DPTR
+0045 9E                SUBB    A,R6
+C51 COMPILER V9.00   EEPROM                                                                06/20/2014 09:02:39 PAGE 7   
+
+0046 4003              JC      $ + 5H
+0048 020000      R     LJMP    ?C0009
+                                           ; SOURCE LINE # 55
+                                           ; SOURCE LINE # 56
+004B A2AF              MOV     C,EA
+004D E4                CLR     A
+004E 33                RLC     A
+004F 900000      R     MOV     DPTR,#ea_temp
+0052 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 57
+0053 C2AF              CLR     EA
+                                           ; SOURCE LINE # 59
+0055 900000      R     MOV     DPTR,#addr
+0058 E0                MOVX    A,@DPTR
+0059 FE                MOV     R6,A
+005A A3                INC     DPTR
+005B E0                MOVX    A,@DPTR
+005C FF                MOV     R7,A
+005D 8EC7              MOV     EADR+01H,R6
+005F 8FC6              MOV     EADR,R7
+                                           ; SOURCE LINE # 60
+0061 75B901            MOV     ECON,#01H
+                                           ; SOURCE LINE # 62
+0064 A3                INC     DPTR
+0065 E0                MOVX    A,@DPTR
+0066 FC                MOV     R4,A
+0067 A3                INC     DPTR
+0068 E0                MOVX    A,@DPTR
+0069 FD                MOV     R5,A
+006A CE                XCH     A,R6
+006B EC                MOV     A,R4
+006C CE                XCH     A,R6
+006D 7802              MOV     R0,#02H
+006F         ?C0015:
+006F C3                CLR     C
+0070 33                RLC     A
+0071 CE                XCH     A,R6
+0072 33                RLC     A
+0073 CE                XCH     A,R6
+0074 D8F9              DJNZ    R0,?C0015
+0076 FF                MOV     R7,A
+0077 F582              MOV     DPL,A
+0079 8E83              MOV     DPH,R6
+007B E5BC              MOV     A,EDATA1
+007D 120000      E     LCALL   ?C?CSTOPTR
+                                           ; SOURCE LINE # 63
+0080 8F82              MOV     DPL,R7
+0082 8E83              MOV     DPH,R6
+0084 A3                INC     DPTR
+0085 E5BD              MOV     A,EDATA2
+0087 120000      E     LCALL   ?C?CSTOPTR
+                                           ; SOURCE LINE # 64
+008A ED                MOV     A,R5
+008B CE                XCH     A,R6
+008C EC                MOV     A,R4
+008D CE                XCH     A,R6
+008E 7802              MOV     R0,#02H
+0090         ?C0016:
+0090 C3                CLR     C
+0091 33                RLC     A
+0092 CE                XCH     A,R6
+0093 33                RLC     A
+C51 COMPILER V9.00   EEPROM                                                                06/20/2014 09:02:39 PAGE 8   
+
+0094 CE                XCH     A,R6
+0095 D8F9              DJNZ    R0,?C0016
+0097 FF                MOV     R7,A
+0098 F582              MOV     DPL,A
+009A 8E83              MOV     DPH,R6
+009C A3                INC     DPTR
+009D A3                INC     DPTR
+009E E5BE              MOV     A,EDATA3
+00A0 120000      E     LCALL   ?C?CSTOPTR
+                                           ; SOURCE LINE # 65
+00A3 8F82              MOV     DPL,R7
+00A5 8E83              MOV     DPH,R6
+00A7 A3                INC     DPTR
+00A8 A3                INC     DPTR
+00A9 A3                INC     DPTR
+00AA E5BF              MOV     A,EDATA4
+00AC 120000      E     LCALL   ?C?CSTOPTR
+                                           ; SOURCE LINE # 67
+00AF 900000      R     MOV     DPTR,#ea_temp
+00B2 E0                MOVX    A,@DPTR
+00B3 24FF              ADD     A,#0FFH
+00B5 92AF              MOV     EA,C
+                                           ; SOURCE LINE # 69
+00B7 900000      R     MOV     DPTR,#addr+01H
+00BA E0                MOVX    A,@DPTR
+00BB 04                INC     A
+00BC F0                MOVX    @DPTR,A
+00BD 7006              JNZ     ?C0017
+00BF 900000      R     MOV     DPTR,#addr
+00C2 E0                MOVX    A,@DPTR
+00C3 04                INC     A
+00C4 F0                MOVX    @DPTR,A
+00C5         ?C0017:
+                                           ; SOURCE LINE # 70
+00C5 900000      R     MOV     DPTR,#i+01H
+00C8 E0                MOVX    A,@DPTR
+00C9 04                INC     A
+00CA F0                MOVX    @DPTR,A
+00CB 7006              JNZ     ?C0018
+00CD 900000      R     MOV     DPTR,#i
+00D0 E0                MOVX    A,@DPTR
+00D1 04                INC     A
+00D2 F0                MOVX    @DPTR,A
+00D3         ?C0018:
+00D3 020000      R     LJMP    ?C0008
+00D6         ?C0009:
+                                           ; SOURCE LINE # 72
+00D6 900000      R     MOV     DPTR,#i
+00D9 E0                MOVX    A,@DPTR
+00DA FE                MOV     R6,A
+00DB A3                INC     DPTR
+00DC E0                MOVX    A,@DPTR
+00DD FF                MOV     R7,A
+                                           ; SOURCE LINE # 73
+00DE         ?C0007:
+00DE 22                RET     
+             ; FUNCTION _EEPROM_Read (END)
+
+C51 COMPILER V9.00   EEPROM                                                                06/20/2014 09:02:39 PAGE 9   
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+TCON . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0088H  1
+SCON . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0098H  1
+P2 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A0H  1
+IE . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A8H  1
+P3 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B0H  1
+IP . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B8H  1
+ECON . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B9H  1
+EDATA1 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00BCH  1
+EDATA2 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00BDH  1
+EDATA3 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00BEH  1
+EDATA4 . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00BFH  1
+WDCON. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C0H  1
+T2CON. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C8H  1
+PSW. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D0H  1
+ADCSTAT. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D8H  1
+I2CCON . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E8H  1
+DCON . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E8H  1
+SPICON . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F8H  1
+EA . . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00AFH  1
+EADR . . . . . . . . . . . . . . . . .  SFR      DATA   U_INT    00C6H  2
+_EEPROM_Read . . . . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  buffer . . . . . . . . . . . . . . .  AUTO     DATA   VOID_PTR 0001H  3
+  len. . . . . . . . . . . . . . . . .  AUTO     XDATA  U_INT    0003H  2
+  addr . . . . . . . . . . . . . . . .  AUTO     XDATA  U_INT    0005H  2
+  i. . . . . . . . . . . . . . . . . .  AUTO     XDATA  U_INT    0007H  2
+  buf. . . . . . . . . . . . . . . . .  * REG *  DATA   PTR      0001H  3
+  ea_temp. . . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0009H  1
+_EEPROM_Write. . . . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  buffer . . . . . . . . . . . . . . .  AUTO     DATA   VOID_PTR 0001H  3
+  len. . . . . . . . . . . . . . . . .  AUTO     XDATA  U_INT    0003H  2
+  addr . . . . . . . . . . . . . . . .  AUTO     XDATA  U_INT    0005H  2
+  i. . . . . . . . . . . . . . . . . .  AUTO     XDATA  U_INT    0007H  2
+  buf. . . . . . . . . . . . . . . . .  * REG *  DATA   PTR      0001H  3
+  ea_temp. . . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0009H  1
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    450    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----      20
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

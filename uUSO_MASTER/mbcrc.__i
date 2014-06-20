@@ -1,0 +1,1 @@
+"modbus\rtu\mbcrc.c" LARGE OPTIMIZE (0,SPEED) BROWSE MODAB2 INCDIR(.\modbus\include;.\modbus;.\port;.\modbus\ascii;.\modbus\rtu;..\uUSO_MASTER) DEBUG OBJECTEXTEND CODE SYMBOLS PRINT(.\mbcrc.lst) OBJECT(mbcrc.obj)

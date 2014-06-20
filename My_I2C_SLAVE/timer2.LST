@@ -1,0 +1,730 @@
+C51 COMPILER V9.00   TIMER2                                                                10/29/2013 11:03:21 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE TIMER2
+OBJECT MODULE PLACED IN timer2.OBJ
+COMPILER INVOKED BY: C:\Program Files\Keil\C51\BIN\C51.EXE timer2.c LARGE OPTIMIZE(9,SPEED) BROWSE ORDER NOAREGS MODAB2 
+                    -DEBUG OBJECTEXTEND CODE SYMBOLS
+
+line level    source
+
+   1          #include "timer2.h"
+   2          //-------------------------------------------------------
+   3          #define Hz  10
+   4          
+   5          #define kol_izmer_data 3
+   6          #define kol_sec_sred 3
+   7          #define kol_sec_mgnov 1
+   8          #define Period_sred 200
+   9          #define Period_mgnov 100
+  10          
+  11          volatile unsigned long data temp_Hz_kanal_sred=0;
+  12          volatile unsigned long data temp_Hz_kanal_mgnov=0;
+  13          
+  14          volatile unsigned int idata sec_kanal_sred=0;
+  15          volatile unsigned int idata sec_kanal_mgnov=0;
+  16          volatile unsigned int idata cycl_kanal=0;
+  17          
+  18          volatile unsigned long idata Hz_data_sred=0;
+  19          volatile unsigned long idata Hz_data_mgnov=0;
+  20          
+  21          volatile unsigned int xdata period_kanal_sred=0;
+  22          volatile unsigned int xdata period_kanal_mgnov=0;
+  23          //volatile unsigned long xdata Hz_kanal_mgnov[kol_sec_mgnov][1000/Period_mgnov]={0};
+  24          volatile unsigned long xdata Hz_kanal_sred[kol_sec_sred][1000/Period_sred]={0};
+  25          
+  26          volatile unsigned long data sym_kanal_sred=0;
+  27          volatile unsigned long data sym_kanal_mgnov=0;
+  28          unsigned char poschet_intervalov=0; 
+  29          
+  30          volatile unsigned char handle_freq_flag=0;
+  31          //-------------------------------------------------------
+  32          void Timer2_Initialize(void) //using 0// инициализаци€ таймера  таймера дл€ скоростного частотомера
+  33          {
+  34   1          ET2 = 1;
+  35   1              PT2=0;//приоритет низкий
+  36   1              T2CON=0x00;                       // таймер периода сбора частоты (0.01)
+  37   1              RCAP2H=TH2=0x86;//0xC3;//0x86;//0x0B;   - дл€ 6,29 ћ√ц  //0x0A 
+  38   1              RCAP2L=TL2=0x07;//0x03;//0x07;//0xF0; - дл€ 6,29 ћ√ц   //0x3C 
+  39   1              TR2=1;
+  40   1              return;
+  41   1      }
+  42          //-------------------------------------------------------
+  43          void _TR2_ (void) interrupt 5
+  44          {
+  45   1      char i=0;
+  46   1      char j=0;
+  47   1      
+  48   1              TF2=0;
+  49   1              if(cycl_kanal<19)
+  50   1              {
+  51   2                      cycl_kanal++;
+  52   2              }
+  53   1              else
+  54   1              {
+C51 COMPILER V9.00   TIMER2                                                                10/29/2013 11:03:21 PAGE 2   
+
+  55   2                       temp_Hz_kanal_mgnov=((unsigned long)TH1*0x100)|TL1;
+  56   2                       TH1=TL1=0;
+  57   2                       handle_freq_flag=1;
+  58   2              }
+  59   1      } 
+  60          
+  61          //----------------------------------------------------------------------------------
+  62          void Frequency_Handler(void)//обработчик измерени€ частоты
+  63          {
+  64   1      
+  65   1                      if(handle_freq_flag==0)
+  66   1                      {
+  67   2                              return;
+  68   2                      }
+  69   1      
+  70   1                      handle_freq_flag=0;
+  71   1      
+  72   1                      poschet_intervalov++;
+  73   1              
+  74   1                       
+  75   1                      // temp_Hz_kanal_mgnov=((unsigned long)TH1*0x100)|TL1;
+  76   1                       TH1=TL1=0;
+  77   1                       temp_Hz_kanal_sred+=temp_Hz_kanal_mgnov;
+  78   1                       Hz_data_mgnov+=temp_Hz_kanal_mgnov;//*=10;
+  79   1                       
+  80   1                       if(poschet_intervalov==2)
+  81   1                       {
+  82   2                               Hz_data_mgnov*=5;
+  83   2                       //     if(channels.transfer==0)        //если передачи нет
+  84   2                      //      {
+  85   2                                      //channels.I2C_CHNL.channels.frequency=Hz_data_mgnov;//FloatToStrPC((void*)&Hz_data_mgnov);
+  86   2                                      channels.frequency_buf=Hz_data_mgnov;
+  87   2                      //      }
+  88   2                               Hz_data_mgnov=0;
+  89   2                       }
+  90   1              
+  91   1              
+  92   1              
+  93   1              
+  94   1                      if(poschet_intervalov==2) // вычисл€етс€ среднее значение частоты за 10 сек
+  95   1                      {
+  96   2                                       poschet_intervalov=0;
+  97   2                              
+  98   2                                   if(sec_kanal_sred!=kol_sec_sred+1&&!(period_kanal_sred%(1000/Period_sred)))  
+  99   2                                       {
+ 100   3                                                sec_kanal_sred++;
+ 101   3                                       }
+ 102   2              
+ 103   2                                       if(sec_kanal_sred==kol_sec_sred+1)
+ 104   2                                       {
+ 105   3                                                sym_kanal_sred-=Hz_kanal_sred[period_kanal_sred/(1000/Period_sred)][period_kanal_sred%(1000/Period_
+             -sred)];
+ 106   3                                                sym_kanal_sred+=temp_Hz_kanal_sred;
+ 107   3                                                Hz_data_sred=(float)sym_kanal_sred/(float)kol_sec_sred;
+ 108   3      
+ 109   3                                        //    if(channels.transfer==0)        //если передачи нет
+ 110   3                                      //      {
+ 111   3                                                      //channels.I2C_CHNL.channels.mid_frequency=Hz_data_sred;//FloatToStrPC((void*)&Hz_data_sred);
+ 112   3                                                       channels.mid_frequency_buf=Hz_data_sred;
+ 113   3                                      //      }
+ 114   3                                       }
+ 115   2                                       else
+C51 COMPILER V9.00   TIMER2                                                                10/29/2013 11:03:21 PAGE 3   
+
+ 116   2                                       {
+ 117   3                                                      sym_kanal_sred=sym_kanal_sred+temp_Hz_kanal_sred;
+ 118   3                                       }
+ 119   2                                       
+ 120   2                                       Hz_kanal_sred[period_kanal_sred/(1000/Period_sred)][period_kanal_sred%(1000/Period_sred)]=temp_Hz_kan
+             -al_sred;
+ 121   2                              
+ 122   2                                       if(period_kanal_sred<(kol_sec_sred*(1000/Period_sred))-1)      // подсчет периодов в 10 секундный интервал
+ 123   2                                       {
+ 124   3                                              period_kanal_sred++;
+ 125   3                                       }
+ 126   2                                       else
+ 127   2                                       {
+ 128   3                                          period_kanal_sred=0;
+ 129   3                                       }
+ 130   2              
+ 131   2                                       temp_Hz_kanal_sred=0;
+ 132   2              
+ 133   2                      }
+ 134   1                  cycl_kanal=0;
+ 135   1              return;
+ 136   1      }
+C51 COMPILER V9.00   TIMER2                                                                10/29/2013 11:03:21 PAGE 4   
+
+ASSEMBLY LISTING OF GENERATED OBJECT CODE
+
+
+             ; FUNCTION Com0013 (BEGIN)
+0000         L?0020:
+0000 FB                MOV     R3,A
+0001 CA                XCH     A,R2
+0002 EE                MOV     A,R6
+0003 CA                XCH     A,R2
+0004         L?0021:
+0004 900000      R     MOV     DPTR,#period_kanal_sred
+0007 E0                MOVX    A,@DPTR
+0008 FE                MOV     R6,A
+0009 A3                INC     DPTR
+000A E0                MOVX    A,@DPTR
+000B FF                MOV     R7,A
+000C 7C00              MOV     R4,#00H
+000E 7D05              MOV     R5,#05H
+0010 020000      E     LJMP    ?C?UIDIV
+0013         L?0022:
+0013 900000      R     MOV     DPTR,#Hz_kanal_sred
+0016 75F014            MOV     B,#014H
+0019 EF                MOV     A,R7
+001A 120000      E     LCALL   ?C?OFFXADD
+001D EE                MOV     A,R6
+001E 75F014            MOV     B,#014H
+0021 A4                MUL     AB
+0022 2583              ADD     A,DPH
+0024 F583              MOV     DPH,A
+0026 E582              MOV     A,DPL
+0028 2B                ADD     A,R3
+0029 F582              MOV     DPL,A
+002B E583              MOV     A,DPH
+002D 3A                ADDC    A,R2
+002E F583              MOV     DPH,A
+0030 22                RET     
+0031         L?0023:
+0031 E500        R     MOV     A,sym_kanal_sred+03H
+0033 2500        R     ADD     A,temp_Hz_kanal_sred+03H
+0035 F500        R     MOV     sym_kanal_sred+03H,A
+0037 E500        R     MOV     A,sym_kanal_sred+02H
+0039 3500        R     ADDC    A,temp_Hz_kanal_sred+02H
+003B F500        R     MOV     sym_kanal_sred+02H,A
+003D E500        R     MOV     A,sym_kanal_sred+01H
+003F 3500        R     ADDC    A,temp_Hz_kanal_sred+01H
+0041 F500        R     MOV     sym_kanal_sred+01H,A
+0043 E500        R     MOV     A,sym_kanal_sred
+0045 3500        R     ADDC    A,temp_Hz_kanal_sred
+0047 F500        R     MOV     sym_kanal_sred,A
+0049 22                RET     
+             ; FUNCTION Com0013 (END)
+
+             ; FUNCTION Timer2_Initialize (BEGIN)
+                                           ; SOURCE LINE # 32
+                                           ; SOURCE LINE # 33
+                                           ; SOURCE LINE # 34
+0000 D2AD              SETB    ET2
+                                           ; SOURCE LINE # 35
+0002 C2BD              CLR     PT2
+                                           ; SOURCE LINE # 36
+0004 E4                CLR     A
+0005 F5C8              MOV     T2CON,A
+C51 COMPILER V9.00   TIMER2                                                                10/29/2013 11:03:21 PAGE 5   
+
+                                           ; SOURCE LINE # 37
+0007 75CD86            MOV     TH2,#086H
+000A 75CB86            MOV     RCAP2H,#086H
+                                           ; SOURCE LINE # 38
+000D 75CC07            MOV     TL2,#07H
+0010 75CA07            MOV     RCAP2L,#07H
+                                           ; SOURCE LINE # 39
+0013 D2CA              SETB    TR2
+                                           ; SOURCE LINE # 41
+0015         ?C0001:
+0015 22                RET     
+             ; FUNCTION Timer2_Initialize (END)
+
+             ; FUNCTION _TR2_ (BEGIN)
+0000 C0E0              PUSH    ACC
+0002 C0F0              PUSH    B
+0004 C083              PUSH    DPH
+0006 C082              PUSH    DPL
+0008 05A7              INC     DPCON
+000A C083              PUSH    DPH
+000C C082              PUSH    DPL
+000E C0A7              PUSH    DPCON
+0010 75A700            MOV     DPCON,#00H
+0013 C0D0              PUSH    PSW
+0015 E8                MOV     A,R0
+0016 C0E0              PUSH    ACC
+0018 E9                MOV     A,R1
+0019 C0E0              PUSH    ACC
+001B EA                MOV     A,R2
+001C C0E0              PUSH    ACC
+001E EB                MOV     A,R3
+001F C0E0              PUSH    ACC
+0021 EC                MOV     A,R4
+0022 C0E0              PUSH    ACC
+0024 ED                MOV     A,R5
+0025 C0E0              PUSH    ACC
+0027 EE                MOV     A,R6
+0028 C0E0              PUSH    ACC
+002A EF                MOV     A,R7
+002B C0E0              PUSH    ACC
+                                           ; SOURCE LINE # 43
+                                           ; SOURCE LINE # 45
+002D 900000      R     MOV     DPTR,#i
+0030 E4                CLR     A
+0031 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 46
+0032 A3                INC     DPTR
+0033 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 48
+0034 C2CF              CLR     TF2
+                                           ; SOURCE LINE # 49
+0036 C3                CLR     C
+0037 7800        R     MOV     R0,#LOW cycl_kanal+01H
+0039 E6                MOV     A,@R0
+003A 9413              SUBB    A,#013H
+003C 18                DEC     R0
+003D E6                MOV     A,@R0
+003E 9400              SUBB    A,#00H
+0040 5009              JNC     ?C0002
+                                           ; SOURCE LINE # 50
+                                           ; SOURCE LINE # 51
+0042 08                INC     R0
+C51 COMPILER V9.00   TIMER2                                                                10/29/2013 11:03:21 PAGE 6   
+
+0043 06                INC     @R0
+0044 E6                MOV     A,@R0
+0045 18                DEC     R0
+0046 7035              JNZ     ?C0004
+0048 06                INC     @R0
+0049         ?C0014:
+                                           ; SOURCE LINE # 52
+0049 8032              SJMP    ?C0004
+004B         ?C0002:
+                                           ; SOURCE LINE # 54
+                                           ; SOURCE LINE # 55
+004B AF8D              MOV     R7,TH1
+004D 7E00              MOV     R6,#00H
+004F 7C01              MOV     R4,#01H
+0051 7D00              MOV     R5,#00H
+0053 120000      E     LCALL   ?C?LIMUL
+0056 C8                XCH     A,R0
+0057 EC                MOV     A,R4
+0058 C8                XCH     A,R0
+0059 C9                XCH     A,R1
+005A ED                MOV     A,R5
+005B C9                XCH     A,R1
+005C CA                XCH     A,R2
+005D EE                MOV     A,R6
+005E CA                XCH     A,R2
+005F CB                XCH     A,R3
+0060 EF                MOV     A,R7
+0061 CB                XCH     A,R3
+0062 AF8B              MOV     R7,TL1
+0064 EB                MOV     A,R3
+0065 4F                ORL     A,R7
+0066 F500        R     MOV     temp_Hz_kanal_mgnov+03H,A
+0068 EA                MOV     A,R2
+0069 F500        R     MOV     temp_Hz_kanal_mgnov+02H,A
+006B E9                MOV     A,R1
+006C F500        R     MOV     temp_Hz_kanal_mgnov+01H,A
+006E E8                MOV     A,R0
+006F F500        R     MOV     temp_Hz_kanal_mgnov,A
+                                           ; SOURCE LINE # 56
+0071 758B00            MOV     TL1,#00H
+0074 758D00            MOV     TH1,#00H
+                                           ; SOURCE LINE # 57
+0077 900000      R     MOV     DPTR,#handle_freq_flag
+007A 7401              MOV     A,#01H
+007C F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 58
+                                           ; SOURCE LINE # 59
+007D         ?C0004:
+007D D0E0              POP     ACC
+007F FF                MOV     R7,A
+0080 D0E0              POP     ACC
+0082 FE                MOV     R6,A
+0083 D0E0              POP     ACC
+0085 FD                MOV     R5,A
+0086 D0E0              POP     ACC
+0088 FC                MOV     R4,A
+0089 D0E0              POP     ACC
+008B FB                MOV     R3,A
+008C D0E0              POP     ACC
+008E FA                MOV     R2,A
+008F D0E0              POP     ACC
+0091 F9                MOV     R1,A
+C51 COMPILER V9.00   TIMER2                                                                10/29/2013 11:03:21 PAGE 7   
+
+0092 D0E0              POP     ACC
+0094 F8                MOV     R0,A
+0095 D0D0              POP     PSW
+0097 D0A7              POP     DPCON
+0099 D082              POP     DPL
+009B D083              POP     DPH
+009D 05A7              INC     DPCON
+009F D082              POP     DPL
+00A1 D083              POP     DPH
+00A3 D0F0              POP     B
+00A5 D0E0              POP     ACC
+00A7 32                RETI    
+             ; FUNCTION _TR2_ (END)
+
+             ; FUNCTION Frequency_Handler (BEGIN)
+                                           ; SOURCE LINE # 62
+                                           ; SOURCE LINE # 63
+                                           ; SOURCE LINE # 65
+0000 900000      R     MOV     DPTR,#handle_freq_flag
+0003 E0                MOVX    A,@DPTR
+0004 7003              JNZ     $ + 5H
+0006 020000      R     LJMP    ?C0006
+                                           ; SOURCE LINE # 66
+                                           ; SOURCE LINE # 68
+0009         ?C0005:
+                                           ; SOURCE LINE # 70
+0009 E4                CLR     A
+000A 900000      R     MOV     DPTR,#handle_freq_flag
+000D F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 72
+000E 900000      R     MOV     DPTR,#poschet_intervalov
+0011 E0                MOVX    A,@DPTR
+0012 04                INC     A
+0013 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 76
+0014 E4                CLR     A
+0015 F58B              MOV     TL1,A
+0017 F58D              MOV     TH1,A
+                                           ; SOURCE LINE # 77
+0019 E500        R     MOV     A,temp_Hz_kanal_sred+03H
+001B 2500        R     ADD     A,temp_Hz_kanal_mgnov+03H
+001D F500        R     MOV     temp_Hz_kanal_sred+03H,A
+001F E500        R     MOV     A,temp_Hz_kanal_sred+02H
+0021 3500        R     ADDC    A,temp_Hz_kanal_mgnov+02H
+0023 F500        R     MOV     temp_Hz_kanal_sred+02H,A
+0025 E500        R     MOV     A,temp_Hz_kanal_sred+01H
+0027 3500        R     ADDC    A,temp_Hz_kanal_mgnov+01H
+0029 F500        R     MOV     temp_Hz_kanal_sred+01H,A
+002B E500        R     MOV     A,temp_Hz_kanal_sred
+002D 3500        R     ADDC    A,temp_Hz_kanal_mgnov
+002F F500        R     MOV     temp_Hz_kanal_sred,A
+                                           ; SOURCE LINE # 78
+0031 7800        R     MOV     R0,#LOW Hz_data_mgnov
+0033 120000      E     LCALL   ?C?LLDIDATA
+0036 EF                MOV     A,R7
+0037 2500        R     ADD     A,temp_Hz_kanal_mgnov+03H
+0039 FF                MOV     R7,A
+003A EE                MOV     A,R6
+003B 3500        R     ADDC    A,temp_Hz_kanal_mgnov+02H
+003D FE                MOV     R6,A
+003E ED                MOV     A,R5
+003F 3500        R     ADDC    A,temp_Hz_kanal_mgnov+01H
+C51 COMPILER V9.00   TIMER2                                                                10/29/2013 11:03:21 PAGE 8   
+
+0041 FD                MOV     R5,A
+0042 EC                MOV     A,R4
+0043 3500        R     ADDC    A,temp_Hz_kanal_mgnov
+0045 FC                MOV     R4,A
+0046 7800        R     MOV     R0,#LOW Hz_data_mgnov
+0048 120000      E     LCALL   ?C?LSTIDATA
+                                           ; SOURCE LINE # 80
+004B 900000      R     MOV     DPTR,#poschet_intervalov
+004E E0                MOVX    A,@DPTR
+004F B40229            CJNE    A,#02H,?C0007
+                                           ; SOURCE LINE # 81
+                                           ; SOURCE LINE # 82
+0052 7800        R     MOV     R0,#LOW Hz_data_mgnov
+0054 120000      E     LCALL   ?C?LLDIDATA
+0057 E4                CLR     A
+0058 7B05              MOV     R3,#05H
+005A FA                MOV     R2,A
+005B F9                MOV     R1,A
+005C F8                MOV     R0,A
+005D 120000      E     LCALL   ?C?LMUL
+0060 7800        R     MOV     R0,#LOW Hz_data_mgnov
+0062 120000      E     LCALL   ?C?LSTIDATA
+                                           ; SOURCE LINE # 86
+0065 7800        R     MOV     R0,#LOW Hz_data_mgnov
+0067 120000      E     LCALL   ?C?LLDIDATA
+006A 900000      E     MOV     DPTR,#channels+010H
+006D EE                MOV     A,R6
+006E F0                MOVX    @DPTR,A
+006F A3                INC     DPTR
+0070 EF                MOV     A,R7
+0071 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 88
+0072 7800        R     MOV     R0,#LOW Hz_data_mgnov
+0074 120000      E     LCALL   ?C?LSTKIDATA
+0077 00                DB      00H
+0078 00                DB      00H
+0079 00                DB      00H
+007A 00                DB      00H
+                                           ; SOURCE LINE # 89
+007B         ?C0007:
+                                           ; SOURCE LINE # 94
+007B 900000      R     MOV     DPTR,#poschet_intervalov
+007E E0                MOVX    A,@DPTR
+007F 6402              XRL     A,#02H
+0081 6003              JZ      $ + 5H
+0083 020000      R     LJMP    ?C0008
+                                           ; SOURCE LINE # 95
+                                           ; SOURCE LINE # 96
+0086 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 98
+0087 7800        R     MOV     R0,#LOW sec_kanal_sred+01H
+0089 E6                MOV     A,@R0
+008A 6404              XRL     A,#04H
+008C 18                DEC     R0
+008D 46                ORL     A,@R0
+008E 600F              JZ      ?C0009
+0090 120000      R     LCALL   L?0021
+0093 ED                MOV     A,R5
+0094 4C                ORL     A,R4
+0095 7008              JNZ     ?C0009
+                                           ; SOURCE LINE # 99
+                                           ; SOURCE LINE # 100
+C51 COMPILER V9.00   TIMER2                                                                10/29/2013 11:03:21 PAGE 9   
+
+0097 7800        R     MOV     R0,#LOW sec_kanal_sred+01H
+0099 06                INC     @R0
+009A E6                MOV     A,@R0
+009B 18                DEC     R0
+009C 7001              JNZ     ?C0015
+009E 06                INC     @R0
+009F         ?C0015:
+                                           ; SOURCE LINE # 101
+009F         ?C0009:
+                                           ; SOURCE LINE # 103
+009F 7800        R     MOV     R0,#LOW sec_kanal_sred+01H
+00A1 E6                MOV     A,@R0
+00A2 6404              XRL     A,#04H
+00A4 18                DEC     R0
+00A5 46                ORL     A,@R0
+00A6 7066              JNZ     ?C0010
+                                           ; SOURCE LINE # 104
+                                           ; SOURCE LINE # 105
+00A8 120000      R     LCALL   L?0021
+00AB ED                MOV     A,R5
+00AC CE                XCH     A,R6
+00AD EC                MOV     A,R4
+00AE CE                XCH     A,R6
+00AF 7802              MOV     R0,#02H
+00B1         ?C0016:
+00B1 C3                CLR     C
+00B2 33                RLC     A
+00B3 CE                XCH     A,R6
+00B4 33                RLC     A
+00B5 CE                XCH     A,R6
+00B6 D8F9              DJNZ    R0,?C0016
+00B8 120000      R     LCALL   L?0020
+00BB 120000      R     LCALL   L?0022
+00BE E0                MOVX    A,@DPTR
+00BF F8                MOV     R0,A
+00C0 A3                INC     DPTR
+00C1 E0                MOVX    A,@DPTR
+00C2 F9                MOV     R1,A
+00C3 A3                INC     DPTR
+00C4 E0                MOVX    A,@DPTR
+00C5 FA                MOV     R2,A
+00C6 A3                INC     DPTR
+00C7 E0                MOVX    A,@DPTR
+00C8 FB                MOV     R3,A
+00C9 C3                CLR     C
+00CA E500        R     MOV     A,sym_kanal_sred+03H
+00CC 9B                SUBB    A,R3
+00CD F500        R     MOV     sym_kanal_sred+03H,A
+00CF E500        R     MOV     A,sym_kanal_sred+02H
+00D1 9A                SUBB    A,R2
+00D2 F500        R     MOV     sym_kanal_sred+02H,A
+00D4 E500        R     MOV     A,sym_kanal_sred+01H
+00D6 99                SUBB    A,R1
+00D7 F500        R     MOV     sym_kanal_sred+01H,A
+00D9 E500        R     MOV     A,sym_kanal_sred
+00DB 98                SUBB    A,R0
+00DC F500        R     MOV     sym_kanal_sred,A
+                                           ; SOURCE LINE # 106
+00DE 120000      R     LCALL   L?0023
+                                           ; SOURCE LINE # 107
+00E1 AF00        R     MOV     R7,sym_kanal_sred+03H
+00E3 AE00        R     MOV     R6,sym_kanal_sred+02H
+C51 COMPILER V9.00   TIMER2                                                                10/29/2013 11:03:21 PAGE 10  
+
+00E5 AD00        R     MOV     R5,sym_kanal_sred+01H
+00E7 AC00        R     MOV     R4,sym_kanal_sred
+00E9 E4                CLR     A
+00EA 120000      E     LCALL   ?C?FCASTL
+00ED E4                CLR     A
+00EE FB                MOV     R3,A
+00EF FA                MOV     R2,A
+00F0 7940              MOV     R1,#040H
+00F2 7840              MOV     R0,#040H
+00F4 120000      E     LCALL   ?C?FPDIV
+00F7 120000      E     LCALL   ?C?CASTF
+00FA 7800        R     MOV     R0,#LOW Hz_data_sred
+00FC 120000      E     LCALL   ?C?LSTIDATA
+                                           ; SOURCE LINE # 112
+00FF 7800        R     MOV     R0,#LOW Hz_data_sred
+0101 120000      E     LCALL   ?C?LLDIDATA
+0104 900000      E     MOV     DPTR,#channels+012H
+0107 EE                MOV     A,R6
+0108 F0                MOVX    @DPTR,A
+0109 A3                INC     DPTR
+010A EF                MOV     A,R7
+010B F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 114
+010C 8003              SJMP    ?C0011
+010E         ?C0010:
+                                           ; SOURCE LINE # 116
+                                           ; SOURCE LINE # 117
+010E 120000      R     LCALL   L?0023
+                                           ; SOURCE LINE # 118
+0111         ?C0011:
+                                           ; SOURCE LINE # 120
+0111 AF00        R     MOV     R7,temp_Hz_kanal_sred+03H
+0113 AE00        R     MOV     R6,temp_Hz_kanal_sred+02H
+0115 AD00        R     MOV     R5,temp_Hz_kanal_sred+01H
+0117 AC00        R     MOV     R4,temp_Hz_kanal_sred
+0119 EC                MOV     A,R4
+011A C0E0              PUSH    ACC
+011C ED                MOV     A,R5
+011D C0E0              PUSH    ACC
+011F EE                MOV     A,R6
+0120 C0E0              PUSH    ACC
+0122 EF                MOV     A,R7
+0123 C0E0              PUSH    ACC
+0125 120000      R     LCALL   L?0021
+0128 ED                MOV     A,R5
+0129 CE                XCH     A,R6
+012A EC                MOV     A,R4
+012B CE                XCH     A,R6
+012C 7802              MOV     R0,#02H
+012E         ?C0017:
+012E C3                CLR     C
+012F 33                RLC     A
+0130 CE                XCH     A,R6
+0131 33                RLC     A
+0132 CE                XCH     A,R6
+0133 D8F9              DJNZ    R0,?C0017
+0135 120000      R     LCALL   L?0020
+0138 120000      R     LCALL   L?0022
+013B D0E0              POP     ACC
+013D FF                MOV     R7,A
+013E D0E0              POP     ACC
+0140 FE                MOV     R6,A
+C51 COMPILER V9.00   TIMER2                                                                10/29/2013 11:03:21 PAGE 11  
+
+0141 D0E0              POP     ACC
+0143 FD                MOV     R5,A
+0144 D0E0              POP     ACC
+0146 FC                MOV     R4,A
+0147 120000      E     LCALL   ?C?LSTXDATA
+                                           ; SOURCE LINE # 122
+014A C3                CLR     C
+014B 900000      R     MOV     DPTR,#period_kanal_sred+01H
+014E E0                MOVX    A,@DPTR
+014F 940E              SUBB    A,#0EH
+0151 900000      R     MOV     DPTR,#period_kanal_sred
+0154 E0                MOVX    A,@DPTR
+0155 9400              SUBB    A,#00H
+0157 500E              JNC     ?C0012
+                                           ; SOURCE LINE # 123
+                                           ; SOURCE LINE # 124
+0159 A3                INC     DPTR
+015A E0                MOVX    A,@DPTR
+015B 04                INC     A
+015C F0                MOVX    @DPTR,A
+015D 7006              JNZ     ?C0018
+015F 900000      R     MOV     DPTR,#period_kanal_sred
+0162 E0                MOVX    A,@DPTR
+0163 04                INC     A
+0164 F0                MOVX    @DPTR,A
+0165         ?C0018:
+                                           ; SOURCE LINE # 125
+0165 8007              SJMP    ?C0013
+0167         ?C0012:
+                                           ; SOURCE LINE # 127
+                                           ; SOURCE LINE # 128
+0167 E4                CLR     A
+0168 900000      R     MOV     DPTR,#period_kanal_sred
+016B F0                MOVX    @DPTR,A
+016C A3                INC     DPTR
+016D F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 129
+016E         ?C0013:
+                                           ; SOURCE LINE # 131
+016E E4                CLR     A
+016F F500        R     MOV     temp_Hz_kanal_sred+03H,A
+0171 F500        R     MOV     temp_Hz_kanal_sred+02H,A
+0173 F500        R     MOV     temp_Hz_kanal_sred+01H,A
+0175 F500        R     MOV     temp_Hz_kanal_sred,A
+                                           ; SOURCE LINE # 133
+0177         ?C0008:
+                                           ; SOURCE LINE # 134
+0177 E4                CLR     A
+0178 7800        R     MOV     R0,#LOW cycl_kanal
+017A F6                MOV     @R0,A
+017B 08                INC     R0
+017C F6                MOV     @R0,A
+                                           ; SOURCE LINE # 136
+017D         ?C0006:
+017D 22                RET     
+             ; FUNCTION Frequency_Handler (END)
+
+C51 COMPILER V9.00   TIMER2                                                                10/29/2013 11:03:21 PAGE 12  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
+TCON . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0088H  1
+TL1. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   008BH  1
+TH1. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   008DH  1
+SCON . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   0098H  1
+P2 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A0H  1
+IE . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00A8H  1
+P3 . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B0H  1
+IP . . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00B8H  1
+WDCON. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C0H  1
+T2CON. . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00C8H  1
+RCAP2L . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00CAH  1
+RCAP2H . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00CBH  1
+TL2. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00CCH  1
+TH2. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00CDH  1
+PSW. . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D0H  1
+ADCSTAT. . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00D8H  1
+I2CCON . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E8H  1
+DCON . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E8H  1
+SPICON . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F8H  1
+ET2. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00ADH  1
+PT2. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00BDH  1
+TF2. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00CFH  1
+TR2. . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00CAH  1
+Channel. . . . . . . . . . . . . . . .  * TAG *  -----  STRUCT   -----  20
+  I2C_CHNL . . . . . . . . . . . . . .  MEMBER   -----  UNION    0000H  11
+  transfer . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   000BH  1
+  DOL_buf. . . . . . . . . . . . . . .  MEMBER   -----  U_LONG   000CH  4
+  frequency_buf. . . . . . . . . . . .  MEMBER   -----  U_INT    0010H  2
+  mid_frequency_buf. . . . . . . . . .  MEMBER   -----  U_INT    0012H  2
+Timer2_Initialize. . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+Frequency_Handler. . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+channels . . . . . . . . . . . . . . .  EXTERN   XDATA  STRUCT   -----  20
+temp_Hz_kanal_sred . . . . . . . . . .  PUBLIC   DATA   U_LONG   0000H  4
+temp_Hz_kanal_mgnov. . . . . . . . . .  PUBLIC   DATA   U_LONG   0004H  4
+sec_kanal_sred . . . . . . . . . . . .  PUBLIC   IDATA  U_INT    0000H  2
+sec_kanal_mgnov. . . . . . . . . . . .  PUBLIC   IDATA  U_INT    0002H  2
+cycl_kanal . . . . . . . . . . . . . .  PUBLIC   IDATA  U_INT    0004H  2
+Hz_data_sred . . . . . . . . . . . . .  PUBLIC   IDATA  U_LONG   0006H  4
+Hz_data_mgnov. . . . . . . . . . . . .  PUBLIC   IDATA  U_LONG   000AH  4
+period_kanal_sred. . . . . . . . . . .  PUBLIC   XDATA  U_INT    0000H  2
+period_kanal_mgnov . . . . . . . . . .  PUBLIC   XDATA  U_INT    0002H  2
+Hz_kanal_sred. . . . . . . . . . . . .  PUBLIC   XDATA  ARRAY    0004H  60
+sym_kanal_sred . . . . . . . . . . . .  PUBLIC   DATA   U_LONG   0008H  4
+sym_kanal_mgnov. . . . . . . . . . . .  PUBLIC   DATA   U_LONG   000CH  4
+poschet_intervalov . . . . . . . . . .  PUBLIC   XDATA  U_CHAR   0040H  1
+handle_freq_flag . . . . . . . . . . .  PUBLIC   XDATA  U_CHAR   0041H  1
+_TR2_. . . . . . . . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+  i. . . . . . . . . . . . . . . . . .  AUTO     XDATA  CHAR     0000H  1
+  j. . . . . . . . . . . . . . . . . .  AUTO     XDATA  CHAR     0001H  1
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    646    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =     66       2
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     16    ----
+   IDATA SIZE       =     14    ----
+C51 COMPILER V9.00   TIMER2                                                                10/29/2013 11:03:21 PAGE 13  
+
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
