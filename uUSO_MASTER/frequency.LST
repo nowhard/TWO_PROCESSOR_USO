@@ -1,0 +1,266 @@
+C51 COMPILER V9.00   FREQUENCY                                                             06/20/2014 09:13:37 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE FREQUENCY
+OBJECT MODULE PLACED IN frequency.OBJ
+COMPILER INVOKED BY: C:\Program Files\Keil\C51\BIN\C51.EXE frequency.c LARGE OPTIMIZE(6,SPEED) BROWSE ORDER NOAREGS DEBU
+                    -G OBJECTEXTEND
+
+line level    source
+
+   1          #include "frequency.h"
+   2          #include "watchdog.h"
+   3          
+   4          #define FREQ_CHANNELS   3
+   5          
+   6          
+   7          #define FRAME_TIME_1    511  //границы кадров захвата
+   8          #define FRAME_TIME_2    1023
+   9          #define FRAME_TIME_3    1535
+  10          #define FRAME_TIME_4    2047
+  11          
+  12          #define SHEAR                   9         //рассчитывается из максимума кадра захвата, как Nбит-2
+  13          
+  14          # define CLI_EXT  EX1=0; EX0=0; ET0=0;
+  15          # define STI_EXT  EX1=1; EX0=1; ET0=1;
+  16          
+  17          
+  18          //------------------------------------------
+  19          volatile struct Frequency xdata frequency[FREQ_CHANNELS]={0}; //структура частотных каналов
+  20          //------------------------------------------
+  21          #define FRQ_CHNL_1 0
+  22          #define FRQ_CHNL_2 1
+  23          #define FRQ_CHNL_3 2
+  24          //--------------------------------------------------------
+  25          #pragma OT(9,Speed)
+  26          void Frequency_Init(void) //инициализация частотных каналов
+  27          {
+  28   1              unsigned char i=0,j=0;
+  29   1              
+  30   1              Timer0_Initialize();
+  31   1              Timer2_Initialize();
+  32   1              EX1=1;//включаем внешние прерывания
+  33   1              EX0=1;
+  34   1              IT0=1;
+  35   1              IT1=1;
+  36   1              
+  37   1      
+  38   1              for(i=0;i<3;i++) //обнуление структуры
+  39   1              {
+  40   2                      frequency[i].time_counter=0;
+  41   2                      for(j=0;j<4;j++)
+  42   2                      {
+  43   3                              frequency[i].frame[j].event_counter=0;
+  44   3                              frequency[i].frame[j].timestamp=0;
+  45   3                              frequency[i].frame[j].time_copy=0;
+  46   3                              frequency[i].frame[j].event_copy=0;
+  47   3                      }
+  48   2              }
+  49   1              return;
+  50   1      }
+  51          //--------------------------------------------------------
+  52          void INT0_ISR(void) interrupt 0 //using 3//обработчик внешнего прерывания 0
+  53          {
+  54   1              unsigned char cnt;
+C51 COMPILER V9.00   FREQUENCY                                                             06/20/2014 09:13:37 PAGE 2   
+
+  55   1              cnt=(frequency[FRQ_CHNL_1].time_counter>>SHEAR)&0x3;
+  56   1              frequency[FRQ_CHNL_1].frame[cnt].event_counter++;
+  57   1              frequency[FRQ_CHNL_1].frame[cnt].timestamp=frequency[FRQ_CHNL_1].time_counter;
+  58   1              return;
+  59   1      }
+  60          //--------------------------------------------------------
+  61          void INT1_ISR(void) interrupt 2 //using 3//обработчик внешнего прерывания 1
+  62          {
+  63   1              unsigned char cnt;
+  64   1              cnt=(frequency[FRQ_CHNL_1].time_counter>>SHEAR)&0x3;
+  65   1              frequency[FRQ_CHNL_2].frame[cnt].event_counter++;
+  66   1              frequency[FRQ_CHNL_2].frame[cnt].timestamp=frequency[FRQ_CHNL_1].time_counter;
+  67   1              return;
+  68   1      }
+  69          //--------------------------------------------------------
+  70          void INT2_ISR(void) interrupt 1 //using 3//обработчик внешнего прерывания 2-использует внешний вход таймер
+             -а T0
+  71          {
+  72   1              unsigned char cnt;
+  73   1                      
+  74   1              TH0=0xFF;
+  75   1              TL0=0xFF;
+  76   1      
+  77   1              cnt=(frequency[FRQ_CHNL_1].time_counter>>SHEAR)&0x3;
+  78   1      
+  79   1              frequency[FRQ_CHNL_3].frame[cnt].event_counter++;
+  80   1              frequency[FRQ_CHNL_3].frame[cnt].timestamp=frequency[FRQ_CHNL_1].time_counter;
+  81   1              return;
+  82   1      }
+  83          //--------------------------------------------------------
+  84          void Timer2_ISR(void) interrupt 5 //using 3//обработчик прерывания счетного таймера частоты
+  85          {
+  86   1              TF2 = 0;
+  87   1      //      TH2=0xE7;
+  88   1      //      TL2=0xFF;
+  89   1      
+  90   1              switch(frequency[FRQ_CHNL_1].time_counter)
+  91   1              {
+  92   2                      case FRAME_TIME_1:
+  93   2                      {
+  94   3                              frequency[FRQ_CHNL_1].frame[0].time_copy=frequency[FRQ_CHNL_1].frame[0].timestamp+FRAME_TIME_4-frequenc
+             -y[FRQ_CHNL_1].frame[3].timestamp;
+  95   3                              frequency[FRQ_CHNL_1].frame[0].event_copy=frequency[FRQ_CHNL_1].frame[0].event_counter; 
+  96   3      
+  97   3      
+  98   3                              frequency[FRQ_CHNL_1].frame[3].event_counter=0;
+  99   3                              //---------------------------------------
+ 100   3                              frequency[FRQ_CHNL_2].frame[0].time_copy=frequency[FRQ_CHNL_2].frame[0].timestamp+FRAME_TIME_4-frequenc
+             -y[FRQ_CHNL_2].frame[3].timestamp;
+ 101   3                              frequency[FRQ_CHNL_2].frame[0].event_copy=frequency[FRQ_CHNL_2].frame[0].event_counter; 
+ 102   3      
+ 103   3      
+ 104   3                              frequency[FRQ_CHNL_2].frame[3].event_counter=0;
+ 105   3      
+ 106   3                              //---------------------------------------
+ 107   3                              frequency[FRQ_CHNL_3].frame[0].time_copy=frequency[FRQ_CHNL_3].frame[0].timestamp+FRAME_TIME_4-frequenc
+             -y[FRQ_CHNL_3].frame[3].timestamp;
+ 108   3                              frequency[FRQ_CHNL_3].frame[0].event_copy=frequency[FRQ_CHNL_3].frame[0].event_counter; 
+ 109   3      
+ 110   3      
+ 111   3                              frequency[FRQ_CHNL_3].frame[3].event_counter=0;
+ 112   3      
+C51 COMPILER V9.00   FREQUENCY                                                             06/20/2014 09:13:37 PAGE 3   
+
+ 113   3                      }
+ 114   2                      break;
+ 115   2      
+ 116   2                      case FRAME_TIME_2:
+ 117   2                      {
+ 118   3                              frequency[FRQ_CHNL_1].frame[1].time_copy=frequency[FRQ_CHNL_1].frame[1].timestamp-frequency[FRQ_CHNL_1]
+             -.frame[0].timestamp;
+ 119   3                              frequency[FRQ_CHNL_1].frame[1].event_copy=frequency[FRQ_CHNL_1].frame[1].event_counter; 
+ 120   3      
+ 121   3                              frequency[FRQ_CHNL_1].frame[0].event_counter=0;
+ 122   3                              //----------------------------------------------
+ 123   3                              frequency[FRQ_CHNL_2].frame[1].time_copy=frequency[FRQ_CHNL_2].frame[1].timestamp-frequency[FRQ_CHNL_2]
+             -.frame[0].timestamp;
+ 124   3                              frequency[FRQ_CHNL_2].frame[1].event_copy=frequency[FRQ_CHNL_2].frame[1].event_counter; 
+ 125   3      
+ 126   3                              frequency[FRQ_CHNL_2].frame[0].event_counter=0;
+ 127   3                              //----------------------------------------------
+ 128   3                              frequency[FRQ_CHNL_3].frame[1].time_copy=frequency[FRQ_CHNL_3].frame[1].timestamp-frequency[FRQ_CHNL_3]
+             -.frame[0].timestamp;
+ 129   3                              frequency[FRQ_CHNL_3].frame[1].event_copy=frequency[FRQ_CHNL_3].frame[1].event_counter; 
+ 130   3      
+ 131   3                              frequency[FRQ_CHNL_3].frame[0].event_counter=0;
+ 132   3                      }
+ 133   2                      break;
+ 134   2      
+ 135   2                      case FRAME_TIME_3:
+ 136   2                      {
+ 137   3                              frequency[FRQ_CHNL_1].frame[2].time_copy=frequency[FRQ_CHNL_1].frame[2].timestamp-frequency[FRQ_CHNL_1]
+             -.frame[1].timestamp;
+ 138   3                              frequency[FRQ_CHNL_1].frame[2].event_copy=frequency[FRQ_CHNL_1].frame[2].event_counter; 
+ 139   3      
+ 140   3                              frequency[FRQ_CHNL_1].frame[1].event_counter=0;
+ 141   3                              //----------------------------------------------------
+ 142   3                              frequency[FRQ_CHNL_2].frame[2].time_copy=frequency[FRQ_CHNL_2].frame[2].timestamp-frequency[FRQ_CHNL_2]
+             -.frame[1].timestamp;
+ 143   3                              frequency[FRQ_CHNL_2].frame[2].event_copy=frequency[FRQ_CHNL_2].frame[2].event_counter; 
+ 144   3      
+ 145   3                              frequency[FRQ_CHNL_2].frame[1].event_counter=0;
+ 146   3                              //---------------------------------------------------
+ 147   3                              frequency[FRQ_CHNL_3].frame[2].time_copy=frequency[FRQ_CHNL_3].frame[2].timestamp-frequency[FRQ_CHNL_3]
+             -.frame[1].timestamp;
+ 148   3                              frequency[FRQ_CHNL_3].frame[2].event_copy=frequency[FRQ_CHNL_3].frame[2].event_counter; 
+ 149   3      
+ 150   3                              frequency[FRQ_CHNL_3].frame[1].event_counter=0;
+ 151   3                      }
+ 152   2                      break;
+ 153   2      
+ 154   2                      case FRAME_TIME_4:
+ 155   2                      {
+ 156   3                              frequency[FRQ_CHNL_1].frame[3].time_copy=frequency[FRQ_CHNL_1].frame[3].timestamp-frequency[FRQ_CHNL_1]
+             -.frame[2].timestamp;
+ 157   3                              frequency[FRQ_CHNL_1].frame[3].event_copy=frequency[FRQ_CHNL_1].frame[3].event_counter; 
+ 158   3      
+ 159   3                              frequency[FRQ_CHNL_1].frame[2].event_counter=0; 
+ 160   3                              //-----------------------------------------------------
+ 161   3                              frequency[FRQ_CHNL_2].frame[3].time_copy=frequency[FRQ_CHNL_2].frame[3].timestamp-frequency[FRQ_CHNL_2]
+             -.frame[2].timestamp;
+ 162   3                              frequency[FRQ_CHNL_2].frame[3].event_copy=frequency[FRQ_CHNL_2].frame[3].event_counter; 
+ 163   3      
+ 164   3                              frequency[FRQ_CHNL_2].frame[2].event_counter=0;
+ 165   3                              //----------------------------------------------------
+ 166   3                              frequency[FRQ_CHNL_3].frame[3].time_copy=frequency[FRQ_CHNL_3].frame[3].timestamp-frequency[FRQ_CHNL_3]
+C51 COMPILER V9.00   FREQUENCY                                                             06/20/2014 09:13:37 PAGE 4   
+
+             -.frame[2].timestamp;
+ 167   3                              frequency[FRQ_CHNL_3].frame[3].event_copy=frequency[FRQ_CHNL_3].frame[3].event_counter; 
+ 168   3      
+ 169   3                              frequency[FRQ_CHNL_3].frame[2].event_counter=0;
+ 170   3                              
+ 171   3                              frequency[FRQ_CHNL_1].time_counter=0;
+ 172   3                      }
+ 173   2                      break;
+ 174   2              }
+ 175   1      
+ 176   1              frequency[FRQ_CHNL_1].time_counter++;
+ 177   1              frequency[FRQ_CHNL_1].time_counter&=FRAME_TIME_4;
+ 178   1      
+ 179   1              return;
+ 180   1      }
+ 181          //------------------------------------------------------------
+ 182          #pragma OT(0,Speed)
+ 183            PT_THREAD(Frequency_Measure_Process(struct pt *pt))
+ 184           { 
+ 185   1              static unsigned char frq_chnl=0;
+ 186   1              static unsigned long temp_freq=0; 
+ 187   1              wdt_count[Frequency_Measure_Proc].process_state=RUN;
+ 188   1      
+ 189   1         PT_BEGIN(pt);
+ 190   3      
+ 191   3        while(1) 
+ 192   3        {
+ 193   4                      PT_DELAY(pt,20);
+ 194   4                      temp_freq=(((unsigned long)frequency[frq_chnl].frame[0].event_copy+(unsigned long)frequency[frq_chnl].fr
+             -ame[1].event_copy+(unsigned long)frequency[frq_chnl].frame[2].event_copy+(unsigned long)frequency[frq_chnl].frame[3].eve
+             -nt_copy)<<18)/((frequency[frq_chnl].frame[0].time_copy+frequency[frq_chnl].frame[1].time_copy+frequency[frq_chnl].frame[
+             -2].time_copy+frequency[frq_chnl].frame[3].time_copy));
+ 195   4      
+ 196   4                      PT_YIELD(pt);//дадим другим процессам время
+ 197   4                      if(temp_freq<=0xFFFF)
+ 198   4                      {
+ 199   5                              channels[8+frq_chnl].channel_data=temp_freq;
+ 200   5                      }
+ 201   4                      else
+ 202   4                      {
+ 203   5                              channels[8+frq_chnl].channel_data=0xFFFF;
+ 204   5                      }
+ 205   4              
+ 206   4              
+ 207   4                      frq_chnl++;
+ 208   4                      if(frq_chnl>=3)
+ 209   4                      {
+ 210   5                              frq_chnl=0;
+ 211   5                      } 
+ 212   4      
+ 213   4                      wdt_count[Frequency_Measure_Proc].count++;
+ 214   4      
+ 215   4        }
+ 216   3        PT_END(pt);
+ 217   1      
+ 218   1       }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   1871    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =    111       1
+C51 COMPILER V9.00   FREQUENCY                                                             06/20/2014 09:13:37 PAGE 5   
+
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

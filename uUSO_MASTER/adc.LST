@@ -1,0 +1,130 @@
+C51 COMPILER V9.00   ADC                                                                   06/20/2014 09:13:36 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE ADC
+OBJECT MODULE PLACED IN adc.OBJ
+COMPILER INVOKED BY: C:\Program Files\Keil\C51\BIN\C51.EXE adc.c LARGE OPTIMIZE(6,SPEED) BROWSE ORDER NOAREGS DEBUG OBJE
+                    -CTEXTEND
+
+line level    source
+
+   1          #include "adc.h"
+   2          //-------------------global variables-----------------------------------
+   3          volatile struct ADC_Channels xdata adc_channels[ADC_CHANNELS_NUM];
+   4          //#pragma OT(6,Speed)
+   5          //-------------------------------------------
+   6          void ADC_Initialize() //using 0
+   7          {       
+   8   1              ADCMODE&=0x0;
+   9   1              ADC0CON1&=0x0;  
+  10   1          ADC0CON2&=0x0;
+  11   1              //ADCMODE=0xB;
+  12   1      //      ADCMODE=0x3; //chop enable
+  13   1      
+  14   1      //      ADCMODE|=0x8;//CHOP DISABLE
+  15   1      
+  16   1          ADC0CON1|=BUF_BYPASS;
+  17   1              ADC0CON1|=ADC_UNIPOLAR;
+  18   1              ADC0CON1|=RN_2560;
+  19   1      
+  20   1              ADC0CON2&=0xF0;
+  21   1              ADC0CON2|=EXT_REF;//включим внешнюю опору
+  22   1      
+  23   1      //      ADCMODE=ADC0_ENABLE|ADC_0_INTERNAL_CAL;
+  24   1      //      while(!ADCSTAT&ADC_STATUS_CALIBRATE);
+  25   1      //      
+  26   1      //      ADCMODE=ADC0_ENABLE|ADC_FULL_INTERNAL_CAL;
+  27   1      //      while(!ADCSTAT&ADC_STATUS_CALIBRATE);
+  28   1      
+  29   1      //      ADCMODE&=0xF8;//power down adc
+  30   1      
+  31   1              ADC_Restore_Settings();
+  32   1              ADC_Set_Mode(ADC_CONTIN_CONV);
+  33   1      
+  34   1              ADC_Out_Freq(100);      
+  35   1      
+  36   1      
+  37   1              EADC = 1;
+  38   1      
+  39   1              ADCMODE |= 0x20; //0010 0000 //ENABLE
+  40   1      
+  41   1              return;
+  42   1      }
+  43          //-------------------------------------------
+  44          void ADC_ISR(void) interrupt 6 //using 1
+  45          {
+  46   1              static unsigned char current_channel;
+  47   1              static unsigned char current_buf_item; //элемент буфера усреднени€
+  48   1      
+  49   1              current_channel=ADC0CON2&0x7;
+  50   1              current_buf_item=adc_channels[current_channel].adc_buf_counter;
+  51   1      
+  52   1              adc_channels[current_channel].ADC_BUF_UN[current_buf_item].ADC_CHAR[0]=0x0;//получим результат
+  53   1              adc_channels[current_channel].ADC_BUF_UN[current_buf_item].ADC_CHAR[1]=ADC0H;
+  54   1              adc_channels[current_channel].ADC_BUF_UN[current_buf_item].ADC_CHAR[2]=ADC0M;
+C51 COMPILER V9.00   ADC                                                                   06/20/2014 09:13:36 PAGE 2   
+
+  55   1              adc_channels[current_channel].ADC_BUF_UN[current_buf_item].ADC_CHAR[3]=ADC0L; 
+  56   1      
+  57   1              adc_channels[current_channel].adc_buf_counter=((current_buf_item+1)&(ADC_BUF_SIZE-1));  //инкрементируем у
+             -казатель усредн€ющего буфера текущего канала
+  58   1              adc_channels[current_channel].new_measuring=1;   //новое измерение было
+  59   1                      
+  60   1      //      ADCMODE &= 0xDF; // 1101 1111
+  61   1              ADC0CON2=((current_channel+1)&0x7)|(ADC0CON2&0xF0); //инкремент аналогового входа       
+  62   1              ADC0CON1=(ADC0CON1&0xF8)|((channels[ADC0CON2&0x7].settings.set.state_byte_1^0x7)&0x7);//восстанавливаем у
+             -силение следующего канала
+  63   1              SF=channels[(ADC0CON2/*+1*/)&0x7].settings.set.state_byte_2;                                             
+  64   1      //      ADCMODE |= 0x20; //0010 0000 //ENABLE
+  65   1      
+  66   1              RDY0=0;
+  67   1      //      return;
+  68   1      }
+  69          //--------------------------------------------------
+  70          void ADC_Set_Mode(unsigned char mode)   //using 0
+  71          {
+  72   1              ADCMODE&=~0x7;
+  73   1              ADCMODE|=mode;
+  74   1              return;
+  75   1      }
+  76          //--------------------------------------------------
+  77          void ADC_Out_Freq(unsigned int freq)  // using 0
+  78          {
+  79   1              SF=(unsigned char)(32768/3/8/freq);               //частота выхода sinc3 фильтра (децимаци€)
+  80   1              return;
+  81   1      }
+  82          //--------------------------------------------------------------------------------------------------------
+             -----------
+  83          void ADC_Restore_Settings(void) //using 0//восстановление настроек ацп
+  84          {
+  85   1               unsigned char xdata i=0,j=0;
+  86   1              for(i=0;i<ADC_CHANNELS_NUM;i++)
+  87   1              {
+  88   2                      adc_channels[i].adc_buf_counter=0;
+  89   2                      adc_channels[i].buffered=BUF_ENABLE;
+  90   2                      adc_channels[i].unipolar=ADC_UNIPOLAR;
+  91   2                      adc_channels[i].new_measuring=0;
+  92   2                      
+  93   2                      for(j=0;j<ADC_BUF_SIZE;j++)//обнулим массивы значений ацп
+  94   2                      {
+  95   3                              adc_channels[i].ADC_BUF_UN[j].ADC_LONG=0x0;
+  96   3                      }       
+  97   2              }
+  98   1              return;
+  99   1      }
+ 100           //-------------------------------------------------------------------------------------------------------
+             ------------
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    536    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =    306       2
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

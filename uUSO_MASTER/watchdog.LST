@@ -1,0 +1,112 @@
+C51 COMPILER V9.00   WATCHDOG                                                              06/20/2014 09:13:36 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE WATCHDOG
+OBJECT MODULE PLACED IN watchdog.OBJ
+COMPILER INVOKED BY: C:\Program Files\Keil\C51\BIN\C51.EXE watchdog.c LARGE OPTIMIZE(6,SPEED) BROWSE ORDER NOAREGS DEBUG
+                    - OBJECTEXTEND
+
+line level    source
+
+   1          #include "watchdog.h"
+   2          
+   3          //---------------------global variables-----------------------------------
+   4          volatile unsigned char data wdt_intval;
+   5          struct watchdog wdt_count[PROCESS_NUM];
+   6          volatile struct pt pt_wdt;
+   7          //------------------------------------------------------------------------
+   8          void WDT_Init(unsigned char interval) //using 0//установка интервала срабатывания сторожевого таймера, зап
+             -уск        //небезопасная
+   9          {
+  10   1              unsigned char i=0;      
+  11   1      
+  12   1              wdt_intval=interval;    
+  13   1              WDWR=1;//WDWR=1-разрешение записи в регистр
+  14   1              WDCON=wdt_intval;
+  15   1      
+  16   1      //      wdt_count[Proto_Proc].process_state=IDLE;
+  17   1      //      wdt_count[Proto_Proc].count=0;
+  18   1      //      wdt_count[Sort_Proc].process_state=IDLE;
+  19   1      //      wdt_count[Sort_Proc].count=0;
+  20   1      //      wdt_count[Watch_Proc].process_state=IDLE;
+  21   1      //      wdt_count[Watch_Proc].count=0;
+  22   1      //
+  23   1      //      wdt_count[I2C_RepeatRead_Proc].process_state=IDLE;
+  24   1      //      wdt_count[I2C_RepeatRead_Proc].count=0;
+  25   1      //      wdt_count[Frequency_Measure_Proc].process_state=IDLE;
+  26   1      //      wdt_count[Frequency_Measure_Proc].count=0;
+  27   1      //      wdt_count[I2C_Proc].process_state=IDLE;
+  28   1      //      wdt_count[I2C_Proc].count=0;
+  29   1      
+  30   1              for(i=0;i<PROCESS_NUM;i++)
+  31   1              {
+  32   2                       wdt_count[i].count=0;
+  33   2                       wdt_count[i].process_state=IDLE;
+  34   2              }
+  35   1      
+  36   1              PT_INIT(&pt_wdt);
+  37   1              return;
+  38   1      }
+  39          //------------------------------------------------------------------------
+  40          void WDT_Clear(void) //using 0//сброс счетчика сторожевого таймера
+  41          {
+  42   1              EA=0;
+  43   1      
+  44   1              WDWR=1;//WDWR=1-разрешение записи в регистр
+  45   1              WDCON=wdt_intval;       
+  46   1      
+  47   1              EA=1;
+  48   1              return;
+  49   1      }
+  50          //------------------------------------------------------------------------
+  51           PT_THREAD(WDT_Process(struct pt *pt))
+  52           {
+  53   1         
+C51 COMPILER V9.00   WATCHDOG                                                              06/20/2014 09:13:36 PAGE 2   
+
+  54   1        volatile unsigned char i=0, process_error=0;
+  55   1        wdt_count[Watch_Proc].process_state=RUN;
+  56   1      
+  57   1        PT_BEGIN(pt);
+  58   3      
+  59   3        while(1) 
+  60   3        {
+  61   4                      PT_DELAY(pt,100);
+  62   4                      process_error=0;
+  63   4                      
+  64   4                      wdt_count[Watch_Proc].count++;
+  65   4      
+  66   4                      for(i=0;i<PROCESS_NUM;i++)
+  67   4                      {
+  68   5                              if((wdt_count[i].count|wdt_count[i].process_state)==0)
+  69   5                              {
+  70   6                                      process_error=1;
+  71   6                                      break;
+  72   6                              }
+  73   5                              else
+  74   5                              {
+  75   6                                      wdt_count[i].count=0;
+  76   6                              }
+  77   5                      }
+  78   4                      
+  79   4                      if(process_error==0)//все процессы работают
+  80   4                      {
+  81   5                                      WDT_Clear();    
+  82   5                      }       
+  83   4        }
+  84   3        PT_END(pt);
+  85   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    336    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =     22       6
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      1    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
