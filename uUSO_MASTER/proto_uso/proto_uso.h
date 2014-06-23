@@ -120,6 +120,7 @@ unsigned char Channel_Set_Calibrate(void);//установить верхнюю или нижнюю точку 
 unsigned char Channel_Set_All_Default(void);//установить настройки и калибровки каналов по умолчанию
 unsigned char Channel_Get_Calibrate_Value(void);//получить коэфициенты калибровки заданного канала
 unsigned char Request_Error(unsigned char error_code);//	Ошибочный запрос/ответ;
+
 //------------------------------------поддержка старого протокола IMS----------------------------
 #define	OLD_CHANNEL_REINIT_BLOCK 		0x0	 //реинициализация блока
 #define	OLD_CHANNEL_SET_ADC_RANGE		0x1	 //установить усиление ацп
@@ -138,7 +139,8 @@ unsigned char Old_Channel_Get_Data_State(void);//получить данные и байты состоян
 unsigned char Old_Channel_Get_State(void);//получить байты состояний канала
 unsigned char Old_Reinit_Block(void);//реинициализация...
 unsigned char Old_Channel_Set_ADC_Range(void);//сменить усиление программируемого усилителя ацп
-unsigned char Old_Proto_Paste_Null(unsigned char *buf,unsigned char len);//т.к. старый протокол прибавляет к длине количество 0 после D7 то обрабатываем вне прерывания
+
+unsigned char Proto_Paste_Null(unsigned char *buf,unsigned char len);//т.к. старый протокол прибавляет к длине количество 0 после D7 то обрабатываем вне прерывания
 //-----------------------------------------------------------------------------------------------
 void ProtoBufHandling(void); //процесс обработки принятого запроса
 PT_THREAD(ProtoProcess(struct pt *pt));//главный процесс протокола

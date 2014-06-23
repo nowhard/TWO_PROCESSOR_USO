@@ -62,143 +62,7 @@ void UART_ISR(void) interrupt 4 //using 1
 		RI=0; 
 		rngbuf.buf[rngbuf.tail]=SBUF;
 		rngbuf.tail++;
-		rngbuf.count++;
-		//if(rngbuf.tail==RING_BUF_SIZE) rngbuf.tail=0x0;
-
-//----------------------обрабатываем возможные ошибки длины кадра-------------
-//		if(recieve_count>MAX_LENGTH_REC_BUF)	//если посылка слишком длинная
-//		{
-//			PT_RESTART_OUT(pt_proto);  //внепроцессный рестарт
-//			return;
-//		} 
-//
-//
-//		symbol=SBUF;
-//
-//		wdt_count[Proto_Proc].process_state=RUN;
-//
-//
-//		if((recieve_count==0x0)&&(symbol==':'))
-//		{
-//			protocol_type=PROTO_TYPE_MODBUS_ASCII;			
-//		}
-//
-//		switch(symbol)
-//		{
-//			case (char)(0xD7):
-//			{
-//				RecieveBuf[recieve_count]=symbol;
-//				recieve_count++;
-//				CUT_OUT_NULL=1;		 
-//			}
-//			break;
-//
-//			case (char)(0x29):
-//			{
-//				if(CUT_OUT_NULL==1)
-//				{
-//					RecieveBuf[0]=0x0;
-//					RecieveBuf[1]=0xD7;
-//					RecieveBuf[2]=0x29;
-//					recieve_count=0x3;
-//					protocol_type=PROTO_TYPE_NEW;		 	
-//				}
-//				else
-//				{
-//					RecieveBuf[recieve_count]=symbol;
-//					recieve_count++;	
-//				}
-//				CUT_OUT_NULL=0;
-//			}
-//			break;
-//
-//			case (char)(0x28):
-//			{
-//				if(CUT_OUT_NULL==1)
-//				{
-//					RecieveBuf[0]=0x0;
-//					RecieveBuf[1]=0xD7;
-//					RecieveBuf[2]=0x28;
-//					recieve_count=0x3;
-//					protocol_type=PROTO_TYPE_OLD;		 	
-//				}
-//				else
-//				{
-//					RecieveBuf[recieve_count]=symbol;
-//					recieve_count++;	
-//				}
-//				CUT_OUT_NULL=0;
-//			}
-//			break;
-//
-//			case (char)(0x0):
-//			{
-// 				if(CUT_OUT_NULL==1)	  //если после 0xD7-пропускаем
-//				{
-//					CUT_OUT_NULL=0;		
-//				}
-//				else
-//				{
-//					RecieveBuf[recieve_count]=symbol;
-//					recieve_count++;	
-//				}
-//			}
-//			break;
-//
-//			//---------MD ASCII------
-//			case  0x3A:	 //":"
-//			{
-//				RecieveBuf[recieve_count]=symbol;
-//				recieve_count++;
-//				protocol_type=PROTO_TYPE_MODBUS_ASCII;								 
-//			}
-//			break;
-//
-//			case 0xA:	 //"LF"
-//			{
-//			  	ES=0;
-//			  	REN=0;  //recieve disable 
-//			}
-//			break;
-//
-//			case 0xD:	 //"CR"
-//			{
-//				//
-//			}
-//			break;
-//			//-----------------------
-//
-//			default :
-//			{
-//				RecieveBuf[recieve_count]=symbol;
-//				recieve_count++;
-//				CUT_OUT_NULL=0;
-//				
-//			}
-//		}
-//
-//	   if(recieve_count>6)
-//	   {
-//	   		  if(recieve_count==6+frame_len)	  // принимаем указанное в frame_len число байт данные, 6 значит что обмен идет с компом, надо ставаить 5 чтобы обмениваться с устройствами
-//   			  {
-//					RECIEVED=1;//буфер принят
-//			  		ES=0;
-//			  		REN=0;  //recieve disable -запрещаем принимать в буфер	
-//				   	CUT_OUT_NULL=0;  			  			
-//			  }	  
-//	   }
-//	   else
-//	   {
-//			   if(recieve_count==6)
-//			   {     
-//		        	
-//					frame_len=RecieveBuf[recieve_count-1];  // получаем длину данных после заголовка
-//					if(protocol_type==PROTO_TYPE_OLD)
-//					{
-//						frame_len&=0x1F;//в старом протоколе только 5 младших бит -длина оставшейся части	
-//					}					 
-//			   }	   		
-//	   }										
+		rngbuf.count++;										
 	}
 //----------------------------передача----------------------------------------------------------------
 	if(TI)
@@ -207,33 +71,13 @@ void UART_ISR(void) interrupt 4 //using 1
 		 
 		if(transf_count<buf_len)
 		{
-			if((transf_count<3)||(protocol_type==PROTO_TYPE_OLD))//передаем заголовок или все подряд, если старый протокол
-			{
+
 				SBUF=TransferBuf[transf_count];			
 				transf_count++;
-			}
-			else   //тело...   подставляем 0 после 0xD7
-			{
-					if(CUT_OUT_NULL==0)
-					{
-						if(TransferBuf[transf_count]==(unsigned char)0xD7)//проверим, это  ,0xD7 или другое
-						{			
-							CUT_OUT_NULL=0x1;	
-						}
-						SBUF=TransferBuf[transf_count];			
-						transf_count++;
-					}
-					else
-					{
-						SBUF=(unsigned char)0x0;
-						CUT_OUT_NULL=0;		
-					}	
-			}	
 		}
 		else
 		{
 			transf_count=0;		//обнуляем счетчик
-			CUT_OUT_NULL=0;
 			PT_RESTART_OUT(pt_proto);  //внепроцессный рестарт			
 		}					   
 	}			
@@ -759,7 +603,7 @@ unsigned char Old_Channel_Get_Data(void)
 				  break;		 
 		  }
 	   
-	   len=Old_Proto_Paste_Null(TransferBuf,8);
+	  // len=Proto_Paste_Null(TransferBuf,8);
 
 	   TransferBuf[len]=Old_CRC_Check(TransferBuf,len);
 	   return len+1;
@@ -936,7 +780,7 @@ unsigned char Old_Channel_Get_Data_State(void)
 
 	   TransferBuf[10]=0xFF;
 
-	   len=Old_Proto_Paste_Null(TransferBuf,11);
+	   //len=Proto_Paste_Null(TransferBuf,11);
 
 	   TransferBuf[len]=Old_CRC_Check(TransferBuf,len);
 	   return len+1;
@@ -1048,7 +892,7 @@ unsigned char Old_Channel_Get_State(void)
 				 break;		 
 		  }
 	   
-	   len=Old_Proto_Paste_Null(TransferBuf,8);
+	  // len=Proto_Paste_Null(TransferBuf,8);
 
 	   TransferBuf[len]=Old_CRC_Check(TransferBuf,len);
 	   return len+1;
@@ -1108,7 +952,7 @@ unsigned char Old_Channel_Set_ADC_Range(void)
   return 0;
 }
 //-----------------------------------------------------------------------------
-unsigned char Old_Proto_Paste_Null(unsigned char *buf,unsigned char len)//т.к. старый протокол прибавляет к длине количество 0 после D7 то обрабатываем вне прерывания
+unsigned char Proto_Paste_Null(unsigned char *buf,unsigned char len)//т.к. старый протокол прибавляет к длине количество 0 после D7 то обрабатываем вне прерывания
 {
 	volatile unsigned char xdata i=0,j=0;
 
@@ -1121,7 +965,12 @@ unsigned char Old_Proto_Paste_Null(unsigned char *buf,unsigned char len)//т.к. с
 			 	buf[j+1]=buf[j];//сдвигаем элементы буфера вправо на одну позицию до D7
 			 }
 			 buf[i+1]=0x0;//вставляем 0x00 после 0xD7
-			 buf[5]++;//длина кадра увеличилась на 1
+
+			 if(protocol_type==PROTO_TYPE_OLD)
+			 {
+			 	buf[5]++;//длина кадра увеличилась на 1
+			 }
+
 			 len++;
 			 i++;//не проверяем 0 спереди
 		 }
@@ -1304,7 +1153,6 @@ void ProtoBufHandling(void) //using 0 //процесс обработки принятого запроса
   return;
 }
 //-----------------------------------------------------------------------------------
-//#pragma OT(0,Speed) 
 PT_THREAD(ProtoProcess(struct pt *pt))
  {
  static unsigned char  CRC=0x0, LRC=0x0;
@@ -1323,9 +1171,7 @@ PT_THREAD(ProtoProcess(struct pt *pt))
 
 	   PT_YIELD_UNTIL(pt,RECIEVED); //ждем команды на старт	
 	   wdt_count[Proto_Proc].count++;
-	  // WDT_Clear();//если посылка не приходит-сбрасываем
 
-	  
 	    RECIEVED=0;
 		
 
@@ -1385,11 +1231,12 @@ PT_THREAD(ProtoProcess(struct pt *pt))
 		}
 		else
 		{
+			buf_len=Proto_Paste_Null(TransferBuf,buf_len);
 			DE_RE=1; //переключаем RS485 в режим передачи
 							
 			REN=0;	//запрет приема-только передача
 			transf_count=0;
-			CUT_OUT_NULL=0;
+		//	CUT_OUT_NULL=0;
 			SBUF=TransferBuf[transf_count];//передача байта, остальным займется автомат
 			transf_count++;//инкрементируем счетчик переданных
 			ES=1; //включим прерывание уарт	
@@ -1488,7 +1335,7 @@ void Restore_Dev_Address_Desc(void)//восстановить из ппзу адрес и информацию об 
 		temp_tail =rngbuf.tail;
 		ES=1;
 
-		for(i=(temp_tail-temp_count);i<temp_tail;i++)//поиск стартовой последовательности
+		for(i=(temp_tail-temp_count);i!=temp_tail;i++)//поиск стартовой последовательности
 		{
 			switch(rngbuf.buf[i])
 			{
@@ -1589,10 +1436,16 @@ void Restore_Dev_Address_Desc(void)//восстановить из ппзу адрес и информацию об 
 		   			  {
 							RECIEVED=1;//буфер принят
 					  		ES=0;
-							rngbuf.tail=0;
+						//	rngbuf.tail=0;
 					  		REN=0;  //recieve disable -запрещаем принимать в буфер	
 						   	CUT_OUT_NULL=0;  			  			
-					  }	  
+					  }	 
+					  
+					  //----------------------обрабатываем возможные ошибки длины кадра-------------
+				      if(recieve_count>MAX_LENGTH_REC_BUF)	//если посылка слишком длинная
+					  {
+							PT_RESTART(&pt_proto);  //внепроцессный рестарт
+					  }  
 			   }
 			   else
 			   {
@@ -1606,14 +1459,7 @@ void Restore_Dev_Address_Desc(void)//восстановить из ппзу адрес и информацию об 
 							}					 
 					   }	   		
 			   }														
-		}
-
-//		if(frame_count==0x0)//кадр пуст
-//		{
-//		}
-//		else
-//		{
-//		}		
+		}	
   }
 
   PT_END(pt);
