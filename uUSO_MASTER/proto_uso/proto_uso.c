@@ -20,7 +20,7 @@ volatile unsigned char xdata ADRESS_DEV=0x1;
 volatile unsigned char xdata dev_desc_len=20;//длина описания устройства
 //--------------------------------global variable------------------------------------
 volatile unsigned char idata	RECIEVED=0;//принято
-volatile unsigned char xdata    recieve_count;//счетчик приемного буфера
+volatile unsigned int  xdata    recieve_count;//счетчик приемного буфера
 volatile unsigned char xdata	transf_count;//счетчик передаваемых байтов	   
 volatile unsigned char xdata	buf_len;//длина передаваемого буфера
 
@@ -603,7 +603,7 @@ unsigned char Old_Channel_Get_Data(void)
 				  break;		 
 		  }
 	   
-	  // len=Proto_Paste_Null(TransferBuf,8);
+	   len=Proto_Paste_Null(TransferBuf,8);
 
 	   TransferBuf[len]=Old_CRC_Check(TransferBuf,len);
 	   return len+1;
@@ -780,7 +780,7 @@ unsigned char Old_Channel_Get_Data_State(void)
 
 	   TransferBuf[10]=0xFF;
 
-	   //len=Proto_Paste_Null(TransferBuf,11);
+	   len=Proto_Paste_Null(TransferBuf,11);
 
 	   TransferBuf[len]=Old_CRC_Check(TransferBuf,len);
 	   return len+1;
@@ -892,7 +892,7 @@ unsigned char Old_Channel_Get_State(void)
 				 break;		 
 		  }
 	   
-	  // len=Proto_Paste_Null(TransferBuf,8);
+	   len=Proto_Paste_Null(TransferBuf,8);
 
 	   TransferBuf[len]=Old_CRC_Check(TransferBuf,len);
 	   return len+1;
@@ -1231,7 +1231,11 @@ PT_THREAD(ProtoProcess(struct pt *pt))
 		}
 		else
 		{
-			buf_len=Proto_Paste_Null(TransferBuf,buf_len);
+			if(protocol_type==PROTO_TYPE_NEW)
+			{
+				buf_len=Proto_Paste_Null(TransferBuf,buf_len);
+			}
+
 			DE_RE=1; //переключаем RS485 в режим передачи
 							
 			REN=0;	//запрет приема-только передача
@@ -1436,7 +1440,6 @@ void Restore_Dev_Address_Desc(void)//восстановить из ппзу адрес и информацию об 
 		   			  {
 							RECIEVED=1;//буфер принят
 					  		ES=0;
-						//	rngbuf.tail=0;
 					  		REN=0;  //recieve disable -запрещаем принимать в буфер	
 						   	CUT_OUT_NULL=0;  			  			
 					  }	 

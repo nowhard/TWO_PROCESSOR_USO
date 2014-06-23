@@ -244,10 +244,10 @@
       <FileType>1</FileType>
       <tvExp>1</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>0</ColumnNumber>
+      <ColumnNumber>17</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>1288</TopLine>
-      <CurrentLine>1329</CurrentLine>
+      <TopLine>27</TopLine>
+      <CurrentLine>65</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\proto_uso\proto_uso.c</PathWithFileName>
       <FilenameWithoutPath>proto_uso.c</FilenameWithoutPath>
@@ -454,10 +454,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>46</ColumnNumber>
+      <ColumnNumber>72</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>1</TopLine>
-      <CurrentLine>5</CurrentLine>
+      <TopLine>168</TopLine>
+      <CurrentLine>168</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\modbus\modbus_ascii.c</PathWithFileName>
       <FilenameWithoutPath>modbus_ascii.c</FilenameWithoutPath>
@@ -519,7 +519,7 @@
   <AlienFiles>
     <PathWithFilename>D:\PROJECTS\GIT_REPOSITORY\8051\keil\Protothreads\USO_PT\uUSO_MASTER\proto_uso\proto_uso.h</PathWithFilename>
     <TopLine>1</TopLine>
-    <CurrentLine>17</CurrentLine>
+    <CurrentLine>15</CurrentLine>
     <Constant>0</Constant>
     <WindowPosition>
       <length>0</length>
@@ -1887,9 +1887,9 @@
       <Documents>
         <Doc>
           <Name>.\debug.c</Name>
-          <ColumnNumber>0</ColumnNumber>
-          <TopLine>1</TopLine>
-          <CurrentLine>11</CurrentLine>
+          <ColumnNumber>24</ColumnNumber>
+          <TopLine>54</TopLine>
+          <CurrentLine>105</CurrentLine>
         </Doc>
         <Doc>
           <Name>.\modbus\modbus_ascii.c</Name>
@@ -1911,15 +1911,15 @@
         </Doc>
         <Doc>
           <Name>.\proto_uso\proto_uso.c</Name>
-          <ColumnNumber>17</ColumnNumber>
-          <TopLine>27</TopLine>
-          <CurrentLine>65</CurrentLine>
+          <ColumnNumber>42</ColumnNumber>
+          <TopLine>1430</TopLine>
+          <CurrentLine>1430</CurrentLine>
         </Doc>
         <Doc>
           <Name>PROTO_USO/PROTO_USO.H</Name>
-          <ColumnNumber>0</ColumnNumber>
+          <ColumnNumber>21</ColumnNumber>
           <TopLine>1</TopLine>
-          <CurrentLine>17</CurrentLine>
+          <CurrentLine>15</CurrentLine>
         </Doc>
       </Documents>
     </MDIGroup>

@@ -1,4 +1,4 @@
-C51 COMPILER V9.00   PROTO_USO                                                             06/23/2014 11:22:11 PAGE 1   
+C51 COMPILER V9.00   PROTO_USO                                                             06/23/2014 12:15:09 PAGE 1   
 
 
 C51 COMPILER V9.00, COMPILATION OF MODULE PROTO_USO
@@ -31,7 +31,7 @@ line level    source
   20          volatile unsigned char xdata dev_desc_len=20;//длина описания устройства
   21          //--------------------------------global variable------------------------------------
   22          volatile unsigned char idata    RECIEVED=0;//принято
-  23          volatile unsigned char xdata    recieve_count;//счетчик приемного буфера
+  23          volatile unsigned int  xdata    recieve_count;//счетчик приемного буфера
   24          volatile unsigned char xdata    transf_count;//счетчик передаваемых байтов         
   25          volatile unsigned char xdata    buf_len;//длина передаваемого буфера
   26          
@@ -62,7 +62,7 @@ line level    source
   51          extern unsigned char idata i2c_buffer[6];
   52          extern unsigned char channel_number;//количество каналов
   53          
-C51 COMPILER V9.00   PROTO_USO                                                             06/23/2014 11:22:11 PAGE 2   
+C51 COMPILER V9.00   PROTO_USO                                                             06/23/2014 12:15:09 PAGE 2   
 
   54          //-----------------------------------------------------------------------------------
   55          //#pragma OT(0,Speed)
@@ -126,7 +126,7 @@ line level    source
  113          unsigned char Send_Info(void) //using 0    //посылка информации об устройстве
  114          {
  115   1                  unsigned char    i=0;
-C51 COMPILER V9.00   PROTO_USO                                                             06/23/2014 11:22:11 PAGE 3   
+C51 COMPILER V9.00   PROTO_USO                                                             06/23/2014 12:15:09 PAGE 3   
 
  116   1                                                                                      
  117   1                 //заголовок кадра---
@@ -190,7 +190,7 @@ line level    source
  173          //-----------------------------------------------------------------------------
  174          unsigned char Channel_Get_Data(void) //using 0 //Выдать данные по каналам, согласно абсолютной нумерации;
  175          {
-C51 COMPILER V9.00   PROTO_USO                                                             06/23/2014 11:22:11 PAGE 4   
+C51 COMPILER V9.00   PROTO_USO                                                             06/23/2014 12:15:09 PAGE 4   
 
  176   1              return 0;
  177   1      }
@@ -254,7 +254,7 @@ line level    source
  231   1              return 0;
  232   1      }
  233          //-----------------------------------------------------------------------------
-C51 COMPILER V9.00   PROTO_USO                                                             06/23/2014 11:22:11 PAGE 5   
+C51 COMPILER V9.00   PROTO_USO                                                             06/23/2014 12:15:09 PAGE 5   
 
  234          unsigned char Channel_Set_State(void) //using 0 //Установить состояния по каналам, согласно абсолютной нум
              -ерации;
@@ -318,7 +318,7 @@ line level    source
  289   6                                                                       TransferBuf[index++]=channels[i].settings.set.state_byte_1;     // первый байт состояния канала
  290   6                                               TransferBuf[index++]=channels[i].settings.set.state_byte_2;     // второй байт сос
              -тояния канала
-C51 COMPILER V9.00   PROTO_USO                                                             06/23/2014 11:22:11 PAGE 6   
+C51 COMPILER V9.00   PROTO_USO                                                             06/23/2014 12:15:09 PAGE 6   
 
  291   6                                                        }
  292   5                                                        break; 
@@ -382,7 +382,7 @@ line level    source
  349   6                                                                                      TransferBuf[index++]=((unsigned char*)(&channels[i].channel_data))[3];
  350   6                                                                                      TransferBuf[index++]=((unsigned char*)(&channels[i].channel_data))[2];
  351   6                                                                                  TransferBuf[index++]=channels[i].settings.set.state_byte_1;  // первый байт состояния канала
-C51 COMPILER V9.00   PROTO_USO                                                             06/23/2014 11:22:11 PAGE 7   
+C51 COMPILER V9.00   PROTO_USO                                                             06/23/2014 12:15:09 PAGE 7   
 
  352   6                                                                }
  353   5                                                                break; 
@@ -446,7 +446,7 @@ line level    source
  410   2              }
  411   1      
  412   1      
-C51 COMPILER V9.00   PROTO_USO                                                             06/23/2014 11:22:11 PAGE 8   
+C51 COMPILER V9.00   PROTO_USO                                                             06/23/2014 12:15:09 PAGE 8   
 
  413   1              return  Request_Error(FR_SUCCESFUL);//ошибки нет, подтверждение 
  414   1      }
@@ -510,7 +510,7 @@ line level    source
  471   1      }
  472          //-----------------------------------------------------------------------------
  473          unsigned char Channel_Set_All_Default(void)//установить настройки и калибровки каналов по умолчанию
-C51 COMPILER V9.00   PROTO_USO                                                             06/23/2014 11:22:11 PAGE 9   
+C51 COMPILER V9.00   PROTO_USO                                                             06/23/2014 12:15:09 PAGE 9   
 
  474          {
  475   1              Channels_Set_Default();
@@ -574,7 +574,7 @@ line level    source
  533   5                                                        {
  534   6                                                                      if(channels[channel].calibrate.cal.calibrate==1)//калиброванный
  535   6                                                                      {                                                
-C51 COMPILER V9.00   PROTO_USO                                                             06/23/2014 11:22:11 PAGE 10  
+C51 COMPILER V9.00   PROTO_USO                                                             06/23/2014 12:15:09 PAGE 10  
 
  536   7                                                                                      TransferBuf[6]=((unsigned char*)(&channels[channel].channel_data_calibrate))[1];
  537   7                                                                              TransferBuf[7]=((unsigned char*)(&channels[channel].channel_data_calibrate))[2];
@@ -638,7 +638,7 @@ line level    source
  595   5                                                                case CHNL_FREQ_256:
  596   5                                                                {
  597   6                                                                                      TransferBuf[6]=((unsigned char*)(&channels[channel].channel_data))[2];
-C51 COMPILER V9.00   PROTO_USO                                                             06/23/2014 11:22:11 PAGE 11  
+C51 COMPILER V9.00   PROTO_USO                                                             06/23/2014 12:15:09 PAGE 11  
 
  598   6                                                                                      TransferBuf[7]=((unsigned char*)(&channels[channel].channel_data))[3];
  599   6                                                                }
@@ -648,7 +648,7 @@ line level    source
  603   3                                        break;                 
  604   3                        }
  605   2                 
- 606   2                // len=Proto_Paste_Null(TransferBuf,8);
+ 606   2                 len=Proto_Paste_Null(TransferBuf,8);
  607   2      
  608   2                 TransferBuf[len]=Old_CRC_Check(TransferBuf,len);
  609   2                 return len+1;
@@ -702,7 +702,7 @@ line level    source
  657   7                                                                              TransferBuf[7]=((unsigned char*)(&channels[channel].channel_data))[2];  
  658   7                                                                      }
  659   6      
-C51 COMPILER V9.00   PROTO_USO                                                             06/23/2014 11:22:11 PAGE 12  
+C51 COMPILER V9.00   PROTO_USO                                                             06/23/2014 12:15:09 PAGE 12  
 
  660   6                                                        }
  661   5                                                        break;
@@ -766,7 +766,7 @@ line level    source
  719   8                                                                                              TransferBuf[8]=(0x40|(OLD_PROTO_ADC_AMP_1<<1))&0xFE;     // первый байт состояния канала
  720   8                                                                                      }
  721   7                                                                                      break;
-C51 COMPILER V9.00   PROTO_USO                                                             06/23/2014 11:22:11 PAGE 13  
+C51 COMPILER V9.00   PROTO_USO                                                             06/23/2014 12:15:09 PAGE 13  
 
  722   7                              
  723   7                                                                                      case PROTO_ADC_AMP_2:
@@ -829,8 +829,8 @@ line level    source
  780   2      
  781   2                 TransferBuf[10]=0xFF;
  782   2      
- 783   2                 //len=Proto_Paste_Null(TransferBuf,11);
-C51 COMPILER V9.00   PROTO_USO                                                             06/23/2014 11:22:11 PAGE 14  
+ 783   2                 len=Proto_Paste_Null(TransferBuf,11);
+C51 COMPILER V9.00   PROTO_USO                                                             06/23/2014 12:15:09 PAGE 14  
 
  784   2      
  785   2                 TransferBuf[len]=Old_CRC_Check(TransferBuf,len);
@@ -894,7 +894,7 @@ line level    source
  843   4                                        }
  844   3                                        break;
  845   3      
-C51 COMPILER V9.00   PROTO_USO                                                             06/23/2014 11:22:11 PAGE 15  
+C51 COMPILER V9.00   PROTO_USO                                                             06/23/2014 12:15:09 PAGE 15  
 
  846   3                                      case CHNL_DOL:   //ДОЛ
  847   3                                      {
@@ -945,7 +945,7 @@ line level    source
  892   3                                       break;          
  893   3                        }
  894   2                 
- 895   2                // len=Proto_Paste_Null(TransferBuf,8);
+ 895   2                 len=Proto_Paste_Null(TransferBuf,8);
  896   2      
  897   2                 TransferBuf[len]=Old_CRC_Check(TransferBuf,len);
  898   2                 return len+1;
@@ -958,7 +958,7 @@ line level    source
  905   1              return 0;       
  906   1      }
  907          //-----------------------------------------------------------------------------
-C51 COMPILER V9.00   PROTO_USO                                                             06/23/2014 11:22:11 PAGE 16  
+C51 COMPILER V9.00   PROTO_USO                                                             06/23/2014 12:15:09 PAGE 16  
 
  908          unsigned char Old_Channel_Set_ADC_Range(void)
  909          {
@@ -1022,7 +1022,7 @@ line level    source
  966   4                               }
  967   3                               buf[i+1]=0x0;//вставляем 0x00 после 0xD7
  968   3      
-C51 COMPILER V9.00   PROTO_USO                                                             06/23/2014 11:22:11 PAGE 17  
+C51 COMPILER V9.00   PROTO_USO                                                             06/23/2014 12:15:09 PAGE 17  
 
  969   3                               if(protocol_type==PROTO_TYPE_OLD)
  970   3                               {
@@ -1086,7 +1086,7 @@ line level    source
 1028   4                                      case CHANNEL_GET_DATA_ORDER_REQ:
 1029   4                                      {
 1030   5                                               buf_len=Channel_Get_Data_Order();
-C51 COMPILER V9.00   PROTO_USO                                                             06/23/2014 11:22:11 PAGE 18  
+C51 COMPILER V9.00   PROTO_USO                                                             06/23/2014 12:15:09 PAGE 18  
 
 1031   5                                      }
 1032   4                                      break;
@@ -1150,7 +1150,7 @@ line level    source
 1090   2                      case PROTO_TYPE_OLD: //старый протокол
 1091   2                      {
 1092   3                                switch((RecieveBuf[5]>>5)&0x7)
-C51 COMPILER V9.00   PROTO_USO                                                             06/23/2014 11:22:11 PAGE 19  
+C51 COMPILER V9.00   PROTO_USO                                                             06/23/2014 12:15:09 PAGE 19  
 
 1093   3                                {
 1094   4                              //---------------------------------------
@@ -1214,7 +1214,7 @@ line level    source
 1152   1      
 1153   1        return;
 1154   1      }
-C51 COMPILER V9.00   PROTO_USO                                                             06/23/2014 11:22:11 PAGE 20  
+C51 COMPILER V9.00   PROTO_USO                                                             06/23/2014 12:15:09 PAGE 20  
 
 1155          //-----------------------------------------------------------------------------------
 1156          PT_THREAD(ProtoProcess(struct pt *pt))
@@ -1278,7 +1278,7 @@ line level    source
 1214   6                      
 1215   6                                      LRC=((MBCHAR2BIN(RecieveBuf[recieve_count-LRC_LEN])<<4)|(MBCHAR2BIN(RecieveBuf[recieve_count-LRC_LEN+1
              -])));
-C51 COMPILER V9.00   PROTO_USO                                                             06/23/2014 11:22:11 PAGE 21  
+C51 COMPILER V9.00   PROTO_USO                                                             06/23/2014 12:15:09 PAGE 21  
 
 1216   6                                              
 1217   6                                      if(LRC_Check(&RecieveBuf,(recieve_count-LRC_LEN))!=LRC)
@@ -1298,255 +1298,258 @@ line level    source
 1231   5                      }
 1232   4                      else
 1233   4                      {
-1234   5                              buf_len=Proto_Paste_Null(TransferBuf,buf_len);
-1235   5                              DE_RE=1; //переключаем RS485 в режим передачи
-1236   5                                                              
-1237   5                              REN=0;  //запрет приема-только передача
-1238   5                              transf_count=0;
-1239   5                      //      CUT_OUT_NULL=0;
-1240   5                              SBUF=TransferBuf[transf_count];//передача байта, остальным займется автомат
-1241   5                              transf_count++;//инкрементируем счетчик переданных
-1242   5                              ES=1; //включим прерывание уарт 
-1243   5      
-1244   5                          if(protocol_type==PROTO_TYPE_NEW)
-1245   5                              {
-1246   6                                      PT_DELAY(pt,10);
-1247   6                              }
-1248   5                              else
+1234   5                              if(protocol_type==PROTO_TYPE_NEW)
+1235   5                              {
+1236   6                                      buf_len=Proto_Paste_Null(TransferBuf,buf_len);
+1237   6                              }
+1238   5      
+1239   5                              DE_RE=1; //переключаем RS485 в режим передачи
+1240   5                                                              
+1241   5                              REN=0;  //запрет приема-только передача
+1242   5                              transf_count=0;
+1243   5                      //      CUT_OUT_NULL=0;
+1244   5                              SBUF=TransferBuf[transf_count];//передача байта, остальным займется автомат
+1245   5                              transf_count++;//инкрементируем счетчик переданных
+1246   5                              ES=1; //включим прерывание уарт 
+1247   5      
+1248   5                          if(protocol_type==PROTO_TYPE_NEW)
 1249   5                              {
-1250   6                                      PT_DELAY(pt,3);
-1251   6                              }                       
-1252   5                      }               
-1253   4        //-----------------------------
-1254   4        }
-1255   3      
-1256   3       PT_END(pt);
-1257   1      }
-1258          //-----------------------------------------------------------------------------------------------
-1259          void Store_Dev_Address_Desc(unsigned char addr,void* name,void* ver,void* desc,unsigned char desc_len)//со
+1250   6                                      PT_DELAY(pt,10);
+1251   6                              }
+1252   5                              else
+1253   5                              {
+1254   6                                      PT_DELAY(pt,3);
+1255   6                              }                       
+1256   5                      }               
+1257   4        //-----------------------------
+1258   4        }
+1259   3      
+1260   3       PT_END(pt);
+1261   1      }
+1262          //-----------------------------------------------------------------------------------------------
+1263          void Store_Dev_Address_Desc(unsigned char addr,void* name,void* ver,void* desc,unsigned char desc_len)//со
              -хранить в ППЗУ новый адрес устройства, имя, версию, описание
-1260          {
-1261   1      //небезопасная
-1262   1              
-1263   1              unsigned int blocks=0;//здесь будет количество блоков, нужных дя сохранения комментария
-1264   1              
-1265   1              EEPROM_Write(&addr,1,DEVICE_ADDR_EEPROM);        //1 блок
-1266   1              EEPROM_Write(name,DEVICE_NAME_LENGTH,DEVICE_NAME_EEPROM); //5 блоков
-1267   1              memcpy(DEV_NAME,name,DEVICE_NAME_LENGTH_SYM);//копируем полученное имя в буфер
-1268   1      
-1269   1              EEPROM_Write(ver,DEVICE_VER_LENGTH,DEVICE_VER_EEPROM);          //2 блока
-1270   1              memcpy(VERSION,ver,DEVICE_VER_LENGTH_SYM);//копируем версию в буфер
-1271   1      
-1272   1              blocks=desc_len>>2;//в блоке 4 байта, делим на 4
-1273   1              if(desc_len&0xFC)//если есть остаток, то берем еще один блок
-1274   1                      blocks++;
-1275   1              
-1276   1              if(blocks>DEVICE_DESC_MAX_LENGTH) //ограничение на количество блоков для комментария
-C51 COMPILER V9.00   PROTO_USO                                                             06/23/2014 11:22:11 PAGE 22  
+1264          {
+1265   1      //небезопасная
+1266   1              
+1267   1              unsigned int blocks=0;//здесь будет количество блоков, нужных дя сохранения комментария
+1268   1              
+1269   1              EEPROM_Write(&addr,1,DEVICE_ADDR_EEPROM);        //1 блок
+1270   1              EEPROM_Write(name,DEVICE_NAME_LENGTH,DEVICE_NAME_EEPROM); //5 блоков
+1271   1              memcpy(DEV_NAME,name,DEVICE_NAME_LENGTH_SYM);//копируем полученное имя в буфер
+1272   1      
+1273   1              EEPROM_Write(ver,DEVICE_VER_LENGTH,DEVICE_VER_EEPROM);          //2 блока
+1274   1              memcpy(VERSION,ver,DEVICE_VER_LENGTH_SYM);//копируем версию в буфер
+1275   1      
+1276   1              blocks=desc_len>>2;//в блоке 4 байта, делим на 4
+C51 COMPILER V9.00   PROTO_USO                                                             06/23/2014 12:15:09 PAGE 22  
 
-1277   1                      blocks=DEVICE_DESC_MAX_LENGTH;
-1278   1      
-1279   1              EEPROM_Write(desc,(unsigned int)blocks,DEVICE_DESC_EEPROM);
-1280   1              dev_desc_len=desc_len;
-1281   1              EEPROM_Write(&desc_len,1,DEVICE_DESC_LEN_EEPROM);//сохраним длину комментария
-1282   1              
-1283   1              memcpy(NOTICE,desc,desc_len);//копируем описание в буфер
-1284   1              
-1285   1              return;
-1286   1      }
-1287          //-----------------------------------------------------------------------------------------------
-1288          void Restore_Dev_Address_Desc(void)//восстановить из ппзу адрес и информацию об устройстве
-1289          {
-1290   1              unsigned int blocks=0;//здесь будет количество блоков, нужных дя сохранения комментария
-1291   1              
-1292   1              EEPROM_Read(&ADRESS_DEV,1,DEVICE_ADDR_EEPROM);   //1 блок восстанавливаем адрес из ППЗУ
-1293   1      
-1294   1              if(ADRESS_DEV<1 || ADRESS_DEV>15)
-1295   1                      ADRESS_DEV=1; 
-1296   1      
-1297   1              EEPROM_Read(DEV_NAME,DEVICE_NAME_LENGTH,DEVICE_NAME_EEPROM); //5 блоков
-1298   1          EEPROM_Read(VERSION,DEVICE_VER_LENGTH,DEVICE_VER_EEPROM);
-1299   1      
-1300   1              EEPROM_Read(&dev_desc_len,1,DEVICE_DESC_LEN_EEPROM);//длина описания устройства в байтах
-1301   1      
-1302   1              if(dev_desc_len>DEVICE_DESC_MAX_LENGTH_SYM)
-1303   1                      dev_desc_len=DEVICE_DESC_MAX_LENGTH_SYM;
-1304   1      
-1305   1              blocks=dev_desc_len>>2;//в блоке 4 байта, делим на 4
-1306   1              if(dev_desc_len&0xFC)//если есть остаток, то берем еще один блок
-1307   1                      blocks++;
+1277   1              if(desc_len&0xFC)//если есть остаток, то берем еще один блок
+1278   1                      blocks++;
+1279   1              
+1280   1              if(blocks>DEVICE_DESC_MAX_LENGTH) //ограничение на количество блоков для комментария
+1281   1                      blocks=DEVICE_DESC_MAX_LENGTH;
+1282   1      
+1283   1              EEPROM_Write(desc,(unsigned int)blocks,DEVICE_DESC_EEPROM);
+1284   1              dev_desc_len=desc_len;
+1285   1              EEPROM_Write(&desc_len,1,DEVICE_DESC_LEN_EEPROM);//сохраним длину комментария
+1286   1              
+1287   1              memcpy(NOTICE,desc,desc_len);//копируем описание в буфер
+1288   1              
+1289   1              return;
+1290   1      }
+1291          //-----------------------------------------------------------------------------------------------
+1292          void Restore_Dev_Address_Desc(void)//восстановить из ппзу адрес и информацию об устройстве
+1293          {
+1294   1              unsigned int blocks=0;//здесь будет количество блоков, нужных дя сохранения комментария
+1295   1              
+1296   1              EEPROM_Read(&ADRESS_DEV,1,DEVICE_ADDR_EEPROM);   //1 блок восстанавливаем адрес из ППЗУ
+1297   1      
+1298   1              if(ADRESS_DEV<1 || ADRESS_DEV>15)
+1299   1                      ADRESS_DEV=1; 
+1300   1      
+1301   1              EEPROM_Read(DEV_NAME,DEVICE_NAME_LENGTH,DEVICE_NAME_EEPROM); //5 блоков
+1302   1          EEPROM_Read(VERSION,DEVICE_VER_LENGTH,DEVICE_VER_EEPROM);
+1303   1      
+1304   1              EEPROM_Read(&dev_desc_len,1,DEVICE_DESC_LEN_EEPROM);//длина описания устройства в байтах
+1305   1      
+1306   1              if(dev_desc_len>DEVICE_DESC_MAX_LENGTH_SYM)
+1307   1                      dev_desc_len=DEVICE_DESC_MAX_LENGTH_SYM;
 1308   1      
-1309   1              if(blocks>DEVICE_DESC_MAX_LENGTH) //ограничение на количество блоков для комментария     ???
-1310   1                      blocks=DEVICE_DESC_MAX_LENGTH;
-1311   1      
-1312   1              EEPROM_Read(NOTICE,(unsigned int)blocks,DEVICE_DESC_EEPROM);
-1313   1              return;
-1314   1      }
-1315          //-----------------------------------------------------------------------------------------------
-1316          
-1317          
-1318           PT_THREAD(RingBufHandling(struct pt *pt))//обработка кольцевого буфера
-1319           {
-1320   1              static unsigned char temp_count=0;//временные копии конца  и счетчика буфера
-1321   1              static unsigned char temp_tail=0;
-1322   1      //      static unsigned char frame_count=0;//счетчик формируемого кадра  протокола
-1323   1      
-1324   1              static unsigned char i=0;
-1325   1      
-1326   1        PT_BEGIN(pt);
-1327   3      
-1328   3        while(1) 
-1329   3        {
-1330   4                      PT_YIELD_UNTIL(pt,(rngbuf.count>0x0));//в буфере есть данные
-1331   4      
-1332   4                      ES=0;
-1333   4                      temp_count=rngbuf.count;
-1334   4                      rngbuf.count=0x0;
-1335   4                      temp_tail =rngbuf.tail;
-1336   4                      ES=1;
-1337   4      
-1338   4                      for(i=(temp_tail-temp_count);i!=temp_tail;i++)//поиск стартовой последовательности
-C51 COMPILER V9.00   PROTO_USO                                                             06/23/2014 11:22:11 PAGE 23  
+1309   1              blocks=dev_desc_len>>2;//в блоке 4 байта, делим на 4
+1310   1              if(dev_desc_len&0xFC)//если есть остаток, то берем еще один блок
+1311   1                      blocks++;
+1312   1      
+1313   1              if(blocks>DEVICE_DESC_MAX_LENGTH) //ограничение на количество блоков для комментария     ???
+1314   1                      blocks=DEVICE_DESC_MAX_LENGTH;
+1315   1      
+1316   1              EEPROM_Read(NOTICE,(unsigned int)blocks,DEVICE_DESC_EEPROM);
+1317   1              return;
+1318   1      }
+1319          //-----------------------------------------------------------------------------------------------
+1320          
+1321          
+1322           PT_THREAD(RingBufHandling(struct pt *pt))//обработка кольцевого буфера
+1323           {
+1324   1              static unsigned char temp_count=0;//временные копии конца  и счетчика буфера
+1325   1              static unsigned char temp_tail=0;
+1326   1      //      static unsigned char frame_count=0;//счетчик формируемого кадра  протокола
+1327   1      
+1328   1              static unsigned char i=0;
+1329   1      
+1330   1        PT_BEGIN(pt);
+1331   3      
+1332   3        while(1) 
+1333   3        {
+1334   4                      PT_YIELD_UNTIL(pt,(rngbuf.count>0x0));//в буфере есть данные
+1335   4      
+1336   4                      ES=0;
+1337   4                      temp_count=rngbuf.count;
+1338   4                      rngbuf.count=0x0;
+C51 COMPILER V9.00   PROTO_USO                                                             06/23/2014 12:15:09 PAGE 23  
 
-1339   4                      {
-1340   5                              switch(rngbuf.buf[i])
-1341   5                              {
-1342   6                                              case (char)(0xD7):
-1343   6                                              {
-1344   7                                                      RecieveBuf[recieve_count]=rngbuf.buf[i];
-1345   7                                                      recieve_count++;
-1346   7                                                      CUT_OUT_NULL=1;          
-1347   7                                              }
-1348   6                                              break;
-1349   6                      
-1350   6                                              case (char)(0x29):
-1351   6                                              {
-1352   7                                                      if(CUT_OUT_NULL==1)
-1353   7                                                      {
-1354   8                                                              RecieveBuf[0]=0x0;
-1355   8                                                              RecieveBuf[1]=0xD7;
-1356   8                                                              RecieveBuf[2]=0x29;
-1357   8                                                              recieve_count=0x3;
-1358   8                                                              protocol_type=PROTO_TYPE_NEW;                   
-1359   8                                                      }
-1360   7                                                      else
-1361   7                                                      {
-1362   8                                                              RecieveBuf[recieve_count]=rngbuf.buf[i];
-1363   8                                                              recieve_count++;        
-1364   8                                                      }
-1365   7                                                      CUT_OUT_NULL=0;
-1366   7                                              }
-1367   6                                              break;
-1368   6                      
-1369   6                                              case (char)(0x28):
-1370   6                                              {
-1371   7                                                      if(CUT_OUT_NULL==1)
-1372   7                                                      {
-1373   8                                                              RecieveBuf[0]=0x0;
-1374   8                                                              RecieveBuf[1]=0xD7;
-1375   8                                                              RecieveBuf[2]=0x28;
-1376   8                                                              recieve_count=0x3;
-1377   8                                                              protocol_type=PROTO_TYPE_OLD;                   
-1378   8                                                      }
-1379   7                                                      else
-1380   7                                                      {
-1381   8                                                              RecieveBuf[recieve_count]=rngbuf.buf[i];
-1382   8                                                              recieve_count++;        
-1383   8                                                      }
-1384   7                                                      CUT_OUT_NULL=0;
-1385   7                                              }
-1386   6                                              break;
-1387   6                      
-1388   6                                              case (char)(0x0):
-1389   6                                              {
-1390   7                                                      if(CUT_OUT_NULL==1)       //если после 0xD7-пропускаем
-1391   7                                                      {
-1392   8                                                              CUT_OUT_NULL=0;         
-1393   8                                                      }
-1394   7                                                      else
+1339   4                      temp_tail =rngbuf.tail;
+1340   4                      ES=1;
+1341   4      
+1342   4                      for(i=(temp_tail-temp_count);i!=temp_tail;i++)//поиск стартовой последовательности
+1343   4                      {
+1344   5                              switch(rngbuf.buf[i])
+1345   5                              {
+1346   6                                              case (char)(0xD7):
+1347   6                                              {
+1348   7                                                      RecieveBuf[recieve_count]=rngbuf.buf[i];
+1349   7                                                      recieve_count++;
+1350   7                                                      CUT_OUT_NULL=1;          
+1351   7                                              }
+1352   6                                              break;
+1353   6                      
+1354   6                                              case (char)(0x29):
+1355   6                                              {
+1356   7                                                      if(CUT_OUT_NULL==1)
+1357   7                                                      {
+1358   8                                                              RecieveBuf[0]=0x0;
+1359   8                                                              RecieveBuf[1]=0xD7;
+1360   8                                                              RecieveBuf[2]=0x29;
+1361   8                                                              recieve_count=0x3;
+1362   8                                                              protocol_type=PROTO_TYPE_NEW;                   
+1363   8                                                      }
+1364   7                                                      else
+1365   7                                                      {
+1366   8                                                              RecieveBuf[recieve_count]=rngbuf.buf[i];
+1367   8                                                              recieve_count++;        
+1368   8                                                      }
+1369   7                                                      CUT_OUT_NULL=0;
+1370   7                                              }
+1371   6                                              break;
+1372   6                      
+1373   6                                              case (char)(0x28):
+1374   6                                              {
+1375   7                                                      if(CUT_OUT_NULL==1)
+1376   7                                                      {
+1377   8                                                              RecieveBuf[0]=0x0;
+1378   8                                                              RecieveBuf[1]=0xD7;
+1379   8                                                              RecieveBuf[2]=0x28;
+1380   8                                                              recieve_count=0x3;
+1381   8                                                              protocol_type=PROTO_TYPE_OLD;                   
+1382   8                                                      }
+1383   7                                                      else
+1384   7                                                      {
+1385   8                                                              RecieveBuf[recieve_count]=rngbuf.buf[i];
+1386   8                                                              recieve_count++;        
+1387   8                                                      }
+1388   7                                                      CUT_OUT_NULL=0;
+1389   7                                              }
+1390   6                                              break;
+1391   6                      
+1392   6                                              case (char)(0x0):
+1393   6                                              {
+1394   7                                                      if(CUT_OUT_NULL==1)       //если после 0xD7-пропускаем
 1395   7                                                      {
-1396   8                                                              RecieveBuf[recieve_count]=rngbuf.buf[i];
-1397   8                                                              recieve_count++;        
-1398   8                                                      }
-1399   7                                              }
-1400   6                                              break;
-C51 COMPILER V9.00   PROTO_USO                                                             06/23/2014 11:22:11 PAGE 24  
+1396   8                                                              CUT_OUT_NULL=0;         
+1397   8                                                      }
+1398   7                                                      else
+1399   7                                                      {
+1400   8                                                              RecieveBuf[recieve_count]=rngbuf.buf[i];
+C51 COMPILER V9.00   PROTO_USO                                                             06/23/2014 12:15:09 PAGE 24  
 
-1401   6                      
-1402   6                                              //---------MD ASCII------
-1403   6      //                                      case  0x3A:      //":"
-1404   6      //                                      {
-1405   6      //                                              RecieveBuf[recieve_count]=symbol;
-1406   6      //                                              recieve_count++;
-1407   6      //                                              protocol_type=PROTO_TYPE_MODBUS_ASCII;                                                           
-1408   6      //                                      }
-1409   6      //                                      break;
-1410   6      //              
-1411   6      //                                      case 0xA:        //"LF"
-1412   6      //                                      {
-1413   6      //                                              ES=0;
-1414   6      //                                              REN=0;  //recieve disable 
-1415   6      //                                      }
-1416   6      //                                      break;
-1417   6      //              
-1418   6      //                                      case 0xD:        //"CR"
-1419   6      //                                      {
-1420   6      //                                              //
-1421   6      //                                      }
-1422   6      //                                      break;
-1423   6                                              //-----------------------
-1424   6                      
-1425   6                                              default :
-1426   6                                              {
-1427   7                                                      RecieveBuf[recieve_count]=rngbuf.buf[i];
-1428   7                                                      recieve_count++;
-1429   7                                                      CUT_OUT_NULL=0;         
-1430   7                                              }
-1431   6                                      }
-1432   5                      
-1433   5                                 if(recieve_count>6)
-1434   5                                 {
-1435   6                                                if(recieve_count==6+frame_len)          // принимаем указанное в frame_len число байт данные, 6 значит 
+1401   8                                                              recieve_count++;        
+1402   8                                                      }
+1403   7                                              }
+1404   6                                              break;
+1405   6                      
+1406   6                                              //---------MD ASCII------
+1407   6      //                                      case  0x3A:      //":"
+1408   6      //                                      {
+1409   6      //                                              RecieveBuf[recieve_count]=symbol;
+1410   6      //                                              recieve_count++;
+1411   6      //                                              protocol_type=PROTO_TYPE_MODBUS_ASCII;                                                           
+1412   6      //                                      }
+1413   6      //                                      break;
+1414   6      //              
+1415   6      //                                      case 0xA:        //"LF"
+1416   6      //                                      {
+1417   6      //                                              ES=0;
+1418   6      //                                              REN=0;  //recieve disable 
+1419   6      //                                      }
+1420   6      //                                      break;
+1421   6      //              
+1422   6      //                                      case 0xD:        //"CR"
+1423   6      //                                      {
+1424   6      //                                              //
+1425   6      //                                      }
+1426   6      //                                      break;
+1427   6                                              //-----------------------
+1428   6                      
+1429   6                                              default :
+1430   6                                              {
+1431   7                                                      RecieveBuf[recieve_count]=rngbuf.buf[i];
+1432   7                                                      recieve_count++;
+1433   7                                                      CUT_OUT_NULL=0;         
+1434   7                                              }
+1435   6                                      }
+1436   5                      
+1437   5                                 if(recieve_count>6)
+1438   5                                 {
+1439   6                                                if(recieve_count==6+frame_len)          // принимаем указанное в frame_len число байт данные, 6 значит 
              -что обмен идет с компом, надо ставаить 5 чтобы обмениваться с устройствами
-1436   6                                                {
-1437   7                                                              RECIEVED=1;//буфер принят
-1438   7                                                              ES=0;
-1439   7                                                      //      rngbuf.tail=0;
-1440   7                                                              REN=0;  //recieve disable -запрещаем принимать в буфер  
-1441   7                                                              CUT_OUT_NULL=0;                                                 
-1442   7                                                }      
-1443   6                                                
-1444   6                                                //----------------------обрабатываем возможные ошибки длины кадра-------------
-1445   6                                            if(recieve_count>MAX_LENGTH_REC_BUF)      //если посылка слишком длинная
-1446   6                                                {
-1447   7                                                              PT_RESTART(&pt_proto);  //внепроцессный рестарт
-1448   7                                                }  
-1449   6                                 }
-1450   5                                 else
-1451   5                                 {
-1452   6                                                 if(recieve_count==6)
-1453   6                                                 {     
-1454   7                                                      
-1455   7                                                              frame_len=RecieveBuf[recieve_count-1];  // получаем длину данных после заголовка
-1456   7                                                              if(protocol_type==PROTO_TYPE_OLD)
-1457   7                                                              {
-1458   8                                                                      frame_len&=0x1F;//в старом протоколе только 5 младших бит -длина оставшейся части       
-1459   8                                                              }                                        
-1460   7                                                 }                    
-1461   6                                 }                                                                                                            
-C51 COMPILER V9.00   PROTO_USO                                                             06/23/2014 11:22:11 PAGE 25  
+1440   6                                                {
+1441   7                                                              RECIEVED=1;//буфер принят
+1442   7                                                              ES=0;
+1443   7                                                              REN=0;  //recieve disable -запрещаем принимать в буфер  
+1444   7                                                              CUT_OUT_NULL=0;                                                 
+1445   7                                                }      
+1446   6                                                
+1447   6                                                //----------------------обрабатываем возможные ошибки длины кадра-------------
+1448   6                                            if(recieve_count>MAX_LENGTH_REC_BUF)      //если посылка слишком длинная
+1449   6                                                {
+1450   7                                                              PT_RESTART(&pt_proto);  //внепроцессный рестарт
+1451   7                                                }  
+1452   6                                 }
+1453   5                                 else
+1454   5                                 {
+1455   6                                                 if(recieve_count==6)
+1456   6                                                 {     
+1457   7                                                      
+1458   7                                                              frame_len=RecieveBuf[recieve_count-1];  // получаем длину данных после заголовка
+1459   7                                                              if(protocol_type==PROTO_TYPE_OLD)
+1460   7                                                              {
+1461   8                                                                      frame_len&=0x1F;//в старом протоколе только 5 младших бит -длина оставшейся части       
+C51 COMPILER V9.00   PROTO_USO                                                             06/23/2014 12:15:09 PAGE 25  
 
-1462   5                      }       
-1463   4        }
-1464   3      
-1465   3        PT_END(pt);
-1466   1       }
+1462   8                                                              }                                        
+1463   7                                                 }                    
+1464   6                                 }                                                                                                            
+1465   5                      }       
+1466   4        }
+1467   3      
+1468   3        PT_END(pt);
+1469   1       }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =   7972    ----
+   CODE SIZE        =   8129    ----
    CONSTANT SIZE    =   ----    ----
-   XDATA SIZE       =    943       1
+   XDATA SIZE       =    944       1
    PDATA SIZE       =   ----    ----
    DATA SIZE        =      1       2
    IDATA SIZE       =      3    ----

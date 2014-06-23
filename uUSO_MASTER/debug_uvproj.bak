@@ -503,6 +503,11 @@
               <FileType>1</FileType>
               <FilePath>.\crc_table.c</FilePath>
             </File>
+            <File>
+              <FileName>modbus_ascii.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\modbus\modbus_ascii.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>
