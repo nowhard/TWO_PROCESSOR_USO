@@ -142,7 +142,7 @@ unsigned char Old_Proto_Paste_Null(unsigned char *buf,unsigned char len);//т.к. 
 //-----------------------------------------------------------------------------------------------
 void ProtoBufHandling(void); //процесс обработки принятого запроса
 PT_THREAD(ProtoProcess(struct pt *pt));//главный процесс протокола
-PT_THREAD(ProtoBufHandling(struct pt *pt));//обработка кольцевого буфера
+PT_THREAD(RingBufHandling(struct pt *pt));//обработка кольцевого буфера
 
 static unsigned char  CRC_Check( unsigned char xdata *Spool,unsigned char Count);//расчет CRC
 

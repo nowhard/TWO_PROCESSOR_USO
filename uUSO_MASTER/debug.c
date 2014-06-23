@@ -47,7 +47,7 @@ void main(void) //using 0
 	UART_Init();
 	Frequency_Init();
 
-	WDT_Init(WDT_2000);//включить сторожевой таймер
+//	WDT_Init(WDT_2000);//включить сторожевой таймер
 	I2C_Init();
 
 
@@ -69,7 +69,8 @@ void main(void) //using 0
 		Frequency_Measure_Process(&pt_freq_measure);	
 		ulongsort_process(&pt_sort);
 		I2C_Process(&pt_i2c_process);
-		WDT_Process(&pt_wdt);	    
+//		WDT_Process(&pt_wdt);
+		RingBufHandling(&pt_buf_handle);	    
 	}
 }
 //-----------------------------------------------------------------------------
@@ -102,6 +103,6 @@ void Timer1_Interrupt(void) interrupt 3  //таймер шедулера
 	pt_sort.pt_time++;
 	pt_proto.pt_time++;
 	pt_wdt.pt_time++;
-	pt_buf_handle.pt_time++
+	pt_buf_handle.pt_time++;
 	return;	
 }

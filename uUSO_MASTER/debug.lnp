@@ -13,8 +13,7 @@
 "calibrate.obj",
 "ulongsort.obj",
 "timer1.obj",
-"crc_table.obj",
-"modbus_ascii.obj" 
+"crc_table.obj" 
 TO "debug" 
 RAMSIZE(256) 
 XDATA( 0X0000-0X7FFE )

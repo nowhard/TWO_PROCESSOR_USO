@@ -1,4 +1,4 @@
-C51 COMPILER V9.00   DEBUG                                                                 06/20/2014 13:19:15 PAGE 1   
+C51 COMPILER V9.00   DEBUG                                                                 06/23/2014 10:15:12 PAGE 1   
 
 
 C51 COMPILER V9.00, COMPILATION OF MODULE DEBUG
@@ -32,7 +32,7 @@ line level    source
   22          extern unsigned char idata i2c_buffer[6];
   23          
   24          extern struct I2C_Channel xdata i2c_channels;
-  25          extern struct pt pt_proto, pt_wdt;
+  25          extern struct pt pt_proto, pt_wdt, pt_buf_handle;
   26          volatile struct pt pt_i2c_read, pt_freq_measure,pt_sort,pt_i2c_process;
   27          
   28          
@@ -57,12 +57,12 @@ line level    source
   47   1              UART_Init();
   48   1              Frequency_Init();
   49   1      
-  50   1              WDT_Init(WDT_2000);//включить сторожевой таймер
+  50   1      //      WDT_Init(WDT_2000);//включить сторожевой таймер
   51   1              I2C_Init();
   52   1      
   53   1      
   54   1              
-C51 COMPILER V9.00   DEBUG                                                                 06/20/2014 13:19:15 PAGE 2   
+C51 COMPILER V9.00   DEBUG                                                                 06/23/2014 10:15:12 PAGE 2   
 
   55   1              PT_INIT(&pt_i2c_read);
   56   1              PT_INIT(&pt_freq_measure);
@@ -82,52 +82,54 @@ line level    source
   69   2                      Frequency_Measure_Process(&pt_freq_measure);    
   70   2                      ulongsort_process(&pt_sort);
   71   2                      I2C_Process(&pt_i2c_process);
-  72   2                      WDT_Process(&pt_wdt);       
-  73   2              }
-  74   1      }
-  75          //-----------------------------------------------------------------------------
-  76          //#pragma OT(0,Speed)
-  77           //---------------------------------
-  78           PT_THREAD(I2C_RepeatRead(struct pt *pt))//поток чтения I2C
-  79           {  
-  80   1                wdt_count[I2C_RepeatRead_Proc].process_state=RUN;
-  81   1                 
-  82   1                PT_BEGIN(pt);
-  83   3                
-  84   3                while(1) 
-  85   3                {
-  86   4                              PT_DELAY(pt,15);
-  87   4                              I2C_Repeat_Start_Read(I2C_ADDR,&i2c_buffer,1,i2c_channels.I2C_CHNL.i2c_buf,sizeof(i2c_channels));       //исп
+  72   2      //              WDT_Process(&pt_wdt);
+  73   2                      RingBufHandling(&pt_buf_handle);            
+  74   2              }
+  75   1      }
+  76          //-----------------------------------------------------------------------------
+  77          //#pragma OT(0,Speed)
+  78           //---------------------------------
+  79           PT_THREAD(I2C_RepeatRead(struct pt *pt))//поток чтения I2C
+  80           {  
+  81   1                wdt_count[I2C_RepeatRead_Proc].process_state=RUN;
+  82   1                 
+  83   1                PT_BEGIN(pt);
+  84   3                
+  85   3                while(1) 
+  86   3                {
+  87   4                              PT_DELAY(pt,15);
+  88   4                              I2C_Repeat_Start_Read(I2C_ADDR,&i2c_buffer,1,i2c_channels.I2C_CHNL.i2c_buf,sizeof(i2c_channels));       //исп
              -равить сдвиг адресации
-  88   4                              //WDT_Clear();
-  89   4                              wdt_count[I2C_RepeatRead_Proc].count++;
-  90   4                }
-  91   3                PT_END(pt);
-  92   1      
-  93   1       }
-  94          //-----------------------------------
-  95          void Timer1_Interrupt(void) interrupt 3  //таймер шедулера
-  96          {
-  97   1      //---------------------------------------
-  98   1              TH1     = TH1_VAL; ///200 Hz;
-  99   1              TL1 = TL1_VAL;//
- 100   1              pt_i2c_read.pt_time++;
- 101   1              pt_freq_measure.pt_time++;
- 102   1              pt_sort.pt_time++;
- 103   1              pt_proto.pt_time++;
- 104   1              pt_wdt.pt_time++;
- 105   1              return; 
- 106   1      }
+  89   4                              //WDT_Clear();
+  90   4                              wdt_count[I2C_RepeatRead_Proc].count++;
+  91   4                }
+  92   3                PT_END(pt);
+  93   1      
+  94   1       }
+  95          //-----------------------------------
+  96          void Timer1_Interrupt(void) interrupt 3  //таймер шедулера
+  97          {
+  98   1      //---------------------------------------
+  99   1              TH1     = TH1_VAL; ///200 Hz;
+ 100   1              TL1 = TL1_VAL;//
+ 101   1              pt_i2c_read.pt_time++;
+ 102   1              pt_freq_measure.pt_time++;
+ 103   1              pt_sort.pt_time++;
+ 104   1              pt_proto.pt_time++;
+ 105   1              pt_wdt.pt_time++;
+ 106   1              pt_buf_handle.pt_time++;
+ 107   1              return; 
+ 108   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    414    ----
+   CODE SIZE        =    423    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =     16       4
+C51 COMPILER V9.00   DEBUG                                                                 06/23/2014 10:15:12 PAGE 3   
+
    PDATA SIZE       =   ----    ----
    DATA SIZE        =   ----    ----
-C51 COMPILER V9.00   DEBUG                                                                 06/20/2014 13:19:15 PAGE 3   
-
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
 END OF MODULE INFORMATION.
