@@ -47,7 +47,7 @@ void main(void) //using 0
 	UART_Init();
 	Frequency_Init();
 
-//	WDT_Init(WDT_2000);//включить сторожевой таймер
+	WDT_Init(WDT_2000);//включить сторожевой таймер
 	I2C_Init();
 
 
@@ -69,7 +69,7 @@ void main(void) //using 0
 		Frequency_Measure_Process(&pt_freq_measure);	
 		ulongsort_process(&pt_sort);
 		I2C_Process(&pt_i2c_process);
-//		WDT_Process(&pt_wdt);
+		WDT_Process(&pt_wdt);
 		RingBufHandling(&pt_buf_handle);	    
 	}
 }
@@ -86,7 +86,6 @@ void main(void) //using 0
 	  {
 			PT_DELAY(pt,15);
 			I2C_Repeat_Start_Read(I2C_ADDR,&i2c_buffer,1,i2c_channels.I2C_CHNL.i2c_buf,sizeof(i2c_channels));	//исправить сдвиг адресации
-			//WDT_Clear();
 			wdt_count[I2C_RepeatRead_Proc].count++;
 	  }
 	  PT_END(pt);

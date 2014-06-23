@@ -177,7 +177,7 @@ unsigned char ReadHoldingReg(void)
 	addr=Sym_4_To_Int(&RecieveBuf[3]);
 	len= Sym_4_To_Int(&RecieveBuf[5]);
 
-	if(addr>=REG_ADDR_MIN && addr<=(REG_ADDR_MIN+CHANNEL_NUMBER) && len<=CHANNEL_NUMBER)  
+	if(addr>=REG_ADDR_MIN && addr<=(REG_ADDR_MIN+CHANNEL_NUMBER*2) && len<=CHANNEL_NUMBER*2)  
 	{			
 		TransferBuf[0]=':';
 		count++;

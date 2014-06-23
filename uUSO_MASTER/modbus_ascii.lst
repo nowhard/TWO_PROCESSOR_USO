@@ -1,4 +1,4 @@
-C51 COMPILER V9.00   MODBUS_ASCII                                                          06/20/2014 14:22:56 PAGE 1   
+C51 COMPILER V9.00   MODBUS_ASCII                                                          06/23/2014 15:29:50 PAGE 1   
 
 
 C51 COMPILER V9.00, COMPILATION OF MODULE MODBUS_ASCII
@@ -62,7 +62,7 @@ line level    source
   51   1          {
   52   2              return ( unsigned char )( ucByte - 0x0A + 'A' );
   53   2          }
-C51 COMPILER V9.00   MODBUS_ASCII                                                          06/20/2014 14:22:56 PAGE 2   
+C51 COMPILER V9.00   MODBUS_ASCII                                                          06/23/2014 15:29:50 PAGE 2   
 
   54   1          else
   55   1          {
@@ -126,7 +126,7 @@ line level    source
  111   1              {
  112   1                      unsigned long result_long;
  113   1                      unsigned char result_char[4];
-C51 COMPILER V9.00   MODBUS_ASCII                                                          06/20/2014 14:22:56 PAGE 3   
+C51 COMPILER V9.00   MODBUS_ASCII                                                          06/23/2014 15:29:50 PAGE 3   
 
  114   1              }
  115   1              sym_8_to_long;
@@ -190,7 +190,7 @@ line level    source
  169   1      //[             head       |............]       
  170   1              static unsigned char  i=0,count=0;
  171   1              static unsigned char  LRC=0x0;
-C51 COMPILER V9.00   MODBUS_ASCII                                                          06/20/2014 14:22:56 PAGE 4   
+C51 COMPILER V9.00   MODBUS_ASCII                                                          06/23/2014 15:29:50 PAGE 4   
 
  172   1              static unsigned int   addr;
  173   1              static unsigned int   len;
@@ -200,7 +200,7 @@ line level    source
  177   1              addr=Sym_4_To_Int(&RecieveBuf[3]);
  178   1              len= Sym_4_To_Int(&RecieveBuf[5]);
  179   1      
- 180   1              if(addr>=REG_ADDR_MIN && addr<=(REG_ADDR_MIN+CHANNEL_NUMBER) && len<=CHANNEL_NUMBER)  
+ 180   1              if(addr>=REG_ADDR_MIN && addr<=(REG_ADDR_MIN+CHANNEL_NUMBER*2) && len<=CHANNEL_NUMBER*2)  
  181   1              {                       
  182   2                      TransferBuf[0]=':';
  183   2                      count++;
@@ -240,72 +240,6 @@ line level    source
  217   1              return count;
  218   1      }
  219          //-----------------------------------------------------------------------------------
- 220          //#pragma OT(0,Speed) 
- 221          //PT_THREAD(ProtoProcess(struct pt *pt))
- 222          // {
- 223          // static unsigned char  LRC=0x0;
- 224          //  PT_BEGIN(pt);
- 225          //
- 226          //  while(1) 
- 227          //  {
- 228          //  //----------restart------------
- 229          //              recieve_count=0x0;//??
- 230          //              REN=1;//recieve enqble
- 231          //              DE_RE=0;//линия на прием
- 232          //              ES=1;
- 233          //  //-----------------------------
-C51 COMPILER V9.00   MODBUS_ASCII                                                          06/20/2014 14:22:56 PAGE 5   
-
- 234          //        // PT_WAIT_UNTIL(pt,RECIEVED); //ждем команды на старт
- 235          //         wdt_count[Proto_Proc].process_state=IDLE;
- 236          //
- 237          //         PT_YIELD_UNTIL(pt,RECIEVED); //ждем команды на старт 
- 238          //         wdt_count[Proto_Proc].count++;
- 239          //
- 240          //
- 241          //        
- 242          //          RECIEVED=0;
- 243          //              
- 244          //              if((unsigned char)(MBCHAR2BIN(RecieveBuf[1])<<4| MBCHAR2BIN(RecieveBuf[2]))!=DEV_ADDRESS)
- 245          //              {
- 246          //                      PT_RESTART(pt); 
- 247          //              }       
- 248          //                              
- 249          //              
- 250          //              LRC=((MBCHAR2BIN(RecieveBuf[buf_count-LRC_LEN])<<4)|(MBCHAR2BIN(RecieveBuf[buf_count-LRC_LEN+1])));
- 251          //                                      
- 252          //              if(LRC_Check(&RecieveBuf,(buf_count-LRC_LEN))!=LRC)
- 253          //              {
- 254          //                      PT_RESTART(pt);//если LRC не сошлось-перезапустим протокол                       
- 255          //              }
- 256          //
- 257          //
- 258          //      //      PT_YIELD(pt);//дадим другим процессам время
- 259          //  //-----------------------------
- 260          //              ProtoBufHandling();//процедура обработки сообщения      
- 261          //              if(buf_len==0)//если в буфере пусто
- 262          //              {
- 263          //                      PT_RESTART(pt);//перезапустим протокол  
- 264          //              }
- 265          //              else
- 266          //              {
- 267          //                      DE_RE=1; //переключаем RS485 в режим передачи
- 268          //                                                      
- 269          //                      REN=0;  //запрет приема-только передача
- 270          //                      transf_count=0;
- 271          //                      CUT_OUT_NULL=0;
- 272          //                      SBUF=TransferBuf[transf_count];//передача байта, остальным займется автомат
- 273          //                      transf_count++;//инкрементируем счетчик переданных
- 274          //                      ES=1; //включим прерывание уарт 
- 275          //
- 276          //                      PT_DELAY(pt,10);                        
- 277          //              }               
- 278          //  //-----------------------------
- 279          //  }
- 280          //
- 281          // PT_END(pt);
- 282          //}
- 283          
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE

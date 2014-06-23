@@ -11,35 +11,33 @@
 sbit DE_RE=P3^5;
 
 //-----------------------------------------------------------------------------------
-volatile unsigned char xdata DEV_NAME[DEVICE_NAME_LENGTH_SYM] ="<<uUSO_2>>"; //имя устройства
-volatile unsigned char xdata NOTICE[DEVICE_DESC_MAX_LENGTH_SYM]="<-- GEOSPHERA_2012 -->";//примечание 	
-volatile unsigned char xdata VERSION[DEVICE_VER_LENGTH_SYM] ="\x30\x30\x30\x30\x31";	// версия программы ПЗУ	не больше 5 байт
+unsigned char xdata DEV_NAME[DEVICE_NAME_LENGTH_SYM] ="<<uUSO_2>>"; //имя устройства
+unsigned char xdata NOTICE[DEVICE_DESC_MAX_LENGTH_SYM]="<-- GEOSPHERA_2012 -->";//примечание 	
+unsigned char xdata VERSION[DEVICE_VER_LENGTH_SYM] ="\x30\x30\x30\x30\x31";	// версия программы ПЗУ	не больше 5 байт
 
-volatile unsigned char xdata ADRESS_DEV=0x1;
+unsigned char xdata ADRESS_DEV=0x1;
 
-volatile unsigned char xdata dev_desc_len=20;//длина описания устройства
+unsigned char xdata dev_desc_len=20;//длина описания устройства
 //--------------------------------global variable------------------------------------
-volatile unsigned char idata	RECIEVED=0;//принято
-volatile unsigned int  xdata    recieve_count;//счетчик приемного буфера
-volatile unsigned char xdata	transf_count;//счетчик передаваемых байтов	   
-volatile unsigned char xdata	buf_len;//длина передаваемого буфера
+unsigned char xdata	RECIEVED=0;//принято
+unsigned int  xdata recieve_count;//счетчик приемного буфера
+unsigned char xdata	transf_count;//счетчик передаваемых байтов	   
+unsigned char xdata	buf_len;//длина передаваемого буфера
 
 //------------------------флаги ошибок--------------------------------
-volatile unsigned char idata  CUT_OUT_NULL;//флаг-вырезаем 0 после 0xD7
-volatile unsigned char xdata frame_len=0;//длина кадра, которую вытаскиваем из шестого байта кадра
+
+unsigned char xdata frame_len=0;//длина кадра, которую вытаскиваем из шестого байта кадра
 //--------------------------------------------------------------------
-volatile unsigned char xdata  RecieveBuf[MAX_LENGTH_REC_BUF]={0} ; //буфер принимаемых данных
+unsigned char xdata  RecieveBuf[MAX_LENGTH_REC_BUF]={0} ; //буфер принимаемых данных
 //volatile unsigned char xdata 			*TransferBuf;
-volatile unsigned char xdata  TransferBuf[MAX_LENGTH_TR_BUF]={0} ; //буфер передаваемых данных
+unsigned char xdata  TransferBuf[MAX_LENGTH_TR_BUF]={0} ; //буфер передаваемых данных
 //--------------------------------------------------------------------
 volatile unsigned char xdata  STATE_BYTE=0xC0;//байт состояния устройства
-volatile unsigned char idata symbol=0xFF;//принятый символ
-
-volatile unsigned char xdata protocol_type=PROTO_TYPE_NEW;//тип протокола
+unsigned char xdata protocol_type=PROTO_TYPE_NEW;//тип протокола
 
 volatile struct pt pt_proto, pt_buf_handle;
 
-struct RingBuf rngbuf;
+volatile struct RingBuf rngbuf;
 //-----------------------------------------------------------------------------------
 union //объединение для конвертирования char->long
 {
@@ -64,7 +62,7 @@ void UART_ISR(void) interrupt 4 //using 1
 		rngbuf.tail++;
 		rngbuf.count++;										
 	}
-//----------------------------передача----------------------------------------------------------------
+//----------------------------передача-----------------------------------------------
 	if(TI)
 	{
 		TI=0;
@@ -91,7 +89,6 @@ void Protocol_Init(void) //using 0
 	TI=0;
 	RI=0;
 	
-//	TransferBuf=&RecieveBuf[0];	 //буфер ответа =буфер запроса
 
 	Restore_Dev_Address_Desc();
 
@@ -103,7 +100,7 @@ void Protocol_Init(void) //using 0
 	transf_count=0x0;//счетчик передаваемых байтов
 	buf_len=0x0;//длина передаваемого буфера
 	DE_RE=0;//линия на прием
-	CUT_OUT_NULL=0;
+	//CUT_OUT_NULL=0;
 	STATE_BYTE=0xC0;
 	PT_INIT(&pt_proto);
 	PT_INIT(&pt_buf_handle);
@@ -1170,7 +1167,8 @@ PT_THREAD(ProtoProcess(struct pt *pt))
 	   wdt_count[Proto_Proc].process_state=IDLE;
 
 	   PT_YIELD_UNTIL(pt,RECIEVED); //ждем команды на старт	
-	   wdt_count[Proto_Proc].count++;
+	   wdt_count[Proto_Proc].process_state=RUN;
+	   
 
 	    RECIEVED=0;
 		
@@ -1214,7 +1212,7 @@ PT_THREAD(ProtoProcess(struct pt *pt))
 	   	
 				LRC=((MBCHAR2BIN(RecieveBuf[recieve_count-LRC_LEN])<<4)|(MBCHAR2BIN(RecieveBuf[recieve_count-LRC_LEN+1])));
 					
-				if(LRC_Check(&RecieveBuf,(recieve_count-LRC_LEN))!=LRC)
+				if(LRC_Check(&RecieveBuf[1],(recieve_count-LRC_LEN-1))!=LRC)
 				{
 					PT_RESTART(pt);//если LRC не сошлось-перезапустим протокол	 		 
 				}
@@ -1240,21 +1238,21 @@ PT_THREAD(ProtoProcess(struct pt *pt))
 							
 			REN=0;	//запрет приема-только передача
 			transf_count=0;
-		//	CUT_OUT_NULL=0;
 			SBUF=TransferBuf[transf_count];//передача байта, остальным займется автомат
 			transf_count++;//инкрементируем счетчик переданных
 			ES=1; //включим прерывание уарт	
 
 		    if(protocol_type==PROTO_TYPE_NEW)
 			{
-				PT_DELAY(pt,10);
+				PT_DELAY(pt,50);
 			}
 			else
 			{
-				PT_DELAY(pt,3);
+				PT_DELAY(pt,20);
 			}			
 		}		
   //-----------------------------
+  wdt_count[Proto_Proc].count++;
   }
 
  PT_END(pt);
@@ -1317,21 +1315,24 @@ void Restore_Dev_Address_Desc(void)//восстановить из ппзу адрес и информацию об 
 	return;
 }
 //-----------------------------------------------------------------------------------------------
-
-
  PT_THREAD(RingBufHandling(struct pt *pt))//обработка кольцевого буфера
  {
  	static unsigned char temp_count=0;//временные копии конца  и счетчика буфера
 	static unsigned char temp_tail=0;
-//	static unsigned char frame_count=0;//счетчик формируемого кадра	 протокола
 
 	static unsigned char i=0;
+	static unsigned char CUT_OUT_NULL=0;//флаг-вырезаем 0 после 0xD7
 
   PT_BEGIN(pt);
 
+  CUT_OUT_NULL=0;
+
   while(1) 
   {
+  		wdt_count[RingBufHandling_Proc].process_state=IDLE;
   		PT_YIELD_UNTIL(pt,(rngbuf.count>0x0));//в буфере есть данные
+		wdt_count[RingBufHandling_Proc].process_state=RUN;
+	
 
 		ES=0;
 		temp_count=rngbuf.count;
@@ -1404,26 +1405,32 @@ void Restore_Dev_Address_Desc(void)//восстановить из ппзу адрес и информацию об 
 					break;
 		
 					//---------MD ASCII------
-//					case  0x3A:	 //":"
-//					{
-//						RecieveBuf[recieve_count]=symbol;
-//						recieve_count++;
-//						protocol_type=PROTO_TYPE_MODBUS_ASCII;								 
-//					}
-//					break;
-//		
-//					case 0xA:	 //"LF"
-//					{
-//					  	ES=0;
-//					  	REN=0;  //recieve disable 
-//					}
-//					break;
-//		
-//					case 0xD:	 //"CR"
-//					{
-//						//
-//					}
-//					break;
+					case  0x3A:	 //":"
+					{
+						
+						RecieveBuf[recieve_count]=rngbuf.buf[i];
+						recieve_count++;
+
+						if(recieve_count==0x0)
+						{
+							protocol_type=PROTO_TYPE_MODBUS_ASCII;
+						}								 
+					}
+					break;
+		
+					case 0xA:	 //"LF"
+					{
+					  	RECIEVED=1;//буфер принят
+						ES=0;
+					  	REN=0;  //recieve disable 
+					}
+					break;
+		
+					case 0xD:	 //"CR"
+					{
+						//
+					}
+					break;
 					//-----------------------
 		
 					default :
@@ -1461,8 +1468,11 @@ void Restore_Dev_Address_Desc(void)//восстановить из ппзу адрес и информацию об 
 								frame_len&=0x1F;//в старом протоколе только 5 младших бит -длина оставшейся части	
 							}					 
 					   }	   		
-			   }														
-		}	
+			   }
+		       														
+		}
+		wdt_count[RingBufHandling_Proc].count++;
+		PT_YIELD(pt);//дадим другим процессам время	
   }
 
   PT_END(pt);
