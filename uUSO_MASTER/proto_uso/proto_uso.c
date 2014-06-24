@@ -49,6 +49,7 @@ sym_8_to_float;
 extern unsigned char idata i2c_buffer[6];
 extern unsigned char channel_number;//количество каналов
 
+
 //-----------------------------------------------------------------------------------
 //#pragma OT(0,Speed)
 void UART_ISR(void) interrupt 4 //using 1
@@ -1129,7 +1130,7 @@ void ProtoBufHandling(void) //using 0 //процесс обработки принятого запроса
 		 
 		 case PROTO_TYPE_MODBUS_ASCII:
 		 {
-			  switch(MBCHAR2BIN(RecieveBuf[3])<<4| MBCHAR2BIN(RecieveBuf[4]))
+			  switch(Sym_2_To_Char(&RecieveBuf[3]))//(MBCHAR2BIN(RecieveBuf[3])<<4| MBCHAR2BIN(RecieveBuf[4]))
 			  {
 				//---------------------------------------
 				  	case MB_FUNC_READ_HOLDING_REGISTER:
@@ -1204,13 +1205,13 @@ PT_THREAD(ProtoProcess(struct pt *pt))
 	
 			case PROTO_TYPE_MODBUS_ASCII:
 			{
-				if((unsigned char)(MBCHAR2BIN(RecieveBuf[1])<<4| MBCHAR2BIN(RecieveBuf[2]))!=ADRESS_DEV)
+				if(Sym_2_To_Char(&RecieveBuf[1])!=ADRESS_DEV)//((unsigned char)(MBCHAR2BIN(RecieveBuf[1])<<4| MBCHAR2BIN(RecieveBuf[2]))!=ADRESS_DEV)
 				{
 					PT_RESTART(pt);	
 				}	
 				
 	   	
-				LRC=((MBCHAR2BIN(RecieveBuf[recieve_count-LRC_LEN])<<4)|(MBCHAR2BIN(RecieveBuf[recieve_count-LRC_LEN+1])));
+				LRC=Sym_2_To_Char(&RecieveBuf[recieve_count-LRC_LEN]);//((MBCHAR2BIN(RecieveBuf[recieve_count-LRC_LEN])<<4)|(MBCHAR2BIN(RecieveBuf[recieve_count-LRC_LEN+1])));
 					
 				if(LRC_Check(&RecieveBuf[1],(recieve_count-LRC_LEN-1))!=LRC)
 				{
@@ -1344,79 +1345,17 @@ void Restore_Dev_Address_Desc(void)//восстановить из ппзу адрес и информацию об 
 
 		for(i=(temp_tail-temp_count);i!=temp_tail;i++)//поиск стартовой последовательности
 		{
-			switch(rngbuf.buf[i])
+			if(MB_ASCII_ON)
 			{
-					case (char)(0xD7):
-					{
-						RecieveBuf[recieve_count]=rngbuf.buf[i];
-						recieve_count++;
-						CUT_OUT_NULL=1;		 
-					}
-					break;
-		
-					case (char)(0x29):
-					{
-						if(CUT_OUT_NULL==1)
-						{
-							RecieveBuf[0]=0x0;
-							RecieveBuf[1]=0xD7;
-							RecieveBuf[2]=0x29;
-							recieve_count=0x3;
-							protocol_type=PROTO_TYPE_NEW;		 	
-						}
-						else
-						{
-							RecieveBuf[recieve_count]=rngbuf.buf[i];
-							recieve_count++;	
-						}
-						CUT_OUT_NULL=0;
-					}
-					break;
-		
-					case (char)(0x28):
-					{
-						if(CUT_OUT_NULL==1)
-						{
-							RecieveBuf[0]=0x0;
-							RecieveBuf[1]=0xD7;
-							RecieveBuf[2]=0x28;
-							recieve_count=0x3;
-							protocol_type=PROTO_TYPE_OLD;		 	
-						}
-						else
-						{
-							RecieveBuf[recieve_count]=rngbuf.buf[i];
-							recieve_count++;	
-						}
-						CUT_OUT_NULL=0;
-					}
-					break;
-		
-					case (char)(0x0):
-					{
-		 				if(CUT_OUT_NULL==1)	  //если после 0xD7-пропускаем
-						{
-							CUT_OUT_NULL=0;		
-						}
-						else
-						{
-							RecieveBuf[recieve_count]=rngbuf.buf[i];
-							recieve_count++;	
-						}
-					}
-					break;
-		
-					//---------MD ASCII------
+				switch(rngbuf.buf[i])
+				{
+					//---------MB ASCII------
 					case  0x3A:	 //":"
-					{
-						
+					{		
+						recieve_count=0x0;
 						RecieveBuf[recieve_count]=rngbuf.buf[i];
-						recieve_count++;
-
-						if(recieve_count==0x0)
-						{
-							protocol_type=PROTO_TYPE_MODBUS_ASCII;
-						}								 
+						protocol_type=PROTO_TYPE_MODBUS_ASCII;
+						recieve_count++;								 
 					}
 					break;
 		
@@ -1432,45 +1371,121 @@ void Restore_Dev_Address_Desc(void)//восстановить из ппзу адрес и информацию об 
 					{
 						//
 					}
-					break;
-					//-----------------------
-		
-					default :
+					break;	
+					
+					default:
 					{
-						RecieveBuf[recieve_count]=rngbuf.buf[i];
-						recieve_count++;
-						CUT_OUT_NULL=0;		
+						if(((rngbuf.buf[i]>='0' && rngbuf.buf[i]<='9') || (rngbuf.buf[i]>='A' && rngbuf.buf[i]<='F')))
+						{
+							RecieveBuf[recieve_count]=rngbuf.buf[i];
+							recieve_count++;	
+						}
 					}
-				}
-		
-			   if(recieve_count>6)
-			   {
-			   		  if(recieve_count==6+frame_len)	  // принимаем указанное в frame_len число байт данные, 6 значит что обмен идет с компом, надо ставаить 5 чтобы обмениваться с устройствами
-		   			  {
-							RECIEVED=1;//буфер принят
-					  		ES=0;
-					  		REN=0;  //recieve disable -запрещаем принимать в буфер	
-						   	CUT_OUT_NULL=0;  			  			
-					  }	 
-					  
-					  //----------------------обрабатываем возможные ошибки длины кадра-------------
-				      if(recieve_count>MAX_LENGTH_REC_BUF)	//если посылка слишком длинная
-					  {
-							PT_RESTART(&pt_proto);  //внепроцессный рестарт
-					  }  
-			   }
-			   else
-			   {
-					   if(recieve_count==6)
-					   {     
-				        	
-							frame_len=RecieveBuf[recieve_count-1];  // получаем длину данных после заголовка
-							if(protocol_type==PROTO_TYPE_OLD)
+					break;				
+				}				
+			}
+			else
+			{
+				switch(rngbuf.buf[i])
+				{
+						case (char)(0xD7):
+						{
+							RecieveBuf[recieve_count]=rngbuf.buf[i];
+							recieve_count++;
+							CUT_OUT_NULL=1;		 
+						}
+						break;
+			
+						case (char)(0x29):
+						{
+							if(CUT_OUT_NULL==1)
 							{
-								frame_len&=0x1F;//в старом протоколе только 5 младших бит -длина оставшейся части	
-							}					 
-					   }	   		
-			   }
+								RecieveBuf[0]=0x0;
+								RecieveBuf[1]=0xD7;
+								RecieveBuf[2]=0x29;
+								recieve_count=0x3;
+								protocol_type=PROTO_TYPE_NEW;		 	
+							}
+							else
+							{
+								RecieveBuf[recieve_count]=rngbuf.buf[i];
+								recieve_count++;	
+							}
+							CUT_OUT_NULL=0;
+						}
+						break;
+			
+						case (char)(0x28):
+						{
+							if(CUT_OUT_NULL==1)
+							{
+								RecieveBuf[0]=0x0;
+								RecieveBuf[1]=0xD7;
+								RecieveBuf[2]=0x28;
+								recieve_count=0x3;
+								protocol_type=PROTO_TYPE_OLD;		 	
+							}
+							else
+							{
+								RecieveBuf[recieve_count]=rngbuf.buf[i];
+								recieve_count++;	
+							}
+							CUT_OUT_NULL=0;
+						}
+						break;
+			
+						case (char)(0x0):
+						{
+			 				if(CUT_OUT_NULL==1)	  //если после 0xD7-пропускаем
+							{
+								CUT_OUT_NULL=0;		
+							}
+							else
+							{
+								RecieveBuf[recieve_count]=rngbuf.buf[i];
+								recieve_count++;	
+							}
+						}
+						break;		
+						//-----------------------
+			
+						default :
+						{
+							RecieveBuf[recieve_count]=rngbuf.buf[i];
+							recieve_count++;
+							CUT_OUT_NULL=0;		
+						}
+					}
+			
+				   if(recieve_count>6)
+				   {
+				   		  if(recieve_count==6+frame_len)	  // принимаем указанное в frame_len число байт данные, 6 значит что обмен идет с компом, надо ставаить 5 чтобы обмениваться с устройствами
+			   			  {
+								RECIEVED=1;//буфер принят
+						  		ES=0;
+						  		REN=0;  //recieve disable -запрещаем принимать в буфер	
+							   	CUT_OUT_NULL=0;  			  			
+						  }	 
+						  
+						  //----------------------обрабатываем возможные ошибки длины кадра-------------
+					      if(recieve_count>MAX_LENGTH_REC_BUF)	//если посылка слишком длинная
+						  {
+								PT_RESTART(&pt_proto);  //внепроцессный рестарт
+						  }  
+				   }
+				   else
+				   {
+						   if(recieve_count==6)
+						   {     
+					        	
+								frame_len=RecieveBuf[recieve_count-1];  // получаем длину данных после заголовка
+								if(protocol_type==PROTO_TYPE_OLD)
+								{
+									frame_len&=0x1F;//в старом протоколе только 5 младших бит -длина оставшейся части	
+								}					 
+						   }	   		
+				   }
+				}
 		       														
 		}
 		wdt_count[RingBufHandling_Proc].count++;

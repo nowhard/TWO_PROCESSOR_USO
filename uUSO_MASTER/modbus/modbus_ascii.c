@@ -174,8 +174,8 @@ unsigned char ReadHoldingReg(void)
 	
 	count=0;
 
-	addr=Sym_4_To_Int(&RecieveBuf[3]);
-	len= Sym_4_To_Int(&RecieveBuf[5]);
+	addr=Sym_4_To_Int(&RecieveBuf[5]);
+	len= Sym_4_To_Int(&RecieveBuf[9]);
 
 	if(addr>=REG_ADDR_MIN && addr<=(REG_ADDR_MIN+CHANNEL_NUMBER*2) && len<=CHANNEL_NUMBER*2)  
 	{			
@@ -192,22 +192,91 @@ unsigned char ReadHoldingReg(void)
 		count+=2;//счетчик байт, вставим после вставки данных
 		//----
 
-		for(i=addr;i<((addr+len)>>1);i++) //в устройстве все регистры 4-байтовые
+		for(i=(addr-REG_ADDR_MIN);i<((addr+len-REG_ADDR_MIN)>>1);i++) //в устройстве все регистры 4-байтовые
 		{
-			Long_To_Sym_8(channels[i].channel_data,&TransferBuf[count]);
-			count+=8;
+ 			switch(channels[i].settings.set.type)
+		    {
+				 case CHNL_ADC:  //аналоговый канал
+				 {
+					 switch(channels[i].settings.set.modific)
+	                 {
+						  case CHNL_ADC_FIX_16:
+						  {
+						  		if(channels[i].calibrate.cal.calibrate==1)//калиброванный
+								{			 			 
+										Long_To_Sym_8(channels[i].channel_data_calibrate>>8,&TransferBuf[count]);
+								}
+								else
+								{
+										Long_To_Sym_8(channels[i].channel_data>>8,&TransferBuf[count]);	
+								} 					
+						  }
+						  break; 
+
+						  case CHNL_ADC_FIX_24:
+						  {
+						        if(channels[i].calibrate.cal.calibrate==1)//калиброванный
+								{			 									  
+										Long_To_Sym_8(channels[i].channel_data_calibrate,&TransferBuf[count]);
+								}
+								else
+								{									 
+										Long_To_Sym_8(channels[i].channel_data,&TransferBuf[count]);	
+								}
+
+						  }
+						  break;
+					  }					  
+				  }
+				  break;
+
+			  case CHNL_DOL:	 //ƒќЋ
+			  {
+				  switch(channels[i].settings.set.modific)
+			      {	  
+						  case CHNL_DOL_ENC:
+						  {
+								Long_To_Sym_8(channels[i].channel_data,&TransferBuf[count]);
+						  }
+						  break; 
+					   }
+				}
+				break;
+
+				 case CHNL_FREQ: //частотный
+				 { 
+					  switch(channels[i].settings.set.modific)
+				      {	  
+							  
+							  case CHNL_FREQ_COUNT_T:
+							  {
+									Long_To_Sym_8(channels[i].channel_data,&TransferBuf[count]);
+							  }
+							  break;
+
+							  case CHNL_FREQ_256:
+							  {
+									Long_To_Sym_8(channels[i].channel_data,&TransferBuf[count]);
+							  }
+							  break; 
+					   }					
+				  }
+				  break;		 
+		  }
+		  count+=8;
 		}		
 
-		Char_To_Sym_2(count-HEAD_LEN,&TransferBuf[5]);
+		Char_To_Sym_2((count-HEAD_LEN)>>1,&TransferBuf[5]);
 		
 		LRC=LRC_Check(&TransferBuf[1],(count-1));
 		
 		Char_To_Sym_2(LRC,&TransferBuf[count]);
 		count+=2;
 		
-		TransferBuf[count]='\r';
-		TransferBuf[count]='\n';
-		count+=2;							                     
+		TransferBuf[count]=0x0D;
+		count+=1;
+		TransferBuf[count]=0x0A;
+		count+=1;							                     
 	}
 	else
 	{

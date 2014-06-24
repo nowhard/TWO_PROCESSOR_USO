@@ -27,7 +27,7 @@
     <TargetOption>
       <CLK51>32768</CLK51>
       <OPTTT>
-        <gFlags>0</gFlags>
+        <gFlags>1</gFlags>
         <BeepAtEnd>1</BeepAtEnd>
         <RunSim>1</RunSim>
         <RunTarget>0</RunTarget>
@@ -118,6 +118,13 @@
         <tIfile></tIfile>
         <pMon>BIN\MONADI.DLL</pMon>
       </DebugOpt>
+      <TargetDriverDllRegistry>
+        <SetRegEntry>
+          <Number>0</Number>
+          <Key>MONADI</Key>
+          <Name>-S1 -B9600 -O58639</Name>
+        </SetRegEntry>
+      </TargetDriverDllRegistry>
       <DebugFlag>
         <trace>0</trace>
         <periodic>0</periodic>
@@ -160,10 +167,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>113</ColumnNumber>
+      <ColumnNumber>36</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>50</TopLine>
-      <CurrentLine>50</CurrentLine>
+      <TopLine>25</TopLine>
+      <CurrentLine>62</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\debug.c</PathWithFileName>
       <FilenameWithoutPath>debug.c</FilenameWithoutPath>
@@ -190,8 +197,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>25</TopLine>
+      <CurrentLine>25</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\adc.c</PathWithFileName>
       <FilenameWithoutPath>adc.c</FilenameWithoutPath>
@@ -228,7 +235,7 @@
       <GroupNumber>1</GroupNumber>
       <FileNumber>6</FileNumber>
       <FileType>1</FileType>
-      <tvExp>1</tvExp>
+      <tvExp>0</tvExp>
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -242,12 +249,12 @@
       <GroupNumber>1</GroupNumber>
       <FileNumber>7</FileNumber>
       <FileType>1</FileType>
-      <tvExp>1</tvExp>
+      <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>6</ColumnNumber>
+      <ColumnNumber>21</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>969</TopLine>
-      <CurrentLine>985</CurrentLine>
+      <TopLine>1348</TopLine>
+      <CurrentLine>1348</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\proto_uso\proto_uso.c</PathWithFileName>
       <FilenameWithoutPath>proto_uso.c</FilenameWithoutPath>
@@ -288,8 +295,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>142</TopLine>
+      <CurrentLine>142</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\frequency.c</PathWithFileName>
       <FilenameWithoutPath>frequency.c</FilenameWithoutPath>
@@ -302,8 +309,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>1</TopLine>
+      <CurrentLine>1</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\timer0.c</PathWithFileName>
       <FilenameWithoutPath>timer0.c</FilenameWithoutPath>
@@ -316,8 +323,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>1</TopLine>
+      <CurrentLine>1</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\timer2.c</PathWithFileName>
       <FilenameWithoutPath>timer2.c</FilenameWithoutPath>
@@ -330,8 +337,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>274</TopLine>
+      <CurrentLine>274</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\i2c.c</PathWithFileName>
       <FilenameWithoutPath>i2c.c</FilenameWithoutPath>
@@ -450,14 +457,14 @@
     </File>
     <File>
       <GroupNumber>1</GroupNumber>
-      <FileNumber>0</FileNumber>
+      <FileNumber>22</FileNumber>
       <FileType>1</FileType>
       <tvExp>1</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>15</ColumnNumber>
+      <ColumnNumber>53</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>159</TopLine>
-      <CurrentLine>188</CurrentLine>
+      <TopLine>168</TopLine>
+      <CurrentLine>195</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\modbus\modbus_ascii.c</PathWithFileName>
       <FilenameWithoutPath>modbus_ascii.c</FilenameWithoutPath>
@@ -465,9 +472,9 @@
   </Group>
 
   <AlienFiles>
-    <PathWithFilename>D:\PROJECTS\GIT_REPOSITORY\8051\keil\Protothreads\USO_PT\uUSO_MASTER\PROTO_USO\CHANNELS.H</PathWithFilename>
+    <PathWithFilename>D:\PROJECTS\GIT_REPOSITORY\8051\keil\Protothreads\USO_PT\uUSO_MASTER\MODBUS\MODBUS_ASCII.H</PathWithFilename>
     <TopLine>1</TopLine>
-    <CurrentLine>6</CurrentLine>
+    <CurrentLine>30</CurrentLine>
     <Constant>0</Constant>
     <WindowPosition>
       <length>0</length>
@@ -517,7 +524,59 @@
   </AlienFiles>
 
   <AlienFiles>
-    <PathWithFilename>D:\PROJECTS\GIT_REPOSITORY\8051\keil\Protothreads\USO_PT\uUSO_MASTER\MODBUS\MODBUS_ASCII.H</PathWithFilename>
+    <PathWithFilename>D:\PROJECTS\GIT_REPOSITORY\8051\keil\Protothreads\USO_PT\uUSO_MASTER\PROTO_USO\CHANNELS.H</PathWithFilename>
+    <TopLine>1</TopLine>
+    <CurrentLine>6</CurrentLine>
+    <Constant>0</Constant>
+    <WindowPosition>
+      <length>0</length>
+      <flags>0</flags>
+      <showCmd>0</showCmd>
+      <MinPosition>
+        <xPos>0</xPos>
+        <yPos>0</yPos>
+      </MinPosition>
+      <MaxPosition>
+        <xPos>0</xPos>
+        <yPos>0</yPos>
+      </MaxPosition>
+      <NormalPosition>
+        <Top>0</Top>
+        <Left>0</Left>
+        <Right>0</Right>
+        <Bottom>0</Bottom>
+      </NormalPosition>
+    </WindowPosition>
+  </AlienFiles>
+
+  <AlienFiles>
+    <PathWithFilename>D:\PROJECTS\GIT_REPOSITORY\8051\keil\Protothreads\USO_PT\uUSO_MASTER\I2C.H</PathWithFilename>
+    <TopLine>1</TopLine>
+    <CurrentLine>31</CurrentLine>
+    <Constant>0</Constant>
+    <WindowPosition>
+      <length>0</length>
+      <flags>0</flags>
+      <showCmd>0</showCmd>
+      <MinPosition>
+        <xPos>0</xPos>
+        <yPos>0</yPos>
+      </MinPosition>
+      <MaxPosition>
+        <xPos>0</xPos>
+        <yPos>0</yPos>
+      </MaxPosition>
+      <NormalPosition>
+        <Top>0</Top>
+        <Left>0</Left>
+        <Right>0</Right>
+        <Bottom>0</Bottom>
+      </NormalPosition>
+    </WindowPosition>
+  </AlienFiles>
+
+  <AlienFiles>
+    <PathWithFilename>C:\PROGRAM FILES\KEIL\C51\INC\ADI\ADUC845.H</PathWithFilename>
     <TopLine>1</TopLine>
     <CurrentLine>1</CurrentLine>
     <Constant>0</Constant>
@@ -542,10 +601,36 @@
     </WindowPosition>
   </AlienFiles>
 
+  <AlienFiles>
+    <PathWithFilename>D:\PROJECTS\GIT_REPOSITORY\8051\keil\Protothreads\USO_PT\uUSO_MASTER\PROTO_USO\PROTO_USO.H</PathWithFilename>
+    <TopLine>81</TopLine>
+    <CurrentLine>81</CurrentLine>
+    <Constant>0</Constant>
+    <WindowPosition>
+      <length>0</length>
+      <flags>0</flags>
+      <showCmd>0</showCmd>
+      <MinPosition>
+        <xPos>0</xPos>
+        <yPos>0</yPos>
+      </MinPosition>
+      <MaxPosition>
+        <xPos>0</xPos>
+        <yPos>0</yPos>
+      </MaxPosition>
+      <NormalPosition>
+        <Top>0</Top>
+        <Left>0</Left>
+        <Right>0</Right>
+        <Bottom>0</Bottom>
+      </NormalPosition>
+    </WindowPosition>
+  </AlienFiles>
+
   <WinLayout>
-    <sActiveDebugView></sActiveDebugView>
-    <iActiveDebugViewLocation>0</iActiveDebugViewLocation>
-    <sActiveBuildView></sActiveBuildView>
+    <sActiveDebugView>Default</sActiveDebugView>
+    <iActiveDebugViewLocation>1</iActiveDebugViewLocation>
+    <sActiveBuildView>Build</sActiveBuildView>
     <iActiveBuildViewLocation>0</iActiveBuildViewLocation>
     <View>
       <ViewName>Default</ViewName>
@@ -1886,22 +1971,82 @@
       <ActiveTab>2</ActiveTab>
       <Documents>
         <Doc>
+          <Name>MODBUS\MODBUS_ASCII.H</Name>
+          <ColumnNumber>8</ColumnNumber>
+          <TopLine>1</TopLine>
+          <CurrentLine>30</CurrentLine>
+        </Doc>
+        <Doc>
+          <Name>.\proto_uso\proto_uso.c</Name>
+          <ColumnNumber>21</ColumnNumber>
+          <TopLine>1348</TopLine>
+          <CurrentLine>1348</CurrentLine>
+        </Doc>
+        <Doc>
+          <Name>.\modbus\modbus_ascii.c</Name>
+          <ColumnNumber>53</ColumnNumber>
+          <TopLine>168</TopLine>
+          <CurrentLine>195</CurrentLine>
+        </Doc>
+        <Doc>
+          <Name>.\adc.c</Name>
+          <ColumnNumber>0</ColumnNumber>
+          <TopLine>25</TopLine>
+          <CurrentLine>25</CurrentLine>
+        </Doc>
+        <Doc>
+          <Name>.\i2c.c</Name>
+          <ColumnNumber>0</ColumnNumber>
+          <TopLine>274</TopLine>
+          <CurrentLine>274</CurrentLine>
+        </Doc>
+        <Doc>
+          <Name>.\timer2.c</Name>
+          <ColumnNumber>0</ColumnNumber>
+          <TopLine>1</TopLine>
+          <CurrentLine>1</CurrentLine>
+        </Doc>
+        <Doc>
+          <Name>.\timer0.c</Name>
+          <ColumnNumber>0</ColumnNumber>
+          <TopLine>1</TopLine>
+          <CurrentLine>1</CurrentLine>
+        </Doc>
+        <Doc>
+          <Name>.\frequency.c</Name>
+          <ColumnNumber>0</ColumnNumber>
+          <TopLine>142</TopLine>
+          <CurrentLine>142</CurrentLine>
+        </Doc>
+        <Doc>
+          <Name>I2C.H</Name>
+          <ColumnNumber>23</ColumnNumber>
+          <TopLine>1</TopLine>
+          <CurrentLine>31</CurrentLine>
+        </Doc>
+        <Doc>
+          <Name>PROTO_USO/PROTO_USO.H</Name>
+          <ColumnNumber>0</ColumnNumber>
+          <TopLine>81</TopLine>
+          <CurrentLine>81</CurrentLine>
+        </Doc>
+        <Doc>
+          <Name>C:\PROGRAM FILES\KEIL\C51\INC\ADI\ADUC845.H</Name>
+          <ColumnNumber>0</ColumnNumber>
+          <TopLine>1</TopLine>
+          <CurrentLine>1</CurrentLine>
+        </Doc>
+        <Doc>
           <Name>.\debug.c</Name>
-          <ColumnNumber>113</ColumnNumber>
-          <TopLine>50</TopLine>
-          <CurrentLine>50</CurrentLine>
+          <ColumnNumber>36</ColumnNumber>
+          <TopLine>25</TopLine>
+          <CurrentLine>62</CurrentLine>
         </Doc>
         <Doc>
           <Name>PROTO_USO/CHANNELS.H</Name>
           <ColumnNumber>22</ColumnNumber>
           <TopLine>1</TopLine>
           <CurrentLine>6</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>.\proto_uso\proto_uso.c</Name>
-          <ColumnNumber>14</ColumnNumber>
-          <TopLine>235</TopLine>
-          <CurrentLine>241</CurrentLine>
         </Doc>
         <Doc>
           <Name>WATCHDOG.H</Name>
@@ -1916,16 +2061,10 @@
           <CurrentLine>33</CurrentLine>
         </Doc>
         <Doc>
-          <Name>.\modbus\modbus_ascii.c</Name>
-          <ColumnNumber>15</ColumnNumber>
-          <TopLine>159</TopLine>
-          <CurrentLine>188</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>MODBUS\MODBUS_ASCII.H</Name>
-          <ColumnNumber>0</ColumnNumber>
-          <TopLine>1</TopLine>
-          <CurrentLine>1</CurrentLine>
+          <Name>PT/PT.H</Name>
+          <ColumnNumber>8</ColumnNumber>
+          <TopLine>234</TopLine>
+          <CurrentLine>240</CurrentLine>
         </Doc>
       </Documents>
     </MDIGroup>

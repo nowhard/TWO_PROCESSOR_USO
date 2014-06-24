@@ -159,3 +159,428 @@ Erase Done.
 Programming Done.
 Verify Done.
 Application running ...
+Build target 'Target 1'
+compiling proto_uso.c...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_SYM_2_TO_CHAR?MODBUS_ASCII
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_INT_TO_SYM_4?MODBUS_ASCII
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_SYM_8_TO_LONG?MODBUS_ASCII
+Program Size: data=19.0 xdata=1886 code=20721
+creating hex file from "debug"...
+"debug" - 0 Error(s), 3 Warning(s).
+Build target 'Target 1'
+compiling proto_uso.c...
+PROTO_USO\PROTO_USO.C(1207): warning C206: 'Sym_2_To_Char': missing function-prototype
+PROTO_USO\PROTO_USO.C(1207): error C267: 'Sym_2_To_Char': requires ANSI-style prototype
+Target not created
+Build target 'Target 1'
+compiling proto_uso.c...
+compiling modbus_ascii.c...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_INT_TO_SYM_4?MODBUS_ASCII
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_SYM_8_TO_LONG?MODBUS_ASCII
+Program Size: data=19.0 xdata=1886 code=20697
+creating hex file from "debug"...
+"debug" - 0 Error(s), 2 Warning(s).
+Build target 'Target 1'
+compiling proto_uso.c...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_INT_TO_SYM_4?MODBUS_ASCII
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_SYM_8_TO_LONG?MODBUS_ASCII
+Program Size: data=19.0 xdata=1886 code=20654
+creating hex file from "debug"...
+"debug" - 0 Error(s), 2 Warning(s).
+Build target 'Target 1'
+compiling proto_uso.c...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_INT_TO_SYM_4?MODBUS_ASCII
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_SYM_8_TO_LONG?MODBUS_ASCII
+Program Size: data=19.0 xdata=1886 code=20630
+creating hex file from "debug"...
+"debug" - 0 Error(s), 2 Warning(s).
+Build target 'Target 1'
+compiling proto_uso.c...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_INT_TO_SYM_4?MODBUS_ASCII
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_SYM_8_TO_LONG?MODBUS_ASCII
+Program Size: data=19.0 xdata=1886 code=20630
+creating hex file from "debug"...
+"debug" - 0 Error(s), 2 Warning(s).
+Load "D:\\PROJECTS\\GIT_REPOSITORY\\8051\\keil\\Protothreads\\USO_PT\\uUSO_MASTER\\debug" 
+Detected Device: ADI 847     Monitor Revision: V217
+Erasing Program Flash...
+Erase Done.
+Programming Done.
+Verify Done.
+Application running ...
+Build target 'Target 1'
+compiling proto_uso.c...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_INT_TO_SYM_4?MODBUS_ASCII
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_SYM_8_TO_LONG?MODBUS_ASCII
+Program Size: data=19.0 xdata=1886 code=20528
+creating hex file from "debug"...
+"debug" - 0 Error(s), 2 Warning(s).
+Build target 'Target 1'
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_INT_TO_SYM_4?MODBUS_ASCII
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_SYM_8_TO_LONG?MODBUS_ASCII
+Program Size: data=19.0 xdata=1886 code=20528
+creating hex file from "debug"...
+"debug" - 0 Error(s), 2 Warning(s).
+Load "D:\\PROJECTS\\GIT_REPOSITORY\\8051\\keil\\Protothreads\\USO_PT\\uUSO_MASTER\\debug" 
+Detected Device: ADI 847     Monitor Revision: V217
+Erasing Program Flash...
+Erase Done.
+Programming Done.
+Verify Done.
+Application running ...
+Build target 'Target 1'
+compiling proto_uso.c...
+compiling modbus_ascii.c...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_INT_TO_SYM_4?MODBUS_ASCII
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_SYM_8_TO_LONG?MODBUS_ASCII
+Program Size: data=19.0 xdata=1886 code=20810
+creating hex file from "debug"...
+"debug" - 0 Error(s), 2 Warning(s).
+Build target 'Target 1'
+compiling proto_uso.c...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_INT_TO_SYM_4?MODBUS_ASCII
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_SYM_8_TO_LONG?MODBUS_ASCII
+Program Size: data=19.0 xdata=1886 code=20805
+creating hex file from "debug"...
+"debug" - 0 Error(s), 2 Warning(s).
+Load "D:\\PROJECTS\\GIT_REPOSITORY\\8051\\keil\\Protothreads\\USO_PT\\uUSO_MASTER\\debug" 
+Detected Device: ADI 847     Monitor Revision: V217
+Erasing Program Flash...
+Erase Done.
+Programming Done.
+Verify Done.
+Application running ...
+Build target 'Target 1'
+compiling proto_uso.c...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_INT_TO_SYM_4?MODBUS_ASCII
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_SYM_8_TO_LONG?MODBUS_ASCII
+Program Size: data=19.0 xdata=1886 code=20801
+creating hex file from "debug"...
+"debug" - 0 Error(s), 2 Warning(s).
+Build target 'Target 1'
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_INT_TO_SYM_4?MODBUS_ASCII
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_SYM_8_TO_LONG?MODBUS_ASCII
+Program Size: data=19.0 xdata=1886 code=20801
+creating hex file from "debug"...
+"debug" - 0 Error(s), 2 Warning(s).
+Load "D:\\PROJECTS\\GIT_REPOSITORY\\8051\\keil\\Protothreads\\USO_PT\\uUSO_MASTER\\debug" 
+Detected Device: ADI 847     Monitor Revision: V217
+Erasing Program Flash...
+Erase Done.
+Programming Done.
+Verify Done.
+Application running ...
+Build target 'Target 1'
+compiling proto_uso.c...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_INT_TO_SYM_4?MODBUS_ASCII
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_SYM_8_TO_LONG?MODBUS_ASCII
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?READHOLDINGREG?MODBUS_ASCII
+Program Size: data=19.0 xdata=1896 code=20799
+creating hex file from "debug"...
+"debug" - 0 Error(s), 3 Warning(s).
+Load "D:\\PROJECTS\\GIT_REPOSITORY\\8051\\keil\\Protothreads\\USO_PT\\uUSO_MASTER\\debug" 
+Detected Device: ADI 847     Monitor Revision: V217
+Erasing Program Flash...
+Erase Done.
+Programming Done.
+Verify Done.
+Application running ...
+Build target 'Target 1'
+compiling proto_uso.c...
+compiling modbus_ascii.c...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_INT_TO_SYM_4?MODBUS_ASCII
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_SYM_8_TO_LONG?MODBUS_ASCII
+Program Size: data=19.0 xdata=1886 code=20801
+creating hex file from "debug"...
+"debug" - 0 Error(s), 2 Warning(s).
+Load "D:\\PROJECTS\\GIT_REPOSITORY\\8051\\keil\\Protothreads\\USO_PT\\uUSO_MASTER\\debug" 
+Detected Device: ADI 847     Monitor Revision: V217
+Erasing Program Flash...
+Erase Done.
+Programming Done.
+Verify Done.
+Application running ...
+Build target 'Target 1'
+compiling modbus_ascii.c...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_INT_TO_SYM_4?MODBUS_ASCII
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_SYM_8_TO_LONG?MODBUS_ASCII
+Program Size: data=19.0 xdata=1886 code=20801
+creating hex file from "debug"...
+"debug" - 0 Error(s), 2 Warning(s).
+Load "D:\\PROJECTS\\GIT_REPOSITORY\\8051\\keil\\Protothreads\\USO_PT\\uUSO_MASTER\\debug" 
+Detected Device: ADI 847     Monitor Revision: V217
+Erasing Program Flash...
+Erase Done.
+Programming Done.
+Verify Done.
+Application running ...
+Build target 'Target 1'
+compiling modbus_ascii.c...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_INT_TO_SYM_4?MODBUS_ASCII
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_SYM_8_TO_LONG?MODBUS_ASCII
+Program Size: data=19.0 xdata=1886 code=20801
+creating hex file from "debug"...
+"debug" - 0 Error(s), 2 Warning(s).
+Load "D:\\PROJECTS\\GIT_REPOSITORY\\8051\\keil\\Protothreads\\USO_PT\\uUSO_MASTER\\debug" 
+Detected Device: ADI 847     Monitor Revision: V217
+Erasing Program Flash...
+Erase Done.
+Programming Done.
+Verify Done.
+Application running ...
+Build target 'Target 1'
+compiling modbus_ascii.c...
+MODBUS\MODBUS_ASCII.C(170): warning C280: 'i': unreferenced local variable
+MODBUS\MODBUS_ASCII.C(171): warning C280: 'LRC': unreferenced local variable
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_INT_TO_SYM_4?MODBUS_ASCII
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_CHAR_TO_SYM_2?MODBUS_ASCII
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_SYM_8_TO_LONG?MODBUS_ASCII
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_LONG_TO_SYM_8?MODBUS_ASCII
+Program Size: data=19.0 xdata=1894 code=20537
+creating hex file from "debug"...
+"debug" - 0 Error(s), 6 Warning(s).
+Load "D:\\PROJECTS\\GIT_REPOSITORY\\8051\\keil\\Protothreads\\USO_PT\\uUSO_MASTER\\debug" 
+Detected Device: ADI 847     Monitor Revision: V217
+Erasing Program Flash...
+Erase Done.
+Programming Done.
+Verify Done.
+Application running ...
+Build target 'Target 1'
+compiling modbus_ascii.c...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_INT_TO_SYM_4?MODBUS_ASCII
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_SYM_8_TO_LONG?MODBUS_ASCII
+Program Size: data=19.0 xdata=1886 code=20804
+creating hex file from "debug"...
+"debug" - 0 Error(s), 2 Warning(s).
+Build target 'Target 1'
+compiling modbus_ascii.c...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_INT_TO_SYM_4?MODBUS_ASCII
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_SYM_8_TO_LONG?MODBUS_ASCII
+Program Size: data=19.0 xdata=1886 code=20804
+creating hex file from "debug"...
+"debug" - 0 Error(s), 2 Warning(s).
+Load "D:\\PROJECTS\\GIT_REPOSITORY\\8051\\keil\\Protothreads\\USO_PT\\uUSO_MASTER\\debug" 
+Detected Device: ADI 847     Monitor Revision: V217
+Erasing Program Flash...
+Erase Done.
+Programming Done.
+Verify Done.
+Application running ...
+Build target 'Target 1'
+compiling modbus_ascii.c...
+MODBUS\MODBUS_ASCII.C(170): warning C280: 'i': unreferenced local variable
+MODBUS\MODBUS_ASCII.C(171): warning C280: 'LRC': unreferenced local variable
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_INT_TO_SYM_4?MODBUS_ASCII
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_SYM_8_TO_LONG?MODBUS_ASCII
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_LONG_TO_SYM_8?MODBUS_ASCII
+Program Size: data=19.0 xdata=1894 code=20587
+creating hex file from "debug"...
+"debug" - 0 Error(s), 5 Warning(s).
+Load "D:\\PROJECTS\\GIT_REPOSITORY\\8051\\keil\\Protothreads\\USO_PT\\uUSO_MASTER\\debug" 
+Detected Device: ADI 847     Monitor Revision: V217
+Erasing Program Flash...
+Erase Done.
+Programming Done.
+Verify Done.
+Application running ...
+Build target 'Target 1'
+compiling modbus_ascii.c...
+MODBUS\MODBUS_ASCII.C(170): warning C280: 'i': unreferenced local variable
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_INT_TO_SYM_4?MODBUS_ASCII
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_SYM_8_TO_LONG?MODBUS_ASCII
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_LONG_TO_SYM_8?MODBUS_ASCII
+Program Size: data=19.0 xdata=1894 code=20694
+creating hex file from "debug"...
+"debug" - 0 Error(s), 4 Warning(s).
+Load "D:\\PROJECTS\\GIT_REPOSITORY\\8051\\keil\\Protothreads\\USO_PT\\uUSO_MASTER\\debug" 
+Detected Device: ADI 847     Monitor Revision: V217
+Erasing Program Flash...
+Erase Done.
+Programming Done.
+Verify Done.
+Application running ...
+Build target 'Target 1'
+compiling modbus_ascii.c...
+MODBUS\MODBUS_ASCII.C(170): warning C280: 'i': unreferenced local variable
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_INT_TO_SYM_4?MODBUS_ASCII
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_SYM_8_TO_LONG?MODBUS_ASCII
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_LONG_TO_SYM_8?MODBUS_ASCII
+Program Size: data=19.0 xdata=1894 code=20694
+creating hex file from "debug"...
+"debug" - 0 Error(s), 4 Warning(s).
+Load "D:\\PROJECTS\\GIT_REPOSITORY\\8051\\keil\\Protothreads\\USO_PT\\uUSO_MASTER\\debug" 
+Detected Device: ADI 847     Monitor Revision: V217
+Erasing Program Flash...
+Erase Done.
+Programming Done.
+Verify Done.
+Application running ...
+Build target 'Target 1'
+compiling modbus_ascii.c...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_INT_TO_SYM_4?MODBUS_ASCII
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_SYM_8_TO_LONG?MODBUS_ASCII
+Program Size: data=19.0 xdata=1886 code=20811
+creating hex file from "debug"...
+"debug" - 0 Error(s), 2 Warning(s).
+Load "D:\\PROJECTS\\GIT_REPOSITORY\\8051\\keil\\Protothreads\\USO_PT\\uUSO_MASTER\\debug" 
+Detected Device: ADI 847     Monitor Revision: V217
+Erasing Program Flash...
+Erase Done.
+Programming Done.
+Verify Done.
+Application running ...
+Build target 'Target 1'
+compiling modbus_ascii.c...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_INT_TO_SYM_4?MODBUS_ASCII
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_SYM_8_TO_LONG?MODBUS_ASCII
+Program Size: data=19.0 xdata=1886 code=20811
+creating hex file from "debug"...
+"debug" - 0 Error(s), 2 Warning(s).
+Load "D:\\PROJECTS\\GIT_REPOSITORY\\8051\\keil\\Protothreads\\USO_PT\\uUSO_MASTER\\debug" 
+Detected Device: ADI 847     Monitor Revision: V217
+Erasing Program Flash...
+Erase Done.
+Programming Done.
+Verify Done.
+Application running ...
+Build target 'Target 1'
+compiling modbus_ascii.c...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_INT_TO_SYM_4?MODBUS_ASCII
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_SYM_8_TO_LONG?MODBUS_ASCII
+Program Size: data=19.0 xdata=1886 code=20815
+creating hex file from "debug"...
+"debug" - 0 Error(s), 2 Warning(s).
+Load "D:\\PROJECTS\\GIT_REPOSITORY\\8051\\keil\\Protothreads\\USO_PT\\uUSO_MASTER\\debug" 
+Detected Device: ADI 847     Monitor Revision: V217
+Erasing Program Flash...
+Erase Done.
+Programming Done.
+Verify Done.
+Application running ...
+Build target 'Target 1'
+compiling modbus_ascii.c...
+MODBUS\MODBUS_ASCII.C(201): error C202: 'channel': undefined identifier
+MODBUS\MODBUS_ASCII.C(205): error C202: 'channel': undefined identifier
+MODBUS\MODBUS_ASCII.C(209): error C202: 'channel': undefined identifier
+MODBUS\MODBUS_ASCII.C(226): error C202: 'channel': undefined identifier
+MODBUS\MODBUS_ASCII.C(245): error C202: 'channel': undefined identifier
+MODBUS\MODBUS_ASCII.C(261): error C202: 'channel': undefined identifier
+Target not created
+Build target 'Target 1'
+compiling modbus_ascii.c...
+MODBUS\MODBUS_ASCII.C(201): error C202: 'is': undefined identifier
+MODBUS\MODBUS_ASCII.C(205): error C202: 'is': undefined identifier
+MODBUS\MODBUS_ASCII.C(209): error C202: 'is': undefined identifier
+MODBUS\MODBUS_ASCII.C(213): error C202: 'is': undefined identifier
+MODBUS\MODBUS_ASCII.C(219): error C202: 'is': undefined identifier
+MODBUS\MODBUS_ASCII.C(226): error C202: 'is': undefined identifier
+MODBUS\MODBUS_ASCII.C(245): error C202: 'is': undefined identifier
+MODBUS\MODBUS_ASCII.C(261): error C202: 'is': undefined identifier
+Target not created
+Build target 'Target 1'
+compiling modbus_ascii.c...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_INT_TO_SYM_4?MODBUS_ASCII
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_SYM_8_TO_LONG?MODBUS_ASCII
+Program Size: data=19.0 xdata=1886 code=21047
+creating hex file from "debug"...
+"debug" - 0 Error(s), 2 Warning(s).
+Build target 'Target 1'
+compiling modbus_ascii.c...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_INT_TO_SYM_4?MODBUS_ASCII
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_SYM_8_TO_LONG?MODBUS_ASCII
+Program Size: data=19.0 xdata=1886 code=21288
+creating hex file from "debug"...
+"debug" - 0 Error(s), 2 Warning(s).
+Load "D:\\PROJECTS\\GIT_REPOSITORY\\8051\\keil\\Protothreads\\USO_PT\\uUSO_MASTER\\debug" 
+Detected Device: ADI 847     Monitor Revision: V217
+Erasing Program Flash...
+Erase Done.
+Programming Done.
+Verify Done.
+Application running ...

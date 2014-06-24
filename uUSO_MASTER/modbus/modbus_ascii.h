@@ -30,10 +30,13 @@
 #define REG_ADDR_MIN						  0x1000
 #define LRC_LEN								  2
 
+#define MB_ASCII_ON	1
+
 
 unsigned char ReadHoldingReg(void);
 unsigned char MBCHAR2BIN( unsigned char ucCharacter );
 unsigned char MBBIN2CHAR( unsigned char ucByte );
 unsigned char LRC_Check(unsigned char * pucFrame, unsigned int usLen );
+unsigned char Sym_2_To_Char(unsigned char * pucFrame);
 
 #endif
