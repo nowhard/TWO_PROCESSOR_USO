@@ -1,4 +1,5 @@
 #include "i2c_slave.h"
+#include "dol.h"
 #define REQUEST	0x12//ключевое слово запроса
 
 #define  TH0_VAL 0x0
@@ -90,10 +91,25 @@ void I2C_ISR(void) interrupt 7//прерывание I2C
 		watch_timer=WATCH_I2C; //сброс сторожевого таймера
 		TH0	= TH0_VAL; /// 
 		TL0 = TL0_VAL;//
-		if(req==0x12)//сброс байта статуса
+		
+		switch(req)
 		{
-			channels.I2C_CHNL.channels.state_byte=0x40;	
-		//	channels.transfer=0;
+			case SLAVE_STATE_BYTE_RESET:
+			{
+				channels.I2C_CHNL.channels.state_byte=0x40;//сброс байта статуса	
+			}
+			break;
+
+			case SLAVE_DOL_COUNT_RESET:
+			{
+				Dol_Init();
+			}
+			break;
+
+			default:
+			{
+			}
+			break;
 		}
 	}
 	else   //передача

@@ -241,7 +241,7 @@ unsigned char  Channel_Get_Data_Order_M2(void) //using 0 //Выдать данные по кана
 unsigned char Channel_Set_Reset_State_Flags(void) //using 0 //	Установка/Сброс флагов состояния 
 {
 	STATE_BYTE=0x40;
-	i2c_buffer[0]=0x12;//сбросим флаг инициализации ведомого
+	i2c_buffer[0]=SLAVE_STATE_BYTE_RESET;//сбросим флаг инициализации ведомого
 	ChannelsInit();
 	return	Request_Error(FR_SUCCESFUL);//ошибки нет, подтверждение
 }
@@ -1242,17 +1242,19 @@ PT_THREAD(ProtoProcess(struct pt *pt))
 			transf_count++;//инкрементируем счетчик переданных
 			ES=1; //включим прерывание уарт	
 
+			wdt_count[Proto_Proc].count++;
+
 		    if(protocol_type==PROTO_TYPE_NEW)
 			{
-				PT_DELAY(pt,50);
+				PT_DELAY(pt,10);
 			}
 			else
 			{
-				PT_DELAY(pt,20);
+				PT_DELAY(pt,3);
 			}			
 		}		
   //-----------------------------
-  wdt_count[Proto_Proc].count++;
+  
   }
 
  PT_END(pt);

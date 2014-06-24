@@ -26,6 +26,12 @@ struct I2C_Channel	   //структура кадра I2C
 	} I2C_CHNL;
 } ;
 //-------------------------------------------
+enum
+{
+	SLAVE_STATE_BYTE_RESET=0x12,
+	SLAVE_DOL_COUNT_RESET =0x13
+};
+
 
 void I2C_Init(void); //инициализация I2C
 	

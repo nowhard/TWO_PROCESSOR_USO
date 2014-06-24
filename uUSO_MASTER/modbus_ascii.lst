@@ -1,4 +1,4 @@
-C51 COMPILER V9.00   MODBUS_ASCII                                                          06/23/2014 15:29:50 PAGE 1   
+C51 COMPILER V9.00   MODBUS_ASCII                                                          06/23/2014 16:49:28 PAGE 1   
 
 
 C51 COMPILER V9.00, COMPILATION OF MODULE MODBUS_ASCII
@@ -62,7 +62,7 @@ line level    source
   51   1          {
   52   2              return ( unsigned char )( ucByte - 0x0A + 'A' );
   53   2          }
-C51 COMPILER V9.00   MODBUS_ASCII                                                          06/23/2014 15:29:50 PAGE 2   
+C51 COMPILER V9.00   MODBUS_ASCII                                                          06/23/2014 16:49:28 PAGE 2   
 
   54   1          else
   55   1          {
@@ -126,7 +126,7 @@ line level    source
  111   1              {
  112   1                      unsigned long result_long;
  113   1                      unsigned char result_char[4];
-C51 COMPILER V9.00   MODBUS_ASCII                                                          06/23/2014 15:29:50 PAGE 3   
+C51 COMPILER V9.00   MODBUS_ASCII                                                          06/23/2014 16:49:28 PAGE 3   
 
  114   1              }
  115   1              sym_8_to_long;
@@ -190,7 +190,7 @@ line level    source
  169   1      //[             head       |............]       
  170   1              static unsigned char  i=0,count=0;
  171   1              static unsigned char  LRC=0x0;
-C51 COMPILER V9.00   MODBUS_ASCII                                                          06/23/2014 15:29:50 PAGE 4   
+C51 COMPILER V9.00   MODBUS_ASCII                                                          06/23/2014 16:49:28 PAGE 4   
 
  172   1              static unsigned int   addr;
  173   1              static unsigned int   len;

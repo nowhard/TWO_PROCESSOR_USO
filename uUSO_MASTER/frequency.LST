@@ -1,4 +1,4 @@
-C51 COMPILER V9.00   FREQUENCY                                                             06/23/2014 12:59:53 PAGE 1   
+C51 COMPILER V9.00   FREQUENCY                                                             06/23/2014 16:49:28 PAGE 1   
 
 
 C51 COMPILER V9.00, COMPILATION OF MODULE FREQUENCY
@@ -62,7 +62,7 @@ line level    source
   52          void INT0_ISR(void) interrupt 0 //using 3//обработчик внешнего прерывания 0
   53          {
   54   1              unsigned char cnt;
-C51 COMPILER V9.00   FREQUENCY                                                             06/23/2014 12:59:53 PAGE 2   
+C51 COMPILER V9.00   FREQUENCY                                                             06/23/2014 16:49:28 PAGE 2   
 
   55   1              cnt=(frequency[FRQ_CHNL_1].time_counter>>SHEAR)&0x3;
   56   1              frequency[FRQ_CHNL_1].frame[cnt].event_counter++;
@@ -126,7 +126,7 @@ line level    source
  110   3      
  111   3                              frequency[FRQ_CHNL_3].frame[3].event_counter=0;
  112   3      
-C51 COMPILER V9.00   FREQUENCY                                                             06/23/2014 12:59:53 PAGE 3   
+C51 COMPILER V9.00   FREQUENCY                                                             06/23/2014 16:49:28 PAGE 3   
 
  113   3                      }
  114   2                      break;
@@ -190,7 +190,7 @@ line level    source
  164   3                              frequency[FRQ_CHNL_2].frame[2].event_counter=0;
  165   3                              //----------------------------------------------------
  166   3                              frequency[FRQ_CHNL_3].frame[3].time_copy=frequency[FRQ_CHNL_3].frame[3].timestamp-frequency[FRQ_CHNL_3]
-C51 COMPILER V9.00   FREQUENCY                                                             06/23/2014 12:59:53 PAGE 4   
+C51 COMPILER V9.00   FREQUENCY                                                             06/23/2014 16:49:28 PAGE 4   
 
              -.frame[2].timestamp;
  167   3                              frequency[FRQ_CHNL_3].frame[3].event_copy=frequency[FRQ_CHNL_3].frame[3].event_counter; 
@@ -254,7 +254,7 @@ MODULE INFORMATION:   STATIC OVERLAYABLE
    CODE SIZE        =   1871    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =    111       1
-C51 COMPILER V9.00   FREQUENCY                                                             06/23/2014 12:59:53 PAGE 5   
+C51 COMPILER V9.00   FREQUENCY                                                             06/23/2014 16:49:28 PAGE 5   
 
    PDATA SIZE       =   ----    ----
    DATA SIZE        =   ----    ----

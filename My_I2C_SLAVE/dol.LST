@@ -1,0 +1,85 @@
+C51 COMPILER V9.00   DOL                                                                   06/23/2014 17:11:44 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE DOL
+OBJECT MODULE PLACED IN dol.OBJ
+COMPILER INVOKED BY: C:\Program Files\Keil\C51\BIN\C51.EXE dol.c LARGE OPTIMIZE(9,SPEED) BROWSE ORDER NOAREGS MODAB2 DEB
+                    -UG OBJECTEXTEND
+
+line level    source
+
+   1          #include "dol.h"
+   2          
+   3          #define DOL_CHANNELS    1
+   4          #define FIRST_DOL_CHN   0
+   5          
+   6          #define CLI_EXT  EX0=0;
+   7          #define STI_EXT  EX0=1; 
+   8          
+   9          sbit INTINP=P3^2;//канал прерывания
+  10          sbit DIRECT=P3^3 ;
+  11          sbit INVERT=P3^4 ;
+  12          
+  13          //sbit LED=P0^6;
+  14          //-------------------------------------------------------- debug
+  15           long volatile idata counter_32; //счетчик дола
+  16          
+  17          
+  18          //--------------------------------------------------------
+  19          void Dol_Init(void) //инициализация
+  20          {
+  21   1              counter_32=0x80008000;
+  22   1              //channels.I2C_CHNL.channels.DOL=counter_32;
+  23   1              channels.DOL_buf=counter_32;
+  24   1              DIRECT=1;
+  25   1              INVERT=0;
+  26   1              IT0=1;//по фронту
+  27   1              IE0=0;
+  28   1              EX0=1;
+  29   1              PX0=1;//приоритет высокий
+  30   1              if(!INTINP)     //если сигнал в низком уровне-ситуация пропуска первого импульса, инвертируем
+  31   1                      INVERT=!INVERT;
+  32   1      
+  33   1      //      LED=0;
+  34   1              return;
+  35   1      }
+  36          //--------------------------------------------------------
+  37          void INT0_ISR(void) interrupt 0 //using 3//обработчик внешнего прерывания 0
+  38          {
+  39   1              CLI_EXT
+  40   1              INVERT=!INVERT;
+  41   1              if(DIRECT)
+  42   1              {
+  43   2                      counter_32++;
+  44   2              }
+  45   1              else
+  46   1              {
+  47   2                      counter_32--;
+  48   2              }
+  49   1      
+  50   1              if(channels.transfer==0)        //если передачи нет
+  51   1              {
+  52   2                      //channels.I2C_CHNL.channels.DOL=counter_32;
+  53   2                      channels.DOL_buf=counter_32;
+  54   2              }
+C51 COMPILER V9.00   DOL                                                                   06/23/2014 17:11:44 PAGE 2   
+
+  55   1              
+  56   1              STI_EXT
+  57   1              return;
+  58   1      }
+  59          //------------------------------------------------------------
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    188    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =      4    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

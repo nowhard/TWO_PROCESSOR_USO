@@ -59,7 +59,7 @@ void main(void) //using 0
 
 	EA=1;
 
-	i2c_buffer[0]=0x0;//сброс флага инициализации
+	i2c_buffer[0]=SLAVE_DOL_COUNT_RESET;//сброс счетчиков ведомого процессора
 
 	I2C_Repeat_Start_Read(I2C_ADDR,&i2c_buffer,1,i2c_channels.I2C_CHNL.i2c_buf,sizeof(i2c_channels));	  //производим первое чтение заранее
 	while(1)

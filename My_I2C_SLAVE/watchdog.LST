@@ -1,0 +1,48 @@
+C51 COMPILER V9.00   WATCHDOG                                                              06/23/2014 17:11:44 PAGE 1   
+
+
+C51 COMPILER V9.00, COMPILATION OF MODULE WATCHDOG
+OBJECT MODULE PLACED IN watchdog.OBJ
+COMPILER INVOKED BY: C:\Program Files\Keil\C51\BIN\C51.EXE watchdog.c LARGE OPTIMIZE(9,SPEED) BROWSE ORDER NOAREGS MODAB
+                    -2 DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          #include "watchdog.h"
+   2          //---------------------global variables-----------------------------------
+   3          volatile unsigned char data wdt_intval;
+   4          //------------------------------------------------------------------------
+   5          void WDT_Init(unsigned char interval) //using 0//установка интервала срабатывания сторожевого таймера, зап
+             -уск        //небезопасная
+   6          {
+   7   1              wdt_intval=interval;    
+   8   1              WDWR=1;//WDWR=1-разрешение записи в регистр
+   9   1              WDCON=wdt_intval;
+  10   1              return;
+  11   1      }
+  12          //------------------------------------------------------------------------
+  13          void WDT_Clear(void) //using 0//сброс счетчика сторожевого таймера
+  14          {
+  15   1              EA=0;
+  16   1      
+  17   1              WDWR=1;//WDWR=1-разрешение записи в регистр
+  18   1              WDCON=wdt_intval;       
+  19   1      
+  20   1              EA=1;
+  21   1              return;
+  22   1      }
+  23          //------------------------------------------------------------------------
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     18    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      1    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
