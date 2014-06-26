@@ -167,10 +167,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>36</ColumnNumber>
+      <ColumnNumber>32</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>25</TopLine>
-      <CurrentLine>62</CurrentLine>
+      <TopLine>55</TopLine>
+      <CurrentLine>55</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\debug.c</PathWithFileName>
       <FilenameWithoutPath>debug.c</FilenameWithoutPath>
@@ -251,10 +251,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>21</ColumnNumber>
+      <ColumnNumber>71</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>1348</TopLine>
-      <CurrentLine>1348</CurrentLine>
+      <TopLine>1332</TopLine>
+      <CurrentLine>1350</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\proto_uso\proto_uso.c</PathWithFileName>
       <FilenameWithoutPath>proto_uso.c</FilenameWithoutPath>
@@ -333,12 +333,12 @@
       <GroupNumber>1</GroupNumber>
       <FileNumber>13</FileNumber>
       <FileType>1</FileType>
-      <tvExp>0</tvExp>
+      <tvExp>1</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>0</ColumnNumber>
+      <ColumnNumber>41</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>274</TopLine>
-      <CurrentLine>274</CurrentLine>
+      <TopLine>1</TopLine>
+      <CurrentLine>18</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\i2c.c</PathWithFileName>
       <FilenameWithoutPath>i2c.c</FilenameWithoutPath>
@@ -377,10 +377,10 @@
       <FileType>5</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>0</ColumnNumber>
+      <ColumnNumber>8</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>234</TopLine>
+      <CurrentLine>240</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\pt\pt.h</PathWithFileName>
       <FilenameWithoutPath>pt.h</FilenameWithoutPath>
@@ -459,12 +459,12 @@
       <GroupNumber>1</GroupNumber>
       <FileNumber>22</FileNumber>
       <FileType>1</FileType>
-      <tvExp>1</tvExp>
+      <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>53</ColumnNumber>
+      <ColumnNumber>38</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>168</TopLine>
-      <CurrentLine>195</CurrentLine>
+      <TopLine>75</TopLine>
+      <CurrentLine>75</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\modbus\modbus_ascii.c</PathWithFileName>
       <FilenameWithoutPath>modbus_ascii.c</FilenameWithoutPath>
@@ -552,7 +552,7 @@
   <AlienFiles>
     <PathWithFilename>D:\PROJECTS\GIT_REPOSITORY\8051\keil\Protothreads\USO_PT\uUSO_MASTER\I2C.H</PathWithFilename>
     <TopLine>1</TopLine>
-    <CurrentLine>31</CurrentLine>
+    <CurrentLine>40</CurrentLine>
     <Constant>0</Constant>
     <WindowPosition>
       <length>0</length>
@@ -1968,8 +1968,14 @@
     <ActiveMDIGroup>0</ActiveMDIGroup>
     <MDIGroup>
       <Size>100</Size>
-      <ActiveTab>2</ActiveTab>
+      <ActiveTab>5</ActiveTab>
       <Documents>
+        <Doc>
+          <Name>.\debug.c</Name>
+          <ColumnNumber>32</ColumnNumber>
+          <TopLine>55</TopLine>
+          <CurrentLine>55</CurrentLine>
+        </Doc>
         <Doc>
           <Name>MODBUS\MODBUS_ASCII.H</Name>
           <ColumnNumber>8</ColumnNumber>
@@ -1978,15 +1984,15 @@
         </Doc>
         <Doc>
           <Name>.\proto_uso\proto_uso.c</Name>
-          <ColumnNumber>21</ColumnNumber>
-          <TopLine>1348</TopLine>
-          <CurrentLine>1348</CurrentLine>
+          <ColumnNumber>71</ColumnNumber>
+          <TopLine>1332</TopLine>
+          <CurrentLine>1350</CurrentLine>
         </Doc>
         <Doc>
           <Name>.\modbus\modbus_ascii.c</Name>
-          <ColumnNumber>53</ColumnNumber>
-          <TopLine>168</TopLine>
-          <CurrentLine>195</CurrentLine>
+          <ColumnNumber>38</ColumnNumber>
+          <TopLine>75</TopLine>
+          <CurrentLine>75</CurrentLine>
         </Doc>
         <Doc>
           <Name>.\adc.c</Name>
@@ -1996,9 +2002,9 @@
         </Doc>
         <Doc>
           <Name>.\i2c.c</Name>
-          <ColumnNumber>0</ColumnNumber>
-          <TopLine>274</TopLine>
-          <CurrentLine>274</CurrentLine>
+          <ColumnNumber>61</ColumnNumber>
+          <TopLine>276</TopLine>
+          <CurrentLine>311</CurrentLine>
         </Doc>
         <Doc>
           <Name>.\timer2.c</Name>
@@ -2020,9 +2026,9 @@
         </Doc>
         <Doc>
           <Name>I2C.H</Name>
-          <ColumnNumber>23</ColumnNumber>
+          <ColumnNumber>15</ColumnNumber>
           <TopLine>1</TopLine>
-          <CurrentLine>31</CurrentLine>
+          <CurrentLine>40</CurrentLine>
         </Doc>
         <Doc>
           <Name>PROTO_USO/PROTO_USO.H</Name>
@@ -2035,12 +2041,6 @@
           <ColumnNumber>0</ColumnNumber>
           <TopLine>1</TopLine>
           <CurrentLine>1</CurrentLine>
-        </Doc>
-        <Doc>
-          <Name>.\debug.c</Name>
-          <ColumnNumber>36</ColumnNumber>
-          <TopLine>25</TopLine>
-          <CurrentLine>62</CurrentLine>
         </Doc>
         <Doc>
           <Name>PROTO_USO/CHANNELS.H</Name>

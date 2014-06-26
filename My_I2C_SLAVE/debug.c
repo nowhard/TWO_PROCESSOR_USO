@@ -11,7 +11,13 @@
 extern struct Channel xdata channels;//каналы по интерфейсу I2C
 
 sbit FREQ_IN_CONF=P2^0;
+sbit PROTO_CONF=P2^1;
  //---------------------------------------
+ enum
+ {
+ 	PROTO_GEOSPHERE=0,
+	PROTO_MB_ASCII=1
+ };
 
 void main(void) //using 0
 {			   
@@ -22,6 +28,7 @@ void main(void) //using 0
 	PLLCON&=PLLCON_VAL;//настройка частоты процессора
 //	ChannelsInit();//инициализация настроек каналов
 	FREQ_IN_CONF=1;//подтянем на 1 джампер настройки частотного входа
+	PROTO_CONF=1;
 
 	if(FREQ_IN_CONF==0)//джампер установлен
 	{
@@ -30,6 +37,15 @@ void main(void) //using 0
 	else
 	{
 		channels.I2C_CHNL.channels.frequency_modific=CHNL_FREQ_COUNT_T;
+	}
+
+	if(PROTO_CONF==0)  //джампер установлен
+	{
+		channels.I2C_CHNL.channels.protocol_type=PROTO_MB_ASCII;
+	}
+	else
+	{
+		channels.I2C_CHNL.channels.protocol_type=PROTO_GEOSPHERE;
 	}
 
 	Frequency_Init(channels.I2C_CHNL.channels.frequency_modific);

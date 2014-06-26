@@ -114,14 +114,14 @@ void I2C_ISR(void) interrupt 7//прерывание I2C
 	}
 	else   //передача
 	{
-		if(count<11)
+		if(count<I2C_FRAME_SIZE)
 		{		
 			I2CDAT=channels.I2C_CHNL.i2c_buf[count];
 			count++;
 			
-			if(count==10)
+			if(count==(I2C_FRAME_SIZE-1))
 			{
-				channels.I2C_CHNL.channels.CRC=CRC_Check(channels.I2C_CHNL.i2c_buf,10);
+				channels.I2C_CHNL.channels.CRC=CRC_Check(channels.I2C_CHNL.i2c_buf,I2C_FRAME_SIZE-1);
 				//channels.transfer=0;
 			}
 		}

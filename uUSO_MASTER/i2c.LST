@@ -1,4 +1,4 @@
-C51 COMPILER V9.00   I2C                                                                   06/24/2014 09:28:06 PAGE 1   
+C51 COMPILER V9.00   I2C                                                                   06/26/2014 10:32:30 PAGE 1   
 
 
 C51 COMPILER V9.00, COMPILATION OF MODULE I2C
@@ -56,289 +56,289 @@ line level    source
   43   1              PT_INIT(&pt_i2c_write_buf);
   44   1              PT_INIT(&pt_i2c_read_complete);
   45   1      
-  46   1              return;
-  47   1      }
-  48          //--------------------------------------------------------------
-  49          void I2C_Repeat_Start_Read(unsigned char addr,unsigned char *par_buf,unsigned char par_buf_len,unsigned ch
+  46   1              i2c_channels.I2C_CHNL.channels.protocol_type=PROTO_GEOSPHERE;
+  47   1      
+  48   1              return;
+  49   1      }
+  50          //--------------------------------------------------------------
+  51          void I2C_Repeat_Start_Read(unsigned char addr,unsigned char *par_buf,unsigned char par_buf_len,unsigned ch
+C51 COMPILER V9.00   I2C                                                                   06/26/2014 10:32:30 PAGE 2   
+
              -ar *buf,unsigned char buf_len)//запрос с двумя стартами
-  50          {
-C51 COMPILER V9.00   I2C                                                                   06/24/2014 09:28:06 PAGE 2   
-
-  51   1      
-  52   1      
-  53   1              DEV_ADDR=(addr<<1)&0xFE;
+  52          {
+  53   1      
   54   1      
-  55   1              
-  56   1              byte_num_write=par_buf_len;
-  57   1              byte_num_read=buf_len;
-  58   1              
-  59   1              i2c_buf=par_buf;
-  60   1              //repeated_strt_read=1;
-  61   1              START_I2C=1;//стартуем
-  62   1              
-  63   1              return;
-  64   1      }
-*** WARNING C280 IN LINE 49 OF I2C.C: 'buf': unreferenced local variable
-  65          //-------------------------------------------------------------
-  66          //#pragma OT(0,Speed) 
-  67           PT_THREAD(I2C_Process(struct pt *pt))//поток  I2C
-  68           { 
-  69   1         wdt_count[I2C_Proc].process_state=RUN; 
-  70   1      
-  71   1         PT_BEGIN(pt);
-  72   3      
-  73   3        while(1) 
-  74   3        {
-  75   4               
-  76   4               PT_WAIT_UNTIL(pt,START_I2C);
-  77   4               START_I2C=0;
-  78   4      
-  79   4      //       //--------------start---------------
-  80   4               MDE=1; //software output enable
-  81   4      
-  82   4      
-  83   4                 //-------I2C START--------
-  84   4                       MCO=0;
-  85   4                   MDO=1;                                
-  86   4                       MCO=1;                            
-  87   4                       PT_YIELD(pt);//дадим другим процессам время       
-  88   4                       MDO=0;                            
-  89   4                 //------------------------
-  90   4      
-  91   4               //-------------передача буфера-------
+  55   1              DEV_ADDR=(addr<<1)&0xFE;
+  56   1      
+  57   1              
+  58   1              byte_num_write=par_buf_len;
+  59   1              byte_num_read=buf_len;
+  60   1              
+  61   1              i2c_buf=par_buf;
+  62   1              //repeated_strt_read=1;
+  63   1              START_I2C=1;//стартуем
+  64   1              
+  65   1              return;
+  66   1      }
+*** WARNING C280 IN LINE 51 OF I2C.C: 'buf': unreferenced local variable
+  67          //-------------------------------------------------------------
+  68          //#pragma OT(0,Speed) 
+  69           PT_THREAD(I2C_Process(struct pt *pt))//поток  I2C
+  70           { 
+  71   1         wdt_count[I2C_Proc].process_state=RUN; 
+  72   1      
+  73   1         PT_BEGIN(pt);
+  74   3      
+  75   3        while(1) 
+  76   3        {
+  77   4               
+  78   4               PT_WAIT_UNTIL(pt,START_I2C);
+  79   4               START_I2C=0;
+  80   4      
+  81   4      //       //--------------start---------------
+  82   4               MDE=1; //software output enable
+  83   4      
+  84   4      
+  85   4                 //-------I2C START--------
+  86   4                       MCO=0;
+  87   4                   MDO=1;                                
+  88   4                       MCO=1;                            
+  89   4                       PT_YIELD(pt);//дадим другим процессам время       
+  90   4                       MDO=0;                            
+  91   4                 //------------------------
   92   4      
-  93   4               PT_SPAWN(pt, &pt_i2c_write_buf, I2C_Write_Buf(&pt_i2c_write_buf,&DEV_ADDR,1)); //передаем адрес
+  93   4               //-------------передача буфера-------
   94   4      
-  95   4      
-  96   4                if(ERROR_I2C)//смотрим ошибки
-  97   4                {
-  98   5                        //-------I2C STOP--------
-  99   5                              MCO=0;
- 100   5                          MDO=0;                                      
- 101   5                              MCO=1;                          
- 102   5                              PT_YIELD(pt);//дадим другим процессам время                                                                             
- 103   5                              MDO=1;
- 104   5                        //------------------------
- 105   5                          ERROR_I2C=0;                        
- 106   5                              PT_RESTART(pt); 
- 107   5                }
- 108   4                //PT_YIELD(pt);//дадим другим процессам время
- 109   4        //--------------------------------------------------------------------------------------------------
- 110   4                
- 111   4                //i2c_buf[0]=0x8;
-C51 COMPILER V9.00   I2C                                                                   06/24/2014 09:28:06 PAGE 3   
+  95   4               PT_SPAWN(pt, &pt_i2c_write_buf, I2C_Write_Buf(&pt_i2c_write_buf,&DEV_ADDR,1)); //передаем адрес
+  96   4      
+  97   4      
+  98   4                if(ERROR_I2C)//смотрим ошибки
+  99   4                {
+ 100   5                        //-------I2C STOP--------
+ 101   5                              MCO=0;
+ 102   5                          MDO=0;                                      
+ 103   5                              MCO=1;                          
+ 104   5                              PT_YIELD(pt);//дадим другим процессам время                                                                             
+ 105   5                              MDO=1;
+ 106   5                        //------------------------
+ 107   5                          ERROR_I2C=0;                        
+ 108   5                              PT_RESTART(pt); 
+ 109   5                }
+ 110   4                //PT_YIELD(pt);//дадим другим процессам время
+ 111   4        //--------------------------------------------------------------------------------------------------
+C51 COMPILER V9.00   I2C                                                                   06/26/2014 10:32:30 PAGE 3   
 
- 112   4      
- 113   4                PT_SPAWN(pt, &pt_i2c_write_buf, I2C_Write_Buf(&pt_i2c_write_buf,&i2c_buffer/*i2c_buf*/,byte_num_write))
+ 112   4                
+ 113   4                //i2c_buf[0]=0x8;
+ 114   4      
+ 115   4                PT_SPAWN(pt, &pt_i2c_write_buf, I2C_Write_Buf(&pt_i2c_write_buf,&i2c_buffer/*i2c_buf*/,byte_num_write))
              -; //передаем параметры
- 114   4                if(ERROR_I2C)//смотрим ошибки
- 115   4                {
- 116   5                        //-------I2C STOP--------
- 117   5                              MCO=0;
- 118   5                          MDO=0;                                      
- 119   5                              MCO=1;                          
- 120   5                              PT_YIELD(pt);//дадим другим процессам время                                                                             
- 121   5                              MDO=1;
- 122   5                        //------------------------
- 123   5                              ERROR_I2C=0;                    
- 124   5                              PT_RESTART(pt); 
- 125   5                }
- 126   4                //PT_YIELD(pt);//дадим другим процессам время
- 127   4      ////------------------------------------------------------------------------------------------------------
- 128   4                //-----------повторный старт--------
- 129   4                 //-------I2C START--------
- 130   4                       MCO=0;
- 131   4                   MDO=1;                                
- 132   4                       MCO=1;                            
- 133   4                       PT_YIELD(pt);//дадим другим процессам время       
- 134   4                       MDO=0;                            
- 135   4                 //------------------------
- 136   4                DEV_ADDR|=1;
- 137   4      
- 138   4      
- 139   4                PT_SPAWN(pt, &pt_i2c_write_buf, I2C_Write_Buf(&pt_i2c_write_buf,&DEV_ADDR,1)); //передаем адрес
+ 116   4                if(ERROR_I2C)//смотрим ошибки
+ 117   4                {
+ 118   5                        //-------I2C STOP--------
+ 119   5                              MCO=0;
+ 120   5                          MDO=0;                                      
+ 121   5                              MCO=1;                          
+ 122   5                              PT_YIELD(pt);//дадим другим процессам время                                                                             
+ 123   5                              MDO=1;
+ 124   5                        //------------------------
+ 125   5                              ERROR_I2C=0;                    
+ 126   5                              PT_RESTART(pt); 
+ 127   5                }
+ 128   4                //PT_YIELD(pt);//дадим другим процессам время
+ 129   4      ////------------------------------------------------------------------------------------------------------
+ 130   4                //-----------повторный старт--------
+ 131   4                 //-------I2C START--------
+ 132   4                       MCO=0;
+ 133   4                   MDO=1;                                
+ 134   4                       MCO=1;                            
+ 135   4                       PT_YIELD(pt);//дадим другим процессам время       
+ 136   4                       MDO=0;                            
+ 137   4                 //------------------------
+ 138   4                DEV_ADDR|=1;
+ 139   4      
  140   4      
- 141   4                if(ERROR_I2C)//смотрим ошибки
- 142   4                {
- 143   5                        //-------I2C STOP--------
- 144   5                              MCO=0;
- 145   5                          MDO=0;                                      
- 146   5                              MCO=1;  
- 147   5                              PT_YIELD(pt);//дадим другим процессам время                                                                             
- 148   5                              MDO=1;
- 149   5                        //------------------------
- 150   5                          ERROR_I2C=0;                
- 151   5                              PT_RESTART(pt); 
- 152   5                }
- 153   4               // PT_YIELD(pt);//дадим другим процессам время
- 154   4       //-------------------------------------------------------------------------------------------------------
+ 141   4                PT_SPAWN(pt, &pt_i2c_write_buf, I2C_Write_Buf(&pt_i2c_write_buf,&DEV_ADDR,1)); //передаем адрес
+ 142   4      
+ 143   4                if(ERROR_I2C)//смотрим ошибки
+ 144   4                {
+ 145   5                        //-------I2C STOP--------
+ 146   5                              MCO=0;
+ 147   5                          MDO=0;                                      
+ 148   5                              MCO=1;  
+ 149   5                              PT_YIELD(pt);//дадим другим процессам время                                                                             
+ 150   5                              MDO=1;
+ 151   5                        //------------------------
+ 152   5                          ERROR_I2C=0;                
+ 153   5                              PT_RESTART(pt); 
+ 154   5                }
+ 155   4               // PT_YIELD(pt);//дадим другим процессам время
+ 156   4       //-------------------------------------------------------------------------------------------------------
              ---------------
- 155   4                PT_SPAWN(pt, &pt_i2c_read_buf, I2C_Read_Buf(&pt_i2c_read_buf,&i2c_channels.I2C_CHNL.i2c_buf,byte_num_re
+ 157   4                PT_SPAWN(pt, &pt_i2c_read_buf, I2C_Read_Buf(&pt_i2c_read_buf,&i2c_channels.I2C_CHNL.i2c_buf,byte_num_re
              -ad)); //принимаем данные
- 156   4                if(ERROR_I2C)//смотрим ошибки
- 157   4                {
- 158   5                        //-------I2C STOP--------
- 159   5                              MCO=0;
- 160   5                          MDO=0;                                      
- 161   5                              MCO=1;                                  
- 162   5                              PT_YIELD(pt);//дадим другим процессам время                                                                     
- 163   5                              MDO=1;
- 164   5                        //------------------------
- 165   5                              ERROR_I2C=0;                    
- 166   5                              PT_RESTART(pt); 
- 167   5                }
- 168   4               // PT_YIELD(pt);//дадим другим процессам время
- 169   4      
- 170   4                //-------I2C STOP--------
-C51 COMPILER V9.00   I2C                                                                   06/24/2014 09:28:06 PAGE 4   
+ 158   4                if(ERROR_I2C)//смотрим ошибки
+ 159   4                {
+ 160   5                        //-------I2C STOP--------
+ 161   5                              MCO=0;
+ 162   5                          MDO=0;                                      
+ 163   5                              MCO=1;                                  
+ 164   5                              PT_YIELD(pt);//дадим другим процессам время                                                                     
+ 165   5                              MDO=1;
+ 166   5                        //------------------------
+ 167   5                              ERROR_I2C=0;                    
+ 168   5                              PT_RESTART(pt); 
+ 169   5                }
+ 170   4               // PT_YIELD(pt);//дадим другим процессам время
+C51 COMPILER V9.00   I2C                                                                   06/26/2014 10:32:30 PAGE 4   
 
- 171   4                      MCO=0;
- 172   4                  MDO=0;                                      
- 173   4                      MCO=1;
- 174   4                      PT_YIELD(pt);//дадим другим процессам время                                                                     
- 175   4                      MDO=1;
- 176   4      
- 177   4                //-----------------------------------------------------------------------------
+ 171   4      
+ 172   4                //-------I2C STOP--------
+ 173   4                      MCO=0;
+ 174   4                  MDO=0;                                      
+ 175   4                      MCO=1;
+ 176   4                      PT_YIELD(pt);//дадим другим процессам время                                                                     
+ 177   4                      MDO=1;
  178   4      
- 179   4                PT_SPAWN(pt, &pt_i2c_read_complete, I2C_Read_Complete(&pt_i2c_read_complete));
+ 179   4                //-----------------------------------------------------------------------------
  180   4      
- 181   4               //----------------------------------
- 182   4                wdt_count[I2C_Proc].count++;
- 183   4        }
- 184   3        PT_END(pt);
- 185   1      
- 186   1       }
- 187          //-------------------------------------------------------------
- 188          //#pragma OT(0,Speed)
- 189           static PT_THREAD(I2C_Read_Buf(struct pt *pt,unsigned char *buf,unsigned char len))//дочерний поток чтения
+ 181   4                PT_SPAWN(pt, &pt_i2c_read_complete, I2C_Read_Complete(&pt_i2c_read_complete));
+ 182   4      
+ 183   4               //----------------------------------
+ 184   4                wdt_count[I2C_Proc].count++;
+ 185   4        }
+ 186   3        PT_END(pt);
+ 187   1      
+ 188   1       }
+ 189          //-------------------------------------------------------------
+ 190          //#pragma OT(0,Speed)
+ 191           static PT_THREAD(I2C_Read_Buf(struct pt *pt,unsigned char *buf,unsigned char len))//дочерний поток чтения
              - буфера I2C
- 190           {  
- 191   1                  static volatile unsigned char read_byte_counter,bit_counter,recieve_byte;
- 192   1                 
- 193   1                PT_BEGIN(pt);
- 194   3                
- 195   3                read_byte_counter=0;
- 196   3      
- 197   3                while(read_byte_counter<len) //цикл приема буфера
- 198   3                {     
- 199   4                              recieve_byte=0;
- 200   4                              MDE=0;//прием 
- 201   4                              MCO=0;
- 202   4                              PT_YIELD(pt);//дадим другим процессам время
- 203   4                              for(bit_counter=0;bit_counter<8;bit_counter++) //цикл приема байта
- 204   4                              {
- 205   5                                      MCO=1;
- 206   5      
- 207   5                                      //PT_YIELD(pt);//дадим другим процессам время
- 208   5                                      recieve_byte=(recieve_byte<<1)|MDI;
- 209   5                                      MCO=0;
- 210   5                              } //приняли байт
- 211   4                              
- 212   4                              buf[read_byte_counter]=recieve_byte;
- 213   4                              read_byte_counter++;
- 214   4      
- 215   4      
- 216   4                              MDE=1;//на передачу и отсылаем ACK
- 217   4                              if(read_byte_counter<len) //ack
- 218   4                              {
- 219   5                                              //ACK   
- 220   5                                      MDO=0;
- 221   5      
- 222   5                              }
- 223   4                              else  //nack
- 224   4                              {
- 225   5                                      //NACK          
- 226   5                                      MDO=1;                  
- 227   5                              }
- 228   4                                      
- 229   4                              MCO=1;
- 230   4                              PT_YIELD(pt);//дадим другим процессам время
- 231   4                              MCO=0;
-C51 COMPILER V9.00   I2C                                                                   06/24/2014 09:28:06 PAGE 5   
+ 192           {  
+ 193   1                  static volatile unsigned char read_byte_counter,bit_counter,recieve_byte;
+ 194   1                 
+ 195   1                PT_BEGIN(pt);
+ 196   3                
+ 197   3                read_byte_counter=0;
+ 198   3      
+ 199   3                while(read_byte_counter<len) //цикл приема буфера
+ 200   3                {     
+ 201   4                              recieve_byte=0;
+ 202   4                              MDE=0;//прием 
+ 203   4                              MCO=0;
+ 204   4                              PT_YIELD(pt);//дадим другим процессам время
+ 205   4                              for(bit_counter=0;bit_counter<8;bit_counter++) //цикл приема байта
+ 206   4                              {
+ 207   5                                      MCO=1;
+ 208   5      
+ 209   5                                      //PT_YIELD(pt);//дадим другим процессам время
+ 210   5                                      recieve_byte=(recieve_byte<<1)|MDI;
+ 211   5                                      MCO=0;
+ 212   5                              } //приняли байт
+ 213   4                              
+ 214   4                              buf[read_byte_counter]=recieve_byte;
+ 215   4                              read_byte_counter++;
+ 216   4      
+ 217   4      
+ 218   4                              MDE=1;//на передачу и отсылаем ACK
+ 219   4                              if(read_byte_counter<len) //ack
+ 220   4                              {
+ 221   5                                              //ACK   
+ 222   5                                      MDO=0;
+ 223   5      
+ 224   5                              }
+ 225   4                              else  //nack
+ 226   4                              {
+ 227   5                                      //NACK          
+ 228   5                                      MDO=1;                  
+ 229   5                              }
+ 230   4                                      
+ 231   4                              MCO=1;
+C51 COMPILER V9.00   I2C                                                                   06/26/2014 10:32:30 PAGE 5   
 
- 232   4                                      
- 233   4                              MDE=0;//прием
- 234   4      
- 235   4                }
- 236   3                MDE=1;
- 237   3                ERROR_I2C=0;
- 238   3                PT_END(pt);
- 239   1      }
- 240          //-------------------------------------------------------------
- 241          //#pragma OT(0,Speed)
- 242          static PT_THREAD(I2C_Write_Buf(struct pt *pt,unsigned char *buf,unsigned char len))//дочерний поток записи
+ 232   4                              PT_YIELD(pt);//дадим другим процессам время
+ 233   4                              MCO=0;
+ 234   4                                      
+ 235   4                              MDE=0;//прием
+ 236   4      
+ 237   4                }
+ 238   3                MDE=1;
+ 239   3                ERROR_I2C=0;
+ 240   3                PT_END(pt);
+ 241   1      }
+ 242          //-------------------------------------------------------------
+ 243          //#pragma OT(0,Speed)
+ 244          static PT_THREAD(I2C_Write_Buf(struct pt *pt,unsigned char *buf,unsigned char len))//дочерний поток записи
              - буфера I2C
- 243           {  
- 244   1                 static volatile unsigned char write_byte_counter,bit_counter,write_byte;
- 245   1                PT_BEGIN(pt);
- 246   3                MDE=1;//передача 
- 247   3                write_byte_counter=0;
- 248   3                while(write_byte_counter<len)  //цикл передачи буфера
- 249   3                {
- 250   4                      //      bit_counter=0;
- 251   4      
- 252   4                              write_byte=buf[write_byte_counter];
- 253   4                              write_byte_counter++;
- 254   4                              MCO=0;
- 255   4                              PT_YIELD(pt);//дадим другим процессам время
- 256   4                              for(bit_counter=0;bit_counter<8;bit_counter++)
- 257   4                              {
- 258   5                                      
- 259   5                                      write_byte=write_byte<<1;//>>1;  //???
- 260   5                                      MDO=CY;
- 261   5                              
- 262   5                                      MCO=1;
- 263   5                                      PT_YIELD(pt);//дадим другим процессам время
- 264   5                                      MCO=0;
- 265   5      //                              PT_YIELD(pt);//дадим другим процессам время
- 266   5      
- 267   5                              }
- 268   4                              MDE=0;//прием 
- 269   4                              MCO=0;
- 270   4                              PT_YIELD(pt);//дадим другим процессам время
- 271   4                              MCO=1;
+ 245           {  
+ 246   1                 static volatile unsigned char write_byte_counter,bit_counter,write_byte;
+ 247   1                PT_BEGIN(pt);
+ 248   3                MDE=1;//передача 
+ 249   3                write_byte_counter=0;
+ 250   3                while(write_byte_counter<len)  //цикл передачи буфера
+ 251   3                {
+ 252   4                      //      bit_counter=0;
+ 253   4      
+ 254   4                              write_byte=buf[write_byte_counter];
+ 255   4                              write_byte_counter++;
+ 256   4                              MCO=0;
+ 257   4                              PT_YIELD(pt);//дадим другим процессам время
+ 258   4                              for(bit_counter=0;bit_counter<8;bit_counter++)
+ 259   4                              {
+ 260   5                                      
+ 261   5                                      write_byte=write_byte<<1;//>>1;  //???
+ 262   5                                      MDO=CY;
+ 263   5                              
+ 264   5                                      MCO=1;
+ 265   5                                      PT_YIELD(pt);//дадим другим процессам время
+ 266   5                                      MCO=0;
+ 267   5      //                              PT_YIELD(pt);//дадим другим процессам время
+ 268   5      
+ 269   5                              }
+ 270   4                              MDE=0;//прием 
+ 271   4                              MCO=0;
  272   4                              PT_YIELD(pt);//дадим другим процессам время
- 273   4                              MCO=0;  
- 274   4                              MDE=1;//передача
- 275   4                              if(MDI) //NACK
- 276   4                              {
- 277   5                                      ERROR_I2C=1;//случилась ошибка  
- 278   5                                      PT_EXIT(pt);
- 279   5                              }
- 280   4                }
- 281   3                ERROR_I2C=0;
- 282   3                PT_END(pt);
- 283   1      }
- 284          //-------------------------------------------------------------
- 285          //#pragma OT(0,Speed)
- 286          static PT_THREAD(I2C_Read_Complete(struct pt *pt))//постобработка пакета
- 287          {
- 288   1              PT_BEGIN(pt);
- 289   3         if(i2c_channels.I2C_CHNL.channels.CRC==CRC_Check(i2c_channels.I2C_CHNL.i2c_buf,10))
- 290   3         {
- 291   4              channels[11].channel_data=i2c_channels.I2C_CHNL.channels.DOL;
- 292   4      
-C51 COMPILER V9.00   I2C                                                                   06/24/2014 09:28:06 PAGE 6   
+ 273   4                              MCO=1;
+ 274   4                              PT_YIELD(pt);//дадим другим процессам время
+ 275   4                              MCO=0;  
+ 276   4                              MDE=1;//передача
+ 277   4                              if(MDI) //NACK
+ 278   4                              {
+ 279   5                                      ERROR_I2C=1;//случилась ошибка  
+ 280   5                                      PT_EXIT(pt);
+ 281   5                              }
+ 282   4                }
+ 283   3                ERROR_I2C=0;
+ 284   3                PT_END(pt);
+ 285   1      }
+ 286          //-------------------------------------------------------------
+ 287          //#pragma OT(0,Speed)
+ 288          static PT_THREAD(I2C_Read_Complete(struct pt *pt))//постобработка пакета
+ 289          {
+ 290   1              PT_BEGIN(pt);
+ 291   3         if(i2c_channels.I2C_CHNL.channels.CRC==CRC_Check(i2c_channels.I2C_CHNL.i2c_buf,I2C_FRAME_SIZE-1))
+ 292   3         {
+C51 COMPILER V9.00   I2C                                                                   06/26/2014 10:32:30 PAGE 6   
 
- 293   4      
- 294   4              switch(i2c_channels.I2C_CHNL.channels.frequency_modific)  //изменяем тип канала согласно ведомому
- 295   4              {
- 296   5                      case  CHNL_FREQ_256:
- 297   5                      {
- 298   6                                      channels[12].channel_data=i2c_channels.I2C_CHNL.channels.frequency;
- 299   6                                      channels[12].settings.set.modific=CHNL_FREQ_256;
- 300   6                                      channel_number=CHANNEL_NUMBER-1; //удаляем канал усреднения высокой частоты
- 301   6                                      
- 302   6                      }
- 303   5                      break;
- 304   5      
- 305   5                      case CHNL_FREQ_COUNT_T:
- 306   5                      {
- 307   6                                      channels[12].channel_data=i2c_channels.I2C_CHNL.channels.frequency;
- 308   6                                      channels[13].channel_data=i2c_channels.I2C_CHNL.channels.mid_frequency;
- 309   6                                      channels[12].settings.set.modific=CHNL_FREQ_COUNT_T;
- 310   6                                      channel_number=CHANNEL_NUMBER; //все каналы задействованы
- 311   6      
+ 293   4              channels[11].channel_data=i2c_channels.I2C_CHNL.channels.DOL;
+ 294   4      
+ 295   4      
+ 296   4              switch(i2c_channels.I2C_CHNL.channels.frequency_modific)  //изменяем тип канала согласно ведомому
+ 297   4              {
+ 298   5                      case  CHNL_FREQ_256:
+ 299   5                      {
+ 300   6                                      channels[12].channel_data=i2c_channels.I2C_CHNL.channels.frequency;
+ 301   6                                      channels[12].settings.set.modific=CHNL_FREQ_256;
+ 302   6                                      channel_number=CHANNEL_NUMBER-1; //удаляем канал усреднения высокой частоты             
+ 303   6                      }
+ 304   5                      break;
+ 305   5      
+ 306   5                      case CHNL_FREQ_COUNT_T:
+ 307   5                      {
+ 308   6                                      channels[12].channel_data=i2c_channels.I2C_CHNL.channels.frequency;
+ 309   6                                      channels[13].channel_data=i2c_channels.I2C_CHNL.channels.mid_frequency;
+ 310   6                                      channels[12].settings.set.modific=CHNL_FREQ_COUNT_T;
+ 311   6                                      channel_number=CHANNEL_NUMBER; //все каналы задействованы
  312   6                      }
  313   5                      break;
  314   5      
@@ -357,9 +357,9 @@ line level    source
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =   1778    ----
+   CODE SIZE        =   1782    ----
    CONSTANT SIZE    =   ----    ----
-   XDATA SIZE       =     48      33
+   XDATA SIZE       =     49      33
    PDATA SIZE       =   ----    ----
    DATA SIZE        =   ----    ----
    IDATA SIZE       =      6    ----

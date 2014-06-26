@@ -1,4 +1,4 @@
-C51 COMPILER V9.00   CHANNELS                                                              06/23/2014 17:11:45 PAGE 1   
+C51 COMPILER V9.00   CHANNELS                                                              06/26/2014 09:13:09 PAGE 1   
 
 
 C51 COMPILER V9.00, COMPILATION OF MODULE CHANNELS
@@ -62,7 +62,7 @@ line level    source
   52                  unsigned char i=0;
   53                  for(i=0;i<CHANNEL_NUMBER;i++)
   54                  {
-C51 COMPILER V9.00   CHANNELS                                                              06/23/2014 17:11:45 PAGE 2   
+C51 COMPILER V9.00   CHANNELS                                                              06/26/2014 09:13:09 PAGE 2   
 
   55                          EEPROM_Read(&channels[i].settings.serialize,1,ADC_SETTINGS_ADDR+i);
   56                  }
@@ -73,7 +73,7 @@ line level    source
 MODULE INFORMATION:   STATIC OVERLAYABLE
    CODE SIZE        =   ----    ----
    CONSTANT SIZE    =   ----    ----
-   XDATA SIZE       =     20    ----
+   XDATA SIZE       =     21    ----
    PDATA SIZE       =   ----    ----
    DATA SIZE        =   ----    ----
    IDATA SIZE       =   ----    ----

@@ -1,4 +1,4 @@
-BL51 BANKED LINKER/LOCATER V6.22                                                        06/24/2014  09:29:12  PAGE 1
+BL51 BANKED LINKER/LOCATER V6.22                                                        06/26/2014  10:36:52  PAGE 1
 
 
 BL51 BANKED LINKER/LOCATER V6.22, INVOKED BY:
@@ -55,11 +55,11 @@ LINK MAP OF MODULE:  debug (DEBUG)
 
             * * * * * * *  X D A T A   M E M O R Y  * * * * * * *
             XDATA   0000H     0069H     UNIT         ?XD?FREQUENCY
-            XDATA   0069H     0014H     UNIT         ?XD?CHANNELS
-            XDATA   007DH     0012H     UNIT         ?XD?I2C_SLAVE
-            XDATA   008FH     0002H     UNIT         _XDATA_GROUP_
+            XDATA   0069H     0015H     UNIT         ?XD?CHANNELS
+            XDATA   007EH     0012H     UNIT         ?XD?I2C_SLAVE
+            XDATA   0090H     0002H     UNIT         _XDATA_GROUP_
 
-BL51 BANKED LINKER/LOCATER V6.22                                                      06/24/2014  09:29:12  PAGE 2
+BL51 BANKED LINKER/LOCATER V6.22                                                      06/26/2014  10:36:52  PAGE 2
 
 
             * * * * * * *   C O D E   M E M O R Y   * * * * * * *
@@ -86,11 +86,11 @@ LINK MAP OF MODULE:  debug (DEBUG)
             CODE    0D55H     0093H     UNIT         ?PR?INT0_ISR?DOL
             CODE    0DE8H     008FH     UNIT         ?C_C51STARTUP
             CODE    0E77H     007EH     UNIT         ?PR?INT_TIM1_ISR?FREQUENCY
-            CODE    0EF5H     0038H     UNIT         ?PR?TIMER0_ISR?I2C_SLAVE
-            CODE    0F2DH     0034H     UNIT         ?PR?MAIN?DEBUG
-            CODE    0F61H     0028H     UNIT         ?PR?I2C_SLAVE_INIT?I2C_SLAVE
-            CODE    0F89H     0023H     UNIT         ?PR?_CRC_CHECK?I2C_SLAVE
-            CODE    0FACH     001EH     UNIT         ?PR?DOL_INIT?DOL
+            CODE    0EF5H     0046H     UNIT         ?PR?MAIN?DEBUG
+            CODE    0F3BH     0038H     UNIT         ?PR?TIMER0_ISR?I2C_SLAVE
+            CODE    0F73H     0028H     UNIT         ?PR?I2C_SLAVE_INIT?I2C_SLAVE
+            CODE    0F9BH     0023H     UNIT         ?PR?_CRC_CHECK?I2C_SLAVE
+            CODE    0FBEH     001EH     UNIT         ?PR?DOL_INIT?DOL
 
 
 
@@ -119,7 +119,7 @@ SEGMENT                                           XDATA_GROUP
 
 ?PR?INT0_ISR?DOL                                -----    -----
   +--> ?PR?DOL
-BL51 BANKED LINKER/LOCATER V6.22                                                      06/24/2014  09:29:12  PAGE 3
+BL51 BANKED LINKER/LOCATER V6.22                                                      06/26/2014  10:36:52  PAGE 3
 
 
 
@@ -134,7 +134,7 @@ SEGMENT                                           XDATA_GROUP
 
 *** NEW ROOT ***************************************************
 
-?PR?TIMER2_ISR?FREQUENCY                        008FH    0002H
+?PR?TIMER2_ISR?FREQUENCY                        0090H    0002H
 
 
 
@@ -161,33 +161,42 @@ SYMBOL TABLE OF MODULE:  debug (DEBUG)
   D:00F8H         PUBLIC        SPICON
   B:00A8H.7       PUBLIC        EA
   B:00A0H.0       PUBLIC        FREQ_IN_CONF
-  C:0F2DH         PUBLIC        main
+  B:00A0H.1       PUBLIC        PROTO_CONF
+  C:0EF5H         PUBLIC        main
   -------         PROC          MAIN
-  C:0F2DH         LINE#         16
-  C:0F2DH         LINE#         17
-  C:0F2DH         LINE#         18
-  C:0F2FH         LINE#         22
-  C:0F32H         LINE#         24
-  C:0F34H         LINE#         26
-  C:0F37H         LINE#         27
-  C:0F37H         LINE#         28
-  C:0F3DH         LINE#         29
-  C:0F3FH         LINE#         31
-  C:0F3FH         LINE#         32
-  C:0F44H         LINE#         33
-  C:0F44H         LINE#         35
-  C:0F4CH         LINE#         37
-  C:0F4FH         LINE#         39
-  C:0F54H         LINE#         41
-BL51 BANKED LINKER/LOCATER V6.22                                                      06/24/2014  09:29:12  PAGE 4
+  C:0EF5H         LINE#         22
+  C:0EF5H         LINE#         23
+  C:0EF5H         LINE#         24
+  C:0EF7H         LINE#         28
+  C:0EFAH         LINE#         30
+  C:0EFCH         LINE#         31
+  C:0EFEH         LINE#         33
+  C:0F01H         LINE#         34
+  C:0F01H         LINE#         35
+  C:0F07H         LINE#         36
+  C:0F09H         LINE#         38
+  C:0F09H         LINE#         39
+  C:0F0EH         LINE#         40
+  C:0F0EH         LINE#         42
+  C:0F11H         LINE#         43
+BL51 BANKED LINKER/LOCATER V6.22                                                      06/26/2014  10:36:52  PAGE 4
 
 
-  C:0F57H         LINE#         42
-  C:0F59H         LINE#         44
-  C:0F59H         LINE#         45
-  C:0F59H         LINE#         46
-  C:0F5CH         LINE#         47
-  C:0F5FH         LINE#         48
+  C:0F11H         LINE#         44
+  C:0F17H         LINE#         45
+  C:0F19H         LINE#         47
+  C:0F19H         LINE#         48
+  C:0F1EH         LINE#         49
+  C:0F1EH         LINE#         51
+  C:0F26H         LINE#         53
+  C:0F29H         LINE#         55
+  C:0F2EH         LINE#         57
+  C:0F31H         LINE#         58
+  C:0F33H         LINE#         60
+  C:0F33H         LINE#         61
+  C:0F33H         LINE#         62
+  C:0F36H         LINE#         63
+  C:0F39H         LINE#         64
   -------         ENDPROC       MAIN
   -------         ENDMOD        DEBUG
 
@@ -230,6 +239,9 @@ SYMBOL TABLE OF MODULE:  debug (DEBUG)
   C:0027H         LINE#         22
   -------         ENDPROC       WDT_CLEAR
   -------         ENDMOD        WATCHDOG
+BL51 BANKED LINKER/LOCATER V6.22                                                      06/26/2014  10:36:52  PAGE 5
+
+
 
   -------         MODULE        ?C_STARTUP
   C:0DE8H         SEGMENT       ?C_C51STARTUP
@@ -239,9 +251,6 @@ SYMBOL TABLE OF MODULE:  debug (DEBUG)
   N:0000H         SYMBOL        EXSP
   N:0000H         SYMBOL        IBPSTACK
   N:0100H         SYMBOL        IBPSTACKTOP
-BL51 BANKED LINKER/LOCATER V6.22                                                      06/24/2014  09:29:12  PAGE 5
-
-
   N:0080H         SYMBOL        IDATALEN
   C:0DEEH         SYMBOL        IDATALOOP
   D:00A0H         SYMBOL        P2
@@ -290,8 +299,11 @@ SYMBOL TABLE OF MODULE:  debug (DEBUG)
   B:0088H.1       PUBLIC        IE0
   B:0088H.0       PUBLIC        IT0
   B:00A8H.0       PUBLIC        EX0
+BL51 BANKED LINKER/LOCATER V6.22                                                      06/26/2014  10:36:52  PAGE 6
+
+
   B:00B8H.0       PUBLIC        PX0
-  C:0FACH         PUBLIC        Dol_Init
+  C:0FBEH         PUBLIC        Dol_Init
   C:0D55H         PUBLIC        INT0_ISR
   B:00B0H.2       PUBLIC        INTINP
   B:00B0H.3       PUBLIC        DIRECT
@@ -299,25 +311,22 @@ SYMBOL TABLE OF MODULE:  debug (DEBUG)
   I:0027H         PUBLIC        counter_32
   C:000EH         SYMBOL        Com0008
   C:000EH         SYMBOL        L?0009
-BL51 BANKED LINKER/LOCATER V6.22                                                      06/24/2014  09:29:12  PAGE 6
-
-
   -------         PROC          COM0008
   -------         ENDPROC       COM0008
   -------         PROC          DOL_INIT
-  C:0FACH         LINE#         19
-  C:0FACH         LINE#         20
-  C:0FACH         LINE#         21
-  C:0FB5H         LINE#         23
-  C:0FB8H         LINE#         24
-  C:0FBAH         LINE#         25
-  C:0FBCH         LINE#         26
-  C:0FBEH         LINE#         27
-  C:0FC0H         LINE#         28
-  C:0FC2H         LINE#         29
-  C:0FC4H         LINE#         30
-  C:0FC7H         LINE#         31
-  C:0FC9H         LINE#         35
+  C:0FBEH         LINE#         19
+  C:0FBEH         LINE#         20
+  C:0FBEH         LINE#         21
+  C:0FC7H         LINE#         23
+  C:0FCAH         LINE#         24
+  C:0FCCH         LINE#         25
+  C:0FCEH         LINE#         26
+  C:0FD0H         LINE#         27
+  C:0FD2H         LINE#         28
+  C:0FD4H         LINE#         29
+  C:0FD6H         LINE#         30
+  C:0FD9H         LINE#         31
+  C:0FDBH         LINE#         35
   -------         ENDPROC       DOL_INIT
   -------         PROC          INT0_ISR
   C:0D55H         LINE#         37
@@ -350,6 +359,9 @@ SYMBOL TABLE OF MODULE:  debug (DEBUG)
   D:009BH         PUBLIC        I2CADD
   D:00A0H         PUBLIC        P2
   D:00A8H         PUBLIC        IE
+BL51 BANKED LINKER/LOCATER V6.22                                                      06/26/2014  10:36:52  PAGE 7
+
+
   D:00A9H         PUBLIC        IEIP2
   D:00B0H         PUBLIC        P3
   D:00B8H         PUBLIC        IP
@@ -359,41 +371,38 @@ SYMBOL TABLE OF MODULE:  debug (DEBUG)
   D:00D8H         PUBLIC        ADCSTAT
   D:00E8H         PUBLIC        I2CCON
   D:00E8H         PUBLIC        DCON
-BL51 BANKED LINKER/LOCATER V6.22                                                      06/24/2014  09:29:12  PAGE 7
-
-
   D:00F8H         PUBLIC        SPICON
   B:0088H.5       PUBLIC        TF0
   B:0088H.4       PUBLIC        TR0
   B:00A8H.1       PUBLIC        ET0
   B:00E8H.2       PUBLIC        I2CRS
   B:00E8H.1       PUBLIC        I2CTX
-  C:0F61H         PUBLIC        I2C_Slave_Init
+  C:0F73H         PUBLIC        I2C_Slave_Init
   C:0AC3H         PUBLIC        I2C_ISR
-  C:0F89H         SYMBOL        _CRC_Check
+  C:0F9BH         SYMBOL        _CRC_Check
   B:00A0H.0       PUBLIC        FL1
-  X:007DH         PUBLIC        test_buf
+  X:007EH         PUBLIC        test_buf
   C:09C3H         PUBLIC        Crc8Table
-  X:008CH         PUBLIC        req
-  X:008DH         PUBLIC        count
-  X:008EH         PUBLIC        watch_timer
-  C:0EF5H         PUBLIC        Timer0_ISR
+  X:008DH         PUBLIC        req
+  X:008EH         PUBLIC        count
+  X:008FH         PUBLIC        watch_timer
+  C:0F3BH         PUBLIC        Timer0_ISR
   -------         PROC          I2C_SLAVE_INIT
-  C:0F61H         LINE#         51
-  C:0F61H         LINE#         52
-  C:0F61H         LINE#         53
-  C:0F64H         LINE#         54
-  C:0F67H         LINE#         55
-  C:0F6AH         LINE#         56
-  C:0F6EH         LINE#         58
-  C:0F71H         LINE#         59
-  C:0F74H         LINE#         61
-  C:0F76H         LINE#         62
-  C:0F78H         LINE#         63
-  C:0F7EH         LINE#         65
-  C:0F80H         LINE#         66
-  C:0F82H         LINE#         68
-  C:0F88H         LINE#         71
+  C:0F73H         LINE#         51
+  C:0F73H         LINE#         52
+  C:0F73H         LINE#         53
+  C:0F76H         LINE#         54
+  C:0F79H         LINE#         55
+  C:0F7CH         LINE#         56
+  C:0F80H         LINE#         58
+  C:0F83H         LINE#         59
+  C:0F86H         LINE#         61
+  C:0F88H         LINE#         62
+  C:0F8AH         LINE#         63
+  C:0F90H         LINE#         65
+  C:0F92H         LINE#         66
+  C:0F94H         LINE#         68
+  C:0F9AH         LINE#         71
   -------         ENDPROC       I2C_SLAVE_INIT
   -------         PROC          I2C_ISR
   C:0AC3H         LINE#         73
@@ -410,6 +419,9 @@ SYMBOL TABLE OF MODULE:  debug (DEBUG)
   C:0B3EH         LINE#         93
   C:0B41H         LINE#         95
   C:0B4CH         LINE#         96
+BL51 BANKED LINKER/LOCATER V6.22                                                      06/26/2014  10:36:52  PAGE 8
+
+
   C:0B4CH         LINE#         97
   C:0B4CH         LINE#         98
   C:0B4CH         LINE#         99
@@ -419,9 +431,6 @@ SYMBOL TABLE OF MODULE:  debug (DEBUG)
   C:0B54H         LINE#         104
   C:0B54H         LINE#         105
   C:0B57H         LINE#         106
-BL51 BANKED LINKER/LOCATER V6.22                                                      06/24/2014  09:29:12  PAGE 8
-
-
   C:0B57H         LINE#         107
   C:0B59H         LINE#         109
   C:0B59H         LINE#         110
@@ -443,18 +452,18 @@ SYMBOL TABLE OF MODULE:  debug (DEBUG)
   C:0B87H         LINE#         130
   -------         ENDPROC       I2C_ISR
   -------         PROC          TIMER0_ISR
-  C:0EF5H         LINE#         132
-  C:0F06H         LINE#         134
-  C:0F08H         LINE#         135
-  C:0F0BH         LINE#         136
-  C:0F0EH         LINE#         137
-  C:0F14H         LINE#         139
-  C:0F17H         LINE#         140
-  C:0F17H         LINE#         141
-  C:0F19H         LINE#         142
-  C:0F1BH         LINE#         143
-  C:0F1EH         LINE#         145
-  C:0F1EH         LINE#         147
+  C:0F3BH         LINE#         132
+  C:0F4CH         LINE#         134
+  C:0F4EH         LINE#         135
+  C:0F51H         LINE#         136
+  C:0F54H         LINE#         137
+  C:0F5AH         LINE#         139
+  C:0F5DH         LINE#         140
+  C:0F5DH         LINE#         141
+  C:0F5FH         LINE#         142
+  C:0F61H         LINE#         143
+  C:0F64H         LINE#         145
+  C:0F64H         LINE#         147
   -------         ENDPROC       TIMER0_ISR
   -------         PROC          _CRC_CHECK
   D:0006H         SYMBOL        Spool_pr
@@ -462,14 +471,17 @@ SYMBOL TABLE OF MODULE:  debug (DEBUG)
   -------         DO            
   D:0004H         SYMBOL        crc
   -------         ENDDO         
-  C:0F89H         LINE#         149
-  C:0F89H         LINE#         150
-  C:0F89H         LINE#         152
-  C:0F8BH         LINE#         154
-  C:0F92H         LINE#         155
-  C:0FA8H         LINE#         157
-  C:0FABH         LINE#         159
+  C:0F9BH         LINE#         149
+  C:0F9BH         LINE#         150
+  C:0F9BH         LINE#         152
+  C:0F9DH         LINE#         154
+  C:0FA4H         LINE#         155
+  C:0FBAH         LINE#         157
+  C:0FBDH         LINE#         159
   -------         ENDPROC       _CRC_CHECK
+BL51 BANKED LINKER/LOCATER V6.22                                                      06/26/2014  10:36:52  PAGE 9
+
+
   -------         ENDMOD        I2C_SLAVE
 
   -------         MODULE        FREQUENCY
@@ -479,9 +491,6 @@ SYMBOL TABLE OF MODULE:  debug (DEBUG)
   D:008BH         PUBLIC        TL1
   D:008DH         PUBLIC        TH1
   D:0098H         PUBLIC        SCON
-BL51 BANKED LINKER/LOCATER V6.22                                                      06/24/2014  09:29:12  PAGE 9
-
-
   D:00A0H         PUBLIC        P2
   D:00A8H         PUBLIC        IE
   D:00B0H         PUBLIC        P3
@@ -530,6 +539,9 @@ SYMBOL TABLE OF MODULE:  debug (DEBUG)
   -------         ENDDO         
   C:0C84H         LINE#         57
   C:0C84H         LINE#         58
+BL51 BANKED LINKER/LOCATER V6.22                                                      06/26/2014  10:36:52  PAGE 10
+
+
   C:0C84H         LINE#         59
   C:0C86H         LINE#         61
   C:0C8EH         LINE#         62
@@ -539,9 +551,6 @@ SYMBOL TABLE OF MODULE:  debug (DEBUG)
   C:0C97H         LINE#         68
   C:0C9AH         LINE#         71
   C:0C9CH         LINE#         72
-BL51 BANKED LINKER/LOCATER V6.22                                                      06/24/2014  09:29:12  PAGE 10
-
-
   C:0C9EH         LINE#         74
   C:0CA0H         LINE#         75
   C:0CA2H         LINE#         76
@@ -589,8 +598,11 @@ SYMBOL TABLE OF MODULE:  debug (DEBUG)
   -------         ENDPROC       INT_TIM1_ISR
   -------         PROC          TIMER2_ISR
   -------         DO            
-  X:008FH         SYMBOL        i
-  X:0090H         SYMBOL        j
+  X:0090H         SYMBOL        i
+BL51 BANKED LINKER/LOCATER V6.22                                                      06/26/2014  10:36:52  PAGE 11
+
+
+  X:0091H         SYMBOL        j
   -------         ENDDO         
   C:080AH         LINE#         131
   C:0837H         LINE#         134
@@ -599,9 +611,6 @@ SYMBOL TABLE OF MODULE:  debug (DEBUG)
   C:0844H         LINE#         140
   C:0864H         LINE#         141
   C:0864H         LINE#         142
-BL51 BANKED LINKER/LOCATER V6.22                                                      06/24/2014  09:29:12  PAGE 11
-
-
   C:0864H         LINE#         143
   C:0864H         LINE#         144
   C:0887H         LINE#         145
@@ -650,6 +659,9 @@ SYMBOL TABLE OF MODULE:  debug (DEBUG)
   C:0998H         LINE#         204
   C:0998H         LINE#         206
   -------         ENDPROC       TIMER2_ISR
+BL51 BANKED LINKER/LOCATER V6.22                                                      06/26/2014  10:36:52  PAGE 12
+
+
   -------         PROC          FREQUENCY_MEASURE_PROCESS
   -------         DO            
   X:0000H         SYMBOL        frq_chnl
@@ -659,9 +671,6 @@ SYMBOL TABLE OF MODULE:  debug (DEBUG)
   C:003EH         LINE#         210
   C:003EH         LINE#         214
   C:004BH         LINE#         215
-BL51 BANKED LINKER/LOCATER V6.22                                                      06/24/2014  09:29:12  PAGE 12
-
-
   C:004BH         LINE#         217
   C:0182H         LINE#         219
   C:019EH         LINE#         220
@@ -710,6 +719,9 @@ SYMBOL TABLE OF MODULE:  debug (DEBUG)
   C:036FH         LINE#         283
   C:0371H         LINE#         285
   C:0371H         LINE#         286
+BL51 BANKED LINKER/LOCATER V6.22                                                      06/26/2014  10:36:52  PAGE 13
+
+
   C:037BH         LINE#         287
   C:037BH         LINE#         288
   C:037DH         LINE#         290
@@ -719,9 +731,6 @@ SYMBOL TABLE OF MODULE:  debug (DEBUG)
   C:0404H         LINE#         296
   C:0415H         LINE#         297
   C:0415H         LINE#         298
-BL51 BANKED LINKER/LOCATER V6.22                                                      06/24/2014  09:29:12  PAGE 13
-
-
   C:0423H         LINE#         299
   C:0425H         LINE#         301
   C:0425H         LINE#         302
@@ -770,6 +779,9 @@ SYMBOL TABLE OF MODULE:  debug (DEBUG)
   C:05A0H         PUBLIC        ?C?UIDIV
   -------         ENDMOD        ?C?UIDIV
 
+BL51 BANKED LINKER/LOCATER V6.22                                                      06/26/2014  10:36:52  PAGE 14
+
+
   -------         MODULE        ?C?IILDX
   C:05F5H         PUBLIC        ?C?IILDX
   -------         ENDMOD        ?C?IILDX
@@ -779,9 +791,6 @@ SYMBOL TABLE OF MODULE:  debug (DEBUG)
   -------         ENDMOD        ?C?LMUL
 
   -------         MODULE        ?C?ULDIV
-BL51 BANKED LINKER/LOCATER V6.22                                                      06/24/2014  09:29:12  PAGE 14
-
-
   C:0696H         PUBLIC        ?C?ULDIV
   -------         ENDMOD        ?C?ULDIV
 
@@ -829,5 +838,8 @@ SYMBOL TABLE OF MODULE:  debug (DEBUG)
   C:07DDH         PUBLIC        ?C?LIMUL
   -------         ENDMOD        ?C?LIMUL
 
-Program Size: data=44.0 xdata=145 code=4027
+Program Size: data=44.0 xdata=146 code=4045
+BL51 BANKED LINKER/LOCATER V6.22                                                      06/26/2014  10:36:52  PAGE 15
+
+
 LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

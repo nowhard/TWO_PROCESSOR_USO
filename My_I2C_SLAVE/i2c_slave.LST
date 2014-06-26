@@ -1,4 +1,4 @@
-C51 COMPILER V9.00   I2C_SLAVE                                                             06/24/2014 09:27:05 PAGE 1   
+C51 COMPILER V9.00   I2C_SLAVE                                                             06/26/2014 10:36:52 PAGE 1   
 
 
 C51 COMPILER V9.00, COMPILATION OF MODULE I2C_SLAVE
@@ -62,7 +62,7 @@ line level    source
   52          {
   53   1              I2CCON=0x00; // ведомый
   54   1              I2CADD=0x58;
-C51 COMPILER V9.00   I2C_SLAVE                                                             06/24/2014 09:27:05 PAGE 2   
+C51 COMPILER V9.00   I2C_SLAVE                                                             06/26/2014 10:36:52 PAGE 2   
 
   55   1              IEIP2|=0x1; // разрешение прерывания от I2C     
   56   1              channels.transfer=0;
@@ -126,16 +126,16 @@ line level    source
  114   2              }
  115   1              else   //передача
  116   1              {
-C51 COMPILER V9.00   I2C_SLAVE                                                             06/24/2014 09:27:05 PAGE 3   
+C51 COMPILER V9.00   I2C_SLAVE                                                             06/26/2014 10:36:52 PAGE 3   
 
- 117   2                      if(count<11)
+ 117   2                      if(count<I2C_FRAME_SIZE)
  118   2                      {               
  119   3                              I2CDAT=channels.I2C_CHNL.i2c_buf[count];
  120   3                              count++;
  121   3                              
- 122   3                              if(count==10)
+ 122   3                              if(count==(I2C_FRAME_SIZE-1))
  123   3                              {
- 124   4                                      channels.I2C_CHNL.channels.CRC=CRC_Check(channels.I2C_CHNL.i2c_buf,10);
+ 124   4                                      channels.I2C_CHNL.channels.CRC=CRC_Check(channels.I2C_CHNL.i2c_buf,I2C_FRAME_SIZE-1);
  125   4                                      //channels.transfer=0;
  126   4                              }
  127   3                      }

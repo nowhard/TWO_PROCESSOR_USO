@@ -38,6 +38,8 @@ unsigned char xdata protocol_type=PROTO_TYPE_NEW;//тип протокола
 volatile struct pt pt_proto, pt_buf_handle;
 
 volatile struct RingBuf rngbuf;
+
+extern struct I2C_Channel xdata i2c_channels;
 //-----------------------------------------------------------------------------------
 union //объединение для конвертирования char->long
 {
@@ -1345,7 +1347,7 @@ void Restore_Dev_Address_Desc(void)//восстановить из ппзу адрес и информацию об 
 
 		for(i=(temp_tail-temp_count);i!=temp_tail;i++)//поиск стартовой последовательности
 		{
-			if(MB_ASCII_ON)
+			if(i2c_channels.I2C_CHNL.channels.protocol_type==PROTO_MB_ASCII)
 			{
 				switch(rngbuf.buf[i])
 				{

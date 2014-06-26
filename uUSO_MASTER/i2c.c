@@ -43,6 +43,8 @@ void I2C_Init(void)
 	PT_INIT(&pt_i2c_write_buf);
 	PT_INIT(&pt_i2c_read_complete);
 
+	i2c_channels.I2C_CHNL.channels.protocol_type=PROTO_GEOSPHERE;
+
 	return;
 }
 //--------------------------------------------------------------
@@ -286,7 +288,7 @@ static PT_THREAD(I2C_Write_Buf(struct pt *pt,unsigned char *buf,unsigned char le
 static PT_THREAD(I2C_Read_Complete(struct pt *pt))//постобработка пакета
 {
 	PT_BEGIN(pt);
-   if(i2c_channels.I2C_CHNL.channels.CRC==CRC_Check(i2c_channels.I2C_CHNL.i2c_buf,10))
+   if(i2c_channels.I2C_CHNL.channels.CRC==CRC_Check(i2c_channels.I2C_CHNL.i2c_buf,I2C_FRAME_SIZE-1))
    {
  	channels[11].channel_data=i2c_channels.I2C_CHNL.channels.DOL;
 
@@ -297,8 +299,7 @@ static PT_THREAD(I2C_Read_Complete(struct pt *pt))//постобработка пакета
 		{
 				channels[12].channel_data=i2c_channels.I2C_CHNL.channels.frequency;
 				channels[12].settings.set.modific=CHNL_FREQ_256;
-				channel_number=CHANNEL_NUMBER-1; //удаляем канал усреднения высокой частоты
-				
+				channel_number=CHANNEL_NUMBER-1; //удаляем канал усреднения высокой частоты		
 		}
 		break;
 
@@ -308,7 +309,6 @@ static PT_THREAD(I2C_Read_Complete(struct pt *pt))//постобработка пакета
 				channels[13].channel_data=i2c_channels.I2C_CHNL.channels.mid_frequency;
 				channels[12].settings.set.modific=CHNL_FREQ_COUNT_T;
 				channel_number=CHANNEL_NUMBER; //все каналы задействованы
-
 		}
 		break;
 

@@ -1,4 +1,4 @@
-C51 COMPILER V9.00   DOL                                                                   06/23/2014 17:11:44 PAGE 1   
+C51 COMPILER V9.00   DOL                                                                   06/26/2014 09:13:09 PAGE 1   
 
 
 C51 COMPILER V9.00, COMPILATION OF MODULE DOL
@@ -62,7 +62,7 @@ line level    source
   52   2                      //channels.I2C_CHNL.channels.DOL=counter_32;
   53   2                      channels.DOL_buf=counter_32;
   54   2              }
-C51 COMPILER V9.00   DOL                                                                   06/23/2014 17:11:44 PAGE 2   
+C51 COMPILER V9.00   DOL                                                                   06/26/2014 09:13:09 PAGE 2   
 
   55   1              
   56   1              STI_EXT

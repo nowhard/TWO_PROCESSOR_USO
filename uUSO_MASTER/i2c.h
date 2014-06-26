@@ -7,6 +7,7 @@
 #include "proto_uso/channels.h"
 
 #define I2C_ADDR 0x58
+#define I2C_FRAME_SIZE	12
 //------------------------------------------
 struct I2C_Channel	   //структура кадра I2C
 {	
@@ -19,10 +20,11 @@ struct I2C_Channel	   //структура кадра I2C
 			unsigned int frequency;
 			unsigned int mid_frequency;
 			unsigned char state_byte;
+			unsigned char protocol_type;
 			unsigned char CRC; 
 		} channels;
 	
-		unsigned char i2c_buf[11];//сериализованная часть структуры
+		unsigned char i2c_buf[I2C_FRAME_SIZE];//сериализованная часть структуры
 	} I2C_CHNL;
 } ;
 //-------------------------------------------
@@ -30,6 +32,12 @@ enum
 {
 	SLAVE_STATE_BYTE_RESET=0x12,
 	SLAVE_DOL_COUNT_RESET =0x13
+};
+
+enum
+{
+	PROTO_GEOSPHERE=0,
+	PROTO_MB_ASCII=1
 };
 
 

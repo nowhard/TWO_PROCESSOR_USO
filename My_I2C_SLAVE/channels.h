@@ -18,6 +18,7 @@
 	#define  CHNL_FREQ_PERIOD	3
 	#define	 CHNL_FREQ_COUNT	4
 //---------------------------------------
+#define I2C_FRAME_SIZE	12
 struct Channel
 {	
 	union 
@@ -29,10 +30,11 @@ struct Channel
 			unsigned int frequency;
 			unsigned int mid_frequency;
 			unsigned char state_byte;
+			unsigned char protocol_type;
 			unsigned char CRC; 
 		} channels;
 	
-		unsigned char i2c_buf[11];//сериализованная часть структуры
+		unsigned char i2c_buf[I2C_FRAME_SIZE];//сериализованная часть структуры
 	} I2C_CHNL;
 	unsigned char transfer;
 	unsigned long DOL_buf;		  //буферные переменные
