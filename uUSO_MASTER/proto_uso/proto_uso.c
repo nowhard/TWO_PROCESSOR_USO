@@ -1247,7 +1247,7 @@ PT_THREAD(ProtoProcess(struct pt *pt))
 
 			wdt_count[Proto_Proc].count++;
 
-		    if(protocol_type==PROTO_TYPE_NEW)
+		    if((protocol_type==PROTO_TYPE_NEW) || (protocol_type==PROTO_TYPE_MODBUS_ASCII))
 			{
 				PT_DELAY(pt,10);
 			}
