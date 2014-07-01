@@ -36,7 +36,10 @@ volatile unsigned long  temp;
 		}
 	
 	  //-----------------копируем во временный массив-----------------------------
+	  	EADC = 0;
 	   	memcpy(mas_copy,adc_channels[mid_cycle_counter].ADC_BUF_UN,ADC_BUF_SIZE*sizeof(unsigned long)); 
+		EADC = 1;
+
 		PT_YIELD(pt);//отдаем другим процессам
 	  //--------------сортировка пузырьком--------------------------------
 		  for (i=ADC_BUF_SIZE-1;i>0;i--)

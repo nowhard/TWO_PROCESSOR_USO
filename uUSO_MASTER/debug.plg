@@ -771,3 +771,38 @@ Erase Done.
 Programming Done.
 Verify Done.
 Application running ...
+Build target 'Target 1'
+compiling ulongsort.c...
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_INT_TO_SYM_4?MODBUS_ASCII
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_SYM_8_TO_LONG?MODBUS_ASCII
+Program Size: data=19.0 xdata=1887 code=21319
+creating hex file from "debug"...
+"debug" - 0 Error(s), 2 Warning(s).
+Build target 'Target 1'
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_INT_TO_SYM_4?MODBUS_ASCII
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_SYM_8_TO_LONG?MODBUS_ASCII
+Program Size: data=19.0 xdata=1887 code=21319
+creating hex file from "debug"...
+"debug" - 0 Error(s), 2 Warning(s).
+Build target 'Target 1'
+linking...
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_INT_TO_SYM_4?MODBUS_ASCII
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_SYM_8_TO_LONG?MODBUS_ASCII
+Program Size: data=19.0 xdata=1887 code=21319
+creating hex file from "debug"...
+"debug" - 0 Error(s), 2 Warning(s).
+Load "D:\\PROJECTS\\GIT_REPOSITORY\\8051\\keil\\Protothreads\\USO_PT\\uUSO_MASTER\\debug" 
+Detected Device: ADI 847     Monitor Revision: V217
+Erasing Program Flash...
+Erase Done.
+Programming Done.
+Verify Done.
+Application running ...

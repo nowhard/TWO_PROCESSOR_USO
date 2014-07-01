@@ -1,4 +1,4 @@
-C51 COMPILER V9.00   ULONGSORT                                                             06/23/2014 16:49:28 PAGE 1   
+C51 COMPILER V9.00   ULONGSORT                                                             07/01/2014 11:49:57 PAGE 1   
 
 
 C51 COMPILER V9.00, COMPILATION OF MODULE ULONGSORT
@@ -46,45 +46,48 @@ line level    source
   36   5                      }
   37   4              
   38   4                //-----------------копируем во временный массив-----------------------------
-  39   4                      memcpy(mas_copy,adc_channels[mid_cycle_counter].ADC_BUF_UN,ADC_BUF_SIZE*sizeof(unsigned long)); 
-  40   4                      PT_YIELD(pt);//отдаем другим процессам
-  41   4                //--------------сортировка пузырьком--------------------------------
-  42   4                        for (i=ADC_BUF_SIZE-1;i>0;i--)
-  43   4                        {
-  44   5                          for (j=0;j<i;j++)
-  45   5                          {
-  46   6                              if(mas_copy[j]>mas_copy[j+1])
-  47   6                              {
-  48   7                                  temp=mas_copy[j];
-  49   7                                  mas_copy[j]=mas_copy[j+1];
-  50   7                                  mas_copy[j+1]=temp;
-  51   7                              }
-  52   6                                      PT_YIELD(pt);
-  53   6                           }
-  54   5                        }
-C51 COMPILER V9.00   ULONGSORT                                                             06/23/2014 16:49:28 PAGE 2   
+  39   4                      EADC = 0;
+  40   4                      memcpy(mas_copy,adc_channels[mid_cycle_counter].ADC_BUF_UN,ADC_BUF_SIZE*sizeof(unsigned long)); 
+  41   4                      EADC = 1;
+  42   4      
+  43   4                      PT_YIELD(pt);//отдаем другим процессам
+  44   4                //--------------сортировка пузырьком--------------------------------
+  45   4                        for (i=ADC_BUF_SIZE-1;i>0;i--)
+  46   4                        {
+  47   5                          for (j=0;j<i;j++)
+  48   5                          {
+  49   6                              if(mas_copy[j]>mas_copy[j+1])
+  50   6                              {
+  51   7                                  temp=mas_copy[j];
+  52   7                                  mas_copy[j]=mas_copy[j+1];
+  53   7                                  mas_copy[j+1]=temp;
+  54   7                              }
+C51 COMPILER V9.00   ULONGSORT                                                             07/01/2014 11:49:57 PAGE 2   
 
-  55   4                 //-----------находим медиану--------------------
-  56   4                      channels[mid_cycle_counter].channel_data=(mas_copy[(ADC_BUF_SIZE>>1)-1]+mas_copy[ADC_BUF_SIZE>>1])>>1;
-  57   4      
-  58   4                      if(channels[mid_cycle_counter].calibrate.cal.calibrate)
-  59   4                      {
-  60   5                              channels[mid_cycle_counter].channel_data_calibrate=GetCalibrateVal(mid_cycle_counter,channels[mid_cycl
+  55   6                                      PT_YIELD(pt);
+  56   6                           }
+  57   5                        }
+  58   4                 //-----------находим медиану--------------------
+  59   4                      channels[mid_cycle_counter].channel_data=(mas_copy[(ADC_BUF_SIZE>>1)-1]+mas_copy[ADC_BUF_SIZE>>1])>>1;
+  60   4      
+  61   4                      if(channels[mid_cycle_counter].calibrate.cal.calibrate)
+  62   4                      {
+  63   5                              channels[mid_cycle_counter].channel_data_calibrate=GetCalibrateVal(mid_cycle_counter,channels[mid_cycl
              -e_counter].channel_data);     //калиброванная величина
-  61   5                      }
-  62   4      
-  63   4                      adc_channels[mid_cycle_counter].new_measuring=0;
-  64   4                      wdt_count[Sort_Proc].count++;
-  65   4                      PT_RESTART(pt);
-  66   4                //----------------------------------------------      
-  67   4         }
-  68   3         PT_END(pt);
-  69   1       }
-  70          
+  64   5                      }
+  65   4      
+  66   4                      adc_channels[mid_cycle_counter].new_measuring=0;
+  67   4                      wdt_count[Sort_Proc].count++;
+  68   4                      PT_RESTART(pt);
+  69   4                //----------------------------------------------      
+  70   4         }
+  71   3         PT_END(pt);
+  72   1       }
+  73          
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    816    ----
+   CODE SIZE        =    820    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =     40       4
    PDATA SIZE       =   ----    ----
