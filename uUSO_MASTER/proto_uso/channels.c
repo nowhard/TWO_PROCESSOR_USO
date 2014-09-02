@@ -98,7 +98,7 @@ void ChannelsInit(void) //using 0//инициализация структуры каналов
 		channels[3].settings.set.type=CHNL_ADC;
 		channels[3].channel_data=0;
 		// КАНАЛ 5 - фиксированый АЦП
-		channels[4].number=0;		 
+		channels[4].number=0xFF;		 
 		channels[4].settings.set.type=CHNL_ADC;
 		channels[4].channel_data=0;
 		// КАНАЛ 6 - фиксированый АЦП
