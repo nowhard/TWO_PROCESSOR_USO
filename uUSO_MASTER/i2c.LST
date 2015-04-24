@@ -1,4 +1,4 @@
-C51 COMPILER V9.00   I2C                                                                   09/02/2014 11:13:17 PAGE 1   
+C51 COMPILER V9.00   I2C                                                                   04/24/2015 12:10:37 PAGE 1   
 
 
 C51 COMPILER V9.00, COMPILATION OF MODULE I2C
@@ -62,7 +62,7 @@ line level    source
   49   1              DEV_ADDR=(addr<<1)&0xFE;
   50   1              
   51   1              byte_num_write=par_buf_len;
-C51 COMPILER V9.00   I2C                                                                   09/02/2014 11:13:17 PAGE 2   
+C51 COMPILER V9.00   I2C                                                                   04/24/2015 12:10:37 PAGE 2   
 
   52   1              byte_num_read=buf_len;
   53   1              
@@ -126,7 +126,7 @@ line level    source
  109   5                              MCO=0;
  110   5                          MDO=0;                                      
  111   5                              MCO=1;                          
-C51 COMPILER V9.00   I2C                                                                   09/02/2014 11:13:17 PAGE 3   
+C51 COMPILER V9.00   I2C                                                                   04/24/2015 12:10:37 PAGE 3   
 
  112   5                              PT_YIELD(pt);//дадим другим процессам время                                                                             
  113   5                              MDO=1;
@@ -190,7 +190,7 @@ line level    source
  169   4                //-----------------------------------------------------------------------------
  170   4      
  171   4                PT_SPAWN(pt, &pt_i2c_read_complete, I2C_Read_Complete(&pt_i2c_read_complete));
-C51 COMPILER V9.00   I2C                                                                   09/02/2014 11:13:17 PAGE 4   
+C51 COMPILER V9.00   I2C                                                                   04/24/2015 12:10:37 PAGE 4   
 
  172   4      
  173   4               //----------------------------------
@@ -254,7 +254,7 @@ line level    source
  230          //-------------------------------------------------------------
  231          static PT_THREAD(I2C_Write_Buf(struct pt *pt,unsigned char *buf,unsigned char len))//дочерний поток записи
              - буфера I2C
-C51 COMPILER V9.00   I2C                                                                   09/02/2014 11:13:17 PAGE 5   
+C51 COMPILER V9.00   I2C                                                                   04/24/2015 12:10:37 PAGE 5   
 
  232           {  
  233   1                 static volatile unsigned char write_byte_counter,bit_counter,write_byte;
@@ -318,7 +318,7 @@ MODULE INFORMATION:   STATIC OVERLAYABLE
    CODE SIZE        =   1278    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =     47      33
-C51 COMPILER V9.00   I2C                                                                   09/02/2014 11:13:17 PAGE 6   
+C51 COMPILER V9.00   I2C                                                                   04/24/2015 12:10:37 PAGE 6   
 
    PDATA SIZE       =   ----    ----
    DATA SIZE        =   ----    ----

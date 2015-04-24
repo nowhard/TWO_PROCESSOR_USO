@@ -3,10 +3,25 @@
 //------------------------------------------------------------
 unsigned long GetCalibrateVal(unsigned char channel_num,unsigned long ADC_Code)   //преобразование значения АЦП в калиброванное значение	 ??? проверить && debug
 {
-	if(ADC_Code==0)
-		return 0;
+	float result=0;
 
-	return (unsigned long)(ADC_Code*channels[channel_num].calibrate.cal.K+channels[channel_num].calibrate.cal.C);	
+	result=ADC_Code*channels[channel_num].calibrate.cal.K+channels[channel_num].calibrate.cal.C;
+
+	if(result>(float)0xFFFFFF)
+	{
+		return 0xFFFFFF;
+	}
+	else
+	{
+		if(result<0)
+		{
+			return 0;
+		}
+		else
+		{
+			return (unsigned long)result; 
+		}
+	}
 }
 //------------------------------------------------------------
 void RestoreCalibrate(void)		 //восстановление точек калибровки из EEPROM
