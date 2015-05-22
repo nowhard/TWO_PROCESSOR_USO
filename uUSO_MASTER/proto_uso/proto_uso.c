@@ -1236,7 +1236,6 @@ void ProtoBufHandling(void) //using 0 //процесс обработки принятого запроса
   return;
 }
 //-----------------------------------------------------------------------------------
-//#pragma OT(0,Speed) 
 PT_THREAD(ProtoProcess(struct pt *pt))
  {
  static unsigned char  CRC=0x0;

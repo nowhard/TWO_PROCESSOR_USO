@@ -9,7 +9,7 @@
 #include "adc.h"
 #include "watchdog.h"
 #include "proto_uso/channels.h"
-#include "frequency.h"
+//#include "frequency.h"
 
 #include "i2c.h"
 #include "ulongsort.h"
@@ -66,7 +66,7 @@ void main(void) //using 0
 	{	
 		ProtoProcess(&pt_proto);
 		I2C_RepeatRead(&pt_i2c_read);
-		Frequency_Measure_Process(&pt_freq_measure);	
+//		Frequency_Measure_Process(&pt_freq_measure);	
 		ulongsort_process(&pt_sort);
 		I2C_Process(&pt_i2c_process);
 		WDT_Process(&pt_wdt);	    
@@ -98,7 +98,7 @@ void Timer1_Interrupt(void) interrupt 3  //таймер шедулера
 	TH1	= TH1_VAL; ///200 Hz;
 	TL1 = TL1_VAL;//
 	pt_i2c_read.pt_time++;
-	pt_freq_measure.pt_time++;
+//	pt_freq_measure.pt_time++;
 	pt_sort.pt_time++;
 	pt_proto.pt_time++;
 	pt_wdt.pt_time++;

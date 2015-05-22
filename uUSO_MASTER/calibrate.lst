@@ -1,4 +1,4 @@
-C51 COMPILER V9.00   CALIBRATE                                                             06/20/2014 09:02:40 PAGE 1   
+C51 COMPILER V9.00   CALIBRATE                                                             05/22/2015 09:20:44 PAGE 1   
 
 
 C51 COMPILER V9.00, COMPILATION OF MODULE CALIBRATE
@@ -62,7 +62,7 @@ line level    source
   51   1                      channels[channel_num].calibrate.cal.K= K;
   52   1                      channels[channel_num].calibrate.cal.C= C;
   53   1                      EEPROM_Write(&channels[channel_num].calibrate.serialize,3,ADC_CALIBRATE_ADDR+channel_num*3);
-C51 COMPILER V9.00   CALIBRATE                                                             06/20/2014 09:02:40 PAGE 2   
+C51 COMPILER V9.00   CALIBRATE                                                             05/22/2015 09:20:44 PAGE 2   
 
   54   1      
   55   1                      true_crc= (unsigned long)Calibrate_Get_CRC();//расчет текущей CRC калибровок
@@ -124,7 +124,7 @@ line level    source
  110   1                      EEPROM_Write(&true_crc,1,CALIBRATE_DEVICE_CRC_ADDR);//запомним CRC              
  111   1      }
  112          //----------------------------------------------------------------
-C51 COMPILER V9.00   CALIBRATE                                                             06/20/2014 09:02:40 PAGE 3   
+C51 COMPILER V9.00   CALIBRATE                                                             05/22/2015 09:20:44 PAGE 3   
 
 ASSEMBLY LISTING OF GENERATED OBJECT CODE
 
@@ -163,129 +163,129 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0028 A4                MUL     AB
 0029 2400        E     ADD     A,#LOW channels+0EH
 002B F582              MOV     DPL,A
-002D E5F0              MOV     A,B
-002F 3400        E     ADDC    A,#HIGH channels+0EH
-0031 F583              MOV     DPH,A
-0033 E0                MOVX    A,@DPTR
-0034 F8                MOV     R0,A
-0035 A3                INC     DPTR
-0036 E0                MOVX    A,@DPTR
-0037 F9                MOV     R1,A
-0038 A3                INC     DPTR
-0039 E0                MOVX    A,@DPTR
-003A FA                MOV     R2,A
-003B A3                INC     DPTR
-003C E0                MOVX    A,@DPTR
-003D FB                MOV     R3,A
-003E 120000      E     LCALL   ?C?FPMUL
-0041 900000      R     MOV     DPTR,#channel_num
-0044 E0                MOVX    A,@DPTR
-0045 75F019            MOV     B,#019H
-0048 A4                MUL     AB
-0049 2400        E     ADD     A,#LOW channels+012H
-004B F582              MOV     DPL,A
-004D E5F0              MOV     A,B
-004F 3400        E     ADDC    A,#HIGH channels+012H
-0051 F583              MOV     DPH,A
-0053 E0                MOVX    A,@DPTR
-C51 COMPILER V9.00   CALIBRATE                                                             06/20/2014 09:02:40 PAGE 4   
+002D E4                CLR     A
+002E 3400        E     ADDC    A,#HIGH channels+0EH
+0030 F583              MOV     DPH,A
+0032 E0                MOVX    A,@DPTR
+0033 F8                MOV     R0,A
+0034 A3                INC     DPTR
+0035 E0                MOVX    A,@DPTR
+0036 F9                MOV     R1,A
+0037 A3                INC     DPTR
+0038 E0                MOVX    A,@DPTR
+0039 FA                MOV     R2,A
+003A A3                INC     DPTR
+003B E0                MOVX    A,@DPTR
+003C FB                MOV     R3,A
+003D 120000      E     LCALL   ?C?FPMUL
+0040 900000      R     MOV     DPTR,#channel_num
+0043 E0                MOVX    A,@DPTR
+0044 75F019            MOV     B,#019H
+0047 A4                MUL     AB
+0048 2400        E     ADD     A,#LOW channels+012H
+004A F582              MOV     DPL,A
+004C E4                CLR     A
+004D 3400        E     ADDC    A,#HIGH channels+012H
+004F F583              MOV     DPH,A
+0051 E0                MOVX    A,@DPTR
+C51 COMPILER V9.00   CALIBRATE                                                             05/22/2015 09:20:44 PAGE 4   
 
-0054 F8                MOV     R0,A
-0055 A3                INC     DPTR
-0056 E0                MOVX    A,@DPTR
-0057 F9                MOV     R1,A
-0058 A3                INC     DPTR
-0059 E0                MOVX    A,@DPTR
-005A FA                MOV     R2,A
-005B A3                INC     DPTR
-005C E0                MOVX    A,@DPTR
-005D FB                MOV     R3,A
-005E 120000      E     LCALL   ?C?FPADD
-0061 900000      R     MOV     DPTR,#result
-0064 120000      E     LCALL   ?C?LSTXDATA
+0052 F8                MOV     R0,A
+0053 A3                INC     DPTR
+0054 E0                MOVX    A,@DPTR
+0055 F9                MOV     R1,A
+0056 A3                INC     DPTR
+0057 E0                MOVX    A,@DPTR
+0058 FA                MOV     R2,A
+0059 A3                INC     DPTR
+005A E0                MOVX    A,@DPTR
+005B FB                MOV     R3,A
+005C 120000      E     LCALL   ?C?FPADD
+005F 900000      R     MOV     DPTR,#result
+0062 120000      E     LCALL   ?C?LSTXDATA
                                            ; SOURCE LINE # 10
-0067 7FFF              MOV     R7,#0FFH
-0069 7EFF              MOV     R6,#0FFH
-006B 7D7F              MOV     R5,#07FH
-006D 7C4B              MOV     R4,#04BH
-006F 900000      R     MOV     DPTR,#result
-0072 E0                MOVX    A,@DPTR
-0073 F8                MOV     R0,A
-0074 A3                INC     DPTR
-0075 E0                MOVX    A,@DPTR
-0076 F9                MOV     R1,A
-0077 A3                INC     DPTR
-0078 E0                MOVX    A,@DPTR
-0079 FA                MOV     R2,A
-007A A3                INC     DPTR
-007B E0                MOVX    A,@DPTR
-007C FB                MOV     R3,A
-007D 120000      E     LCALL   ?C?FPCMP3
-0080 600A              JZ      ?C0001
-0082 4008              JC      ?C0001
+0065 7FFF              MOV     R7,#0FFH
+0067 7EFF              MOV     R6,#0FFH
+0069 7D7F              MOV     R5,#07FH
+006B 7C4B              MOV     R4,#04BH
+006D 900000      R     MOV     DPTR,#result
+0070 E0                MOVX    A,@DPTR
+0071 F8                MOV     R0,A
+0072 A3                INC     DPTR
+0073 E0                MOVX    A,@DPTR
+0074 F9                MOV     R1,A
+0075 A3                INC     DPTR
+0076 E0                MOVX    A,@DPTR
+0077 FA                MOV     R2,A
+0078 A3                INC     DPTR
+0079 E0                MOVX    A,@DPTR
+007A FB                MOV     R3,A
+007B 120000      E     LCALL   ?C?FPCMP3
+007E 600A              JZ      ?C0001
+0080 4008              JC      ?C0001
                                            ; SOURCE LINE # 11
                                            ; SOURCE LINE # 12
-0084 74FF              MOV     A,#0FFH
-0086 FF                MOV     R7,A
-0087 FE                MOV     R6,A
-0088 FD                MOV     R5,A
-0089 7C00              MOV     R4,#00H
-008B 22                RET     
+0082 74FF              MOV     A,#0FFH
+0084 FF                MOV     R7,A
+0085 FE                MOV     R6,A
+0086 FD                MOV     R5,A
+0087 7C00              MOV     R4,#00H
+0089 22                RET     
                                            ; SOURCE LINE # 13
-008C         ?C0001:
+008A         ?C0001:
                                            ; SOURCE LINE # 15
                                            ; SOURCE LINE # 16
-008C E4                CLR     A
-008D FF                MOV     R7,A
-008E FE                MOV     R6,A
-008F FD                MOV     R5,A
-0090 FC                MOV     R4,A
-0091 900000      R     MOV     DPTR,#result
-0094 E0                MOVX    A,@DPTR
-0095 F8                MOV     R0,A
-0096 A3                INC     DPTR
-0097 E0                MOVX    A,@DPTR
-0098 F9                MOV     R1,A
-0099 A3                INC     DPTR
-009A E0                MOVX    A,@DPTR
-009B FA                MOV     R2,A
-009C A3                INC     DPTR
-009D E0                MOVX    A,@DPTR
-009E FB                MOV     R3,A
-C51 COMPILER V9.00   CALIBRATE                                                             06/20/2014 09:02:40 PAGE 5   
+008A E4                CLR     A
+008B FF                MOV     R7,A
+008C FE                MOV     R6,A
+008D FD                MOV     R5,A
+008E FC                MOV     R4,A
+008F 900000      R     MOV     DPTR,#result
+0092 E0                MOVX    A,@DPTR
+0093 F8                MOV     R0,A
+0094 A3                INC     DPTR
+0095 E0                MOVX    A,@DPTR
+0096 F9                MOV     R1,A
+0097 A3                INC     DPTR
+0098 E0                MOVX    A,@DPTR
+0099 FA                MOV     R2,A
+009A A3                INC     DPTR
+009B E0                MOVX    A,@DPTR
+009C FB                MOV     R3,A
+C51 COMPILER V9.00   CALIBRATE                                                             05/22/2015 09:20:44 PAGE 5   
 
-009F 120000      E     LCALL   ?C?FPCMP3
-00A2 5006              JNC     ?C0004
+009D 120000      E     LCALL   ?C?FPCMP3
+00A0 5006              JNC     ?C0004
                                            ; SOURCE LINE # 17
                                            ; SOURCE LINE # 18
-00A4 E4                CLR     A
-00A5 FF                MOV     R7,A
-00A6 FE                MOV     R6,A
-00A7 FD                MOV     R5,A
-00A8 FC                MOV     R4,A
-00A9 22                RET     
+00A2 E4                CLR     A
+00A3 FF                MOV     R7,A
+00A4 FE                MOV     R6,A
+00A5 FD                MOV     R5,A
+00A6 FC                MOV     R4,A
+00A7 22                RET     
                                            ; SOURCE LINE # 19
-00AA         ?C0004:
+00A8         ?C0004:
                                            ; SOURCE LINE # 21
                                            ; SOURCE LINE # 22
-00AA 900000      R     MOV     DPTR,#result
-00AD E0                MOVX    A,@DPTR
-00AE FC                MOV     R4,A
-00AF A3                INC     DPTR
-00B0 E0                MOVX    A,@DPTR
-00B1 FD                MOV     R5,A
-00B2 A3                INC     DPTR
-00B3 E0                MOVX    A,@DPTR
-00B4 FE                MOV     R6,A
-00B5 A3                INC     DPTR
-00B6 E0                MOVX    A,@DPTR
-00B7 FF                MOV     R7,A
-00B8 120000      E     LCALL   ?C?CASTF
+00A8 900000      R     MOV     DPTR,#result
+00AB E0                MOVX    A,@DPTR
+00AC FC                MOV     R4,A
+00AD A3                INC     DPTR
+00AE E0                MOVX    A,@DPTR
+00AF FD                MOV     R5,A
+00B0 A3                INC     DPTR
+00B1 E0                MOVX    A,@DPTR
+00B2 FE                MOV     R6,A
+00B3 A3                INC     DPTR
+00B4 E0                MOVX    A,@DPTR
+00B5 FF                MOV     R7,A
+00B6 120000      E     LCALL   ?C?CASTF
                                            ; SOURCE LINE # 23
                                            ; SOURCE LINE # 24
                                            ; SOURCE LINE # 25
-00BB         ?C0002:
-00BB 22                RET     
+00B9         ?C0002:
+00B9 22                RET     
              ; FUNCTION _GetCalibrateVal (END)
 
              ; FUNCTION RestoreCalibrate (BEGIN)
@@ -316,10 +316,10 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 001C 900000      R     MOV     DPTR,#i
 001F E0                MOVX    A,@DPTR
 0020 FF                MOV     R7,A
-C51 COMPILER V9.00   CALIBRATE                                                             06/20/2014 09:02:40 PAGE 6   
+C51 COMPILER V9.00   CALIBRATE                                                             05/22/2015 09:20:44 PAGE 6   
 
 0021 C3                CLR     C
-0022 940E              SUBB    A,#0EH
+0022 9406              SUBB    A,#06H
 0024 5030              JNC     ?C0007
                                            ; SOURCE LINE # 33
                                            ; SOURCE LINE # 34
@@ -380,7 +380,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 007C E0                MOVX    A,@DPTR
 007D FC                MOV     R4,A
 007E A3                INC     DPTR
-C51 COMPILER V9.00   CALIBRATE                                                             06/20/2014 09:02:40 PAGE 7   
+C51 COMPILER V9.00   CALIBRATE                                                             05/22/2015 09:20:44 PAGE 7   
 
 007F E0                MOVX    A,@DPTR
 0080 FD                MOV     R5,A
@@ -444,89 +444,89 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0020 E0                MOVX    A,@DPTR
 0021 FB                MOV     R3,A
 0022 75F019            MOV     B,#019H
-C51 COMPILER V9.00   CALIBRATE                                                             06/20/2014 09:02:40 PAGE 8   
+C51 COMPILER V9.00   CALIBRATE                                                             05/22/2015 09:20:44 PAGE 8   
 
 0025 A4                MUL     AB
 0026 2400        E     ADD     A,#LOW channels+0EH
 0028 F582              MOV     DPL,A
-002A E5F0              MOV     A,B
-002C 3400        E     ADDC    A,#HIGH channels+0EH
-002E F583              MOV     DPH,A
-0030 120000      E     LCALL   ?C?LSTXDATA
+002A E4                CLR     A
+002B 3400        E     ADDC    A,#HIGH channels+0EH
+002D F583              MOV     DPH,A
+002F 120000      E     LCALL   ?C?LSTXDATA
                                            ; SOURCE LINE # 52
-0033 900000      R     MOV     DPTR,#C
-0036 E0                MOVX    A,@DPTR
-0037 FC                MOV     R4,A
-0038 A3                INC     DPTR
-0039 E0                MOVX    A,@DPTR
-003A FD                MOV     R5,A
-003B A3                INC     DPTR
-003C E0                MOVX    A,@DPTR
-003D FE                MOV     R6,A
-003E A3                INC     DPTR
-003F E0                MOVX    A,@DPTR
-0040 FF                MOV     R7,A
+0032 900000      R     MOV     DPTR,#C
+0035 E0                MOVX    A,@DPTR
+0036 FC                MOV     R4,A
+0037 A3                INC     DPTR
+0038 E0                MOVX    A,@DPTR
+0039 FD                MOV     R5,A
+003A A3                INC     DPTR
+003B E0                MOVX    A,@DPTR
+003C FE                MOV     R6,A
+003D A3                INC     DPTR
+003E E0                MOVX    A,@DPTR
+003F FF                MOV     R7,A
+0040 EB                MOV     A,R3
 0041 75F019            MOV     B,#019H
-0044 EB                MOV     A,R3
-0045 A4                MUL     AB
-0046 2400        E     ADD     A,#LOW channels+012H
-0048 F582              MOV     DPL,A
-004A E5F0              MOV     A,B
-004C 3400        E     ADDC    A,#HIGH channels+012H
-004E F583              MOV     DPH,A
-0050 120000      E     LCALL   ?C?LSTXDATA
+0044 A4                MUL     AB
+0045 2400        E     ADD     A,#LOW channels+012H
+0047 F582              MOV     DPL,A
+0049 E4                CLR     A
+004A 3400        E     ADDC    A,#HIGH channels+012H
+004C F583              MOV     DPH,A
+004E 120000      E     LCALL   ?C?LSTXDATA
                                            ; SOURCE LINE # 53
-0053 EB                MOV     A,R3
-0054 75F019            MOV     B,#019H
-0057 A4                MUL     AB
-0058 2400        E     ADD     A,#LOW channels+0DH
-005A F9                MOV     R1,A
-005B 7400        E     MOV     A,#HIGH channels+0DH
-005D 35F0              ADDC    A,B
-005F FA                MOV     R2,A
-0060 7B01              MOV     R3,#01H
-0062 900000      R     MOV     DPTR,#channel_num
-0065 E0                MOVX    A,@DPTR
-0066 75F003            MOV     B,#03H
-0069 A4                MUL     AB
-006A 2450              ADD     A,#050H
-006C FE                MOV     R6,A
-006D E4                CLR     A
-006E 35F0              ADDC    A,B
-0070 900000      E     MOV     DPTR,#?_EEPROM_Write?BYTE+05H
-0073 F0                MOVX    @DPTR,A
-0074 A3                INC     DPTR
-0075 CE                XCH     A,R6
-0076 F0                MOVX    @DPTR,A
-0077 7D03              MOV     R5,#03H
-0079 7C00              MOV     R4,#00H
-007B 120000      E     LCALL   _EEPROM_Write
+0051 EB                MOV     A,R3
+0052 75F019            MOV     B,#019H
+0055 A4                MUL     AB
+0056 2400        E     ADD     A,#LOW channels+0DH
+0058 F9                MOV     R1,A
+0059 7400        E     MOV     A,#HIGH channels+0DH
+005B 35F0              ADDC    A,B
+005D FA                MOV     R2,A
+005E 7B01              MOV     R3,#01H
+0060 900000      R     MOV     DPTR,#channel_num
+0063 E0                MOVX    A,@DPTR
+0064 75F003            MOV     B,#03H
+0067 A4                MUL     AB
+0068 2450              ADD     A,#050H
+006A FE                MOV     R6,A
+006B E4                CLR     A
+006C 35F0              ADDC    A,B
+006E 900000      E     MOV     DPTR,#?_EEPROM_Write?BYTE+05H
+0071 F0                MOVX    @DPTR,A
+0072 A3                INC     DPTR
+0073 CE                XCH     A,R6
+0074 F0                MOVX    @DPTR,A
+0075 7D03              MOV     R5,#03H
+0077 7C00              MOV     R4,#00H
+0079 120000      E     LCALL   _EEPROM_Write
                                            ; SOURCE LINE # 55
-007E 120000      R     LCALL   Calibrate_Get_CRC
-0081 E4                CLR     A
-0082 FC                MOV     R4,A
-0083 FD                MOV     R5,A
-0084 FE                MOV     R6,A
-0085 900000      R     MOV     DPTR,#true_crc
-C51 COMPILER V9.00   CALIBRATE                                                             06/20/2014 09:02:40 PAGE 9   
+007C 120000      R     LCALL   Calibrate_Get_CRC
+007F E4                CLR     A
+0080 FC                MOV     R4,A
+0081 FD                MOV     R5,A
+0082 FE                MOV     R6,A
+0083 900000      R     MOV     DPTR,#true_crc
+C51 COMPILER V9.00   CALIBRATE                                                             05/22/2015 09:20:44 PAGE 9   
 
-0088 120000      E     LCALL   ?C?LSTXDATA
+0086 120000      E     LCALL   ?C?LSTXDATA
                                            ; SOURCE LINE # 56
-008B 7B01              MOV     R3,#01H
-008D 7A00        R     MOV     R2,#HIGH true_crc
-008F 7900        R     MOV     R1,#LOW true_crc
-0091 900000      E     MOV     DPTR,#?_EEPROM_Write?BYTE+05H
-0094 E4                CLR     A
-0095 F0                MOVX    @DPTR,A
-0096 A3                INC     DPTR
-0097 74A1              MOV     A,#0A1H
-0099 F0                MOVX    @DPTR,A
-009A 7D01              MOV     R5,#01H
-009C 7C00              MOV     R4,#00H
-009E 120000      E     LCALL   _EEPROM_Write
+0089 7B01              MOV     R3,#01H
+008B 7A00        R     MOV     R2,#HIGH true_crc
+008D 7900        R     MOV     R1,#LOW true_crc
+008F 900000      E     MOV     DPTR,#?_EEPROM_Write?BYTE+05H
+0092 E4                CLR     A
+0093 F0                MOVX    @DPTR,A
+0094 A3                INC     DPTR
+0095 74A1              MOV     A,#0A1H
+0097 F0                MOVX    @DPTR,A
+0098 7D01              MOV     R5,#01H
+009A 7C00              MOV     R4,#00H
+009C 120000      E     LCALL   _EEPROM_Write
                                            ; SOURCE LINE # 59
-00A1         ?C0011:
-00A1 22                RET     
+009F         ?C0011:
+009F 22                RET     
              ; FUNCTION _Calibrate (END)
 
              ; FUNCTION Calibrate_Get_CRC (BEGIN)
@@ -572,7 +572,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 002B 3A                ADDC    A,R2
 002C FA                MOV     R2,A
 002D 120000      E     LCALL   ?C?CLDPTR
-C51 COMPILER V9.00   CALIBRATE                                                             06/20/2014 09:02:40 PAGE 10  
+C51 COMPILER V9.00   CALIBRATE                                                             05/22/2015 09:20:44 PAGE 10  
 
 0030 FF                MOV     R7,A
 0031 900000      R     MOV     DPTR,#crc
@@ -596,7 +596,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 004C 04                INC     A
 004D F0                MOVX    @DPTR,A
 004E E0                MOVX    A,@DPTR
-004F B40EBB            CJNE    A,#0EH,?C0012
+004F B406BB            CJNE    A,#06H,?C0012
 0052         ?C0013:
                                            ; SOURCE LINE # 74
 0052 900000      R     MOV     DPTR,#crc
@@ -627,7 +627,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 81
 0011 EB                MOV     A,R3
 0012 6401              XRL     A,#01H
-0014 7043              JNZ     ?C0019
+0014 7042              JNZ     ?C0019
                                            ; SOURCE LINE # 82
                                            ; SOURCE LINE # 83
 0016 900000      R     MOV     DPTR,#channel
@@ -636,116 +636,116 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 001B 75F019            MOV     B,#019H
 001E A4                MUL     AB
 001F 2400        E     ADD     A,#LOW channels+0DH
-C51 COMPILER V9.00   CALIBRATE                                                             06/20/2014 09:02:40 PAGE 11  
+C51 COMPILER V9.00   CALIBRATE                                                             05/22/2015 09:20:44 PAGE 11  
 
 0021 F582              MOV     DPL,A
-0023 E5F0              MOV     A,B
-0025 3400        E     ADDC    A,#HIGH channels+0DH
-0027 F583              MOV     DPH,A
-0029 7401              MOV     A,#01H
-002B F0                MOVX    @DPTR,A
+0023 E4                CLR     A
+0024 3400        E     ADDC    A,#HIGH channels+0DH
+0026 F583              MOV     DPH,A
+0028 7401              MOV     A,#01H
+002A F0                MOVX    @DPTR,A
                                            ; SOURCE LINE # 84
-002C EF                MOV     A,R7
-002D 75F019            MOV     B,#019H
-0030 A4                MUL     AB
-0031 2400        E     ADD     A,#LOW channels+0DH
-0033 F9                MOV     R1,A
-0034 7400        E     MOV     A,#HIGH channels+0DH
-0036 35F0              ADDC    A,B
-0038 FA                MOV     R2,A
-0039 7B01              MOV     R3,#01H
-003B 900000      R     MOV     DPTR,#channel
-003E E0                MOVX    A,@DPTR
-003F 75F003            MOV     B,#03H
-0042 A4                MUL     AB
-0043 2450              ADD     A,#050H
-0045 FE                MOV     R6,A
-0046 E4                CLR     A
-0047 35F0              ADDC    A,B
-0049 900000      E     MOV     DPTR,#?_EEPROM_Write?BYTE+05H
-004C F0                MOVX    @DPTR,A
-004D A3                INC     DPTR
-004E CE                XCH     A,R6
-004F F0                MOVX    @DPTR,A
-0050 7D03              MOV     R5,#03H
-0052 7C00              MOV     R4,#00H
-0054 120000      E     LCALL   _EEPROM_Write
+002B EF                MOV     A,R7
+002C 75F019            MOV     B,#019H
+002F A4                MUL     AB
+0030 2400        E     ADD     A,#LOW channels+0DH
+0032 F9                MOV     R1,A
+0033 7400        E     MOV     A,#HIGH channels+0DH
+0035 35F0              ADDC    A,B
+0037 FA                MOV     R2,A
+0038 7B01              MOV     R3,#01H
+003A 900000      R     MOV     DPTR,#channel
+003D E0                MOVX    A,@DPTR
+003E 75F003            MOV     B,#03H
+0041 A4                MUL     AB
+0042 2450              ADD     A,#050H
+0044 FE                MOV     R6,A
+0045 E4                CLR     A
+0046 35F0              ADDC    A,B
+0048 900000      E     MOV     DPTR,#?_EEPROM_Write?BYTE+05H
+004B F0                MOVX    @DPTR,A
+004C A3                INC     DPTR
+004D CE                XCH     A,R6
+004E F0                MOVX    @DPTR,A
+004F 7D03              MOV     R5,#03H
+0051 7C00              MOV     R4,#00H
+0053 120000      E     LCALL   _EEPROM_Write
                                            ; SOURCE LINE # 85
-0057 8046              SJMP    ?C0020
-0059         ?C0019:
+0056 8045              SJMP    ?C0020
+0058         ?C0019:
                                            ; SOURCE LINE # 87
                                            ; SOURCE LINE # 88
-0059 900000      R     MOV     DPTR,#flag
-005C E0                MOVX    A,@DPTR
-005D 7040              JNZ     ?C0020
+0058 900000      R     MOV     DPTR,#flag
+005B E0                MOVX    A,@DPTR
+005C 703F              JNZ     ?C0020
                                            ; SOURCE LINE # 89
                                            ; SOURCE LINE # 90
-005F 900000      R     MOV     DPTR,#channel
-0062 E0                MOVX    A,@DPTR
-0063 FF                MOV     R7,A
-0064 75F019            MOV     B,#019H
-0067 A4                MUL     AB
-0068 2400        E     ADD     A,#LOW channels+0DH
-006A F582              MOV     DPL,A
-006C E5F0              MOV     A,B
-006E 3400        E     ADDC    A,#HIGH channels+0DH
-0070 F583              MOV     DPH,A
-0072 E4                CLR     A
-0073 F0                MOVX    @DPTR,A
+005E 900000      R     MOV     DPTR,#channel
+0061 E0                MOVX    A,@DPTR
+0062 FF                MOV     R7,A
+0063 75F019            MOV     B,#019H
+0066 A4                MUL     AB
+0067 2400        E     ADD     A,#LOW channels+0DH
+0069 F582              MOV     DPL,A
+006B E4                CLR     A
+006C 3400        E     ADDC    A,#HIGH channels+0DH
+006E F583              MOV     DPH,A
+0070 E4                CLR     A
+0071 F0                MOVX    @DPTR,A
                                            ; SOURCE LINE # 91
-0074 EF                MOV     A,R7
-0075 75F019            MOV     B,#019H
-0078 A4                MUL     AB
-0079 2400        E     ADD     A,#LOW channels+0DH
-007B F9                MOV     R1,A
-007C 7400        E     MOV     A,#HIGH channels+0DH
-007E 35F0              ADDC    A,B
-C51 COMPILER V9.00   CALIBRATE                                                             06/20/2014 09:02:40 PAGE 12  
+0072 EF                MOV     A,R7
+0073 75F019            MOV     B,#019H
+0076 A4                MUL     AB
+0077 2400        E     ADD     A,#LOW channels+0DH
+0079 F9                MOV     R1,A
+007A 7400        E     MOV     A,#HIGH channels+0DH
+007C 35F0              ADDC    A,B
+C51 COMPILER V9.00   CALIBRATE                                                             05/22/2015 09:20:44 PAGE 12  
 
-0080 FA                MOV     R2,A
-0081 7B01              MOV     R3,#01H
-0083 900000      R     MOV     DPTR,#channel
-0086 E0                MOVX    A,@DPTR
-0087 75F003            MOV     B,#03H
-008A A4                MUL     AB
-008B 2450              ADD     A,#050H
-008D FE                MOV     R6,A
-008E E4                CLR     A
-008F 35F0              ADDC    A,B
-0091 900000      E     MOV     DPTR,#?_EEPROM_Write?BYTE+05H
-0094 F0                MOVX    @DPTR,A
-0095 A3                INC     DPTR
-0096 CE                XCH     A,R6
-0097 F0                MOVX    @DPTR,A
-0098 7D03              MOV     R5,#03H
-009A 7C00              MOV     R4,#00H
-009C 120000      E     LCALL   _EEPROM_Write
+007E FA                MOV     R2,A
+007F 7B01              MOV     R3,#01H
+0081 900000      R     MOV     DPTR,#channel
+0084 E0                MOVX    A,@DPTR
+0085 75F003            MOV     B,#03H
+0088 A4                MUL     AB
+0089 2450              ADD     A,#050H
+008B FE                MOV     R6,A
+008C E4                CLR     A
+008D 35F0              ADDC    A,B
+008F 900000      E     MOV     DPTR,#?_EEPROM_Write?BYTE+05H
+0092 F0                MOVX    @DPTR,A
+0093 A3                INC     DPTR
+0094 CE                XCH     A,R6
+0095 F0                MOVX    @DPTR,A
+0096 7D03              MOV     R5,#03H
+0098 7C00              MOV     R4,#00H
+009A 120000      E     LCALL   _EEPROM_Write
                                            ; SOURCE LINE # 92
                                            ; SOURCE LINE # 93
-009F         ?C0020:
+009D         ?C0020:
                                            ; SOURCE LINE # 95
-009F 120000      R     LCALL   Calibrate_Get_CRC
-00A2 E4                CLR     A
-00A3 FC                MOV     R4,A
-00A4 FD                MOV     R5,A
-00A5 FE                MOV     R6,A
-00A6 900000      R     MOV     DPTR,#true_crc
-00A9 120000      E     LCALL   ?C?LSTXDATA
+009D 120000      R     LCALL   Calibrate_Get_CRC
+00A0 E4                CLR     A
+00A1 FC                MOV     R4,A
+00A2 FD                MOV     R5,A
+00A3 FE                MOV     R6,A
+00A4 900000      R     MOV     DPTR,#true_crc
+00A7 120000      E     LCALL   ?C?LSTXDATA
                                            ; SOURCE LINE # 96
-00AC 7B01              MOV     R3,#01H
-00AE 7A00        R     MOV     R2,#HIGH true_crc
-00B0 7900        R     MOV     R1,#LOW true_crc
-00B2 900000      E     MOV     DPTR,#?_EEPROM_Write?BYTE+05H
-00B5 E4                CLR     A
-00B6 F0                MOVX    @DPTR,A
-00B7 A3                INC     DPTR
-00B8 74A1              MOV     A,#0A1H
-00BA F0                MOVX    @DPTR,A
-00BB 7D01              MOV     R5,#01H
-00BD 7C00              MOV     R4,#00H
-00BF 120000      E     LCALL   _EEPROM_Write
+00AA 7B01              MOV     R3,#01H
+00AC 7A00        R     MOV     R2,#HIGH true_crc
+00AE 7900        R     MOV     R1,#LOW true_crc
+00B0 900000      E     MOV     DPTR,#?_EEPROM_Write?BYTE+05H
+00B3 E4                CLR     A
+00B4 F0                MOVX    @DPTR,A
+00B5 A3                INC     DPTR
+00B6 74A1              MOV     A,#0A1H
+00B8 F0                MOVX    @DPTR,A
+00B9 7D01              MOV     R5,#01H
+00BB 7C00              MOV     R4,#00H
+00BD 120000      E     LCALL   _EEPROM_Write
                                            ; SOURCE LINE # 97
-00C2 22                RET     
+00C0 22                RET     
              ; FUNCTION _Calibrate_Set_Flag (END)
 
              ; FUNCTION Calibrate_Set_Default (BEGIN)
@@ -764,7 +764,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 000C 00                DB      00H
                                            ; SOURCE LINE # 104
 000D E4                CLR     A
-C51 COMPILER V9.00   CALIBRATE                                                             06/20/2014 09:02:40 PAGE 13  
+C51 COMPILER V9.00   CALIBRATE                                                             05/22/2015 09:20:44 PAGE 13  
 
 000E 900000      R     MOV     DPTR,#i
 0011 F0                MOVX    @DPTR,A
@@ -773,7 +773,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0015 E0                MOVX    A,@DPTR
 0016 FF                MOV     R7,A
 0017 C3                CLR     C
-0018 940E              SUBB    A,#0EH
+0018 9406              SUBB    A,#06H
 001A 500D              JNC     ?C0024
                                            ; SOURCE LINE # 105
                                            ; SOURCE LINE # 106
@@ -812,7 +812,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 004C 22                RET     
              ; FUNCTION Calibrate_Set_Default (END)
 
-C51 COMPILER V9.00   CALIBRATE                                                             06/20/2014 09:02:40 PAGE 14  
+C51 COMPILER V9.00   CALIBRATE                                                             05/22/2015 09:20:44 PAGE 14  
 
 NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
 ====                                    =====   ======  ====    ======  ====
@@ -833,6 +833,12 @@ DCON . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E8H  1
 SPICON . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F8H  1
 _EEPROM_Read . . . . . . . . . . . . .  EXTERN   CODE   PROC     -----  -----
 _EEPROM_Write. . . . . . . . . . . . .  EXTERN   CODE   PROC     -----  -----
+CHNL_ADC_0 . . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+CHNL_ADC_1 . . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+CHNL_ADC_2 . . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+CHNL_ADC_3 . . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+CHNL_FREQ_COUNT_T_0. . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+CHNL_FREQ_COUNT_T_1. . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
 Channel. . . . . . . . . . . . . . . .  * TAG *  -----  STRUCT   -----  25
   number . . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
   settings . . . . . . . . . . . . . .  MEMBER   -----  UNION    0001H  4
@@ -852,7 +858,7 @@ ADC_Channels . . . . . . . . . . . . .  * TAG *  -----  STRUCT   -----  38
   buffered . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0023H  1
   unipolar . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0024H  1
   new_measuring. . . . . . . . . . . .  MEMBER   -----  U_CHAR   0025H  1
-channels . . . . . . . . . . . . . . .  EXTERN   XDATA  ARRAY    -----  350
+channels . . . . . . . . . . . . . . .  EXTERN   XDATA  ARRAY    -----  150
 Crc8Table. . . . . . . . . . . . . . .  EXTERN   CODE   ARRAY    -----  -----
 RESET. . . . . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
 SET. . . . . . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
@@ -869,18 +875,18 @@ _GetCalibrateVal . . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
   channel_num. . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0000H  1
   ADC_Code . . . . . . . . . . . . . .  AUTO     XDATA  U_LONG   0001H  4
   result . . . . . . . . . . . . . . .  AUTO     XDATA  FLOAT    0005H  4
+C51 COMPILER V9.00   CALIBRATE                                                             05/22/2015 09:20:44 PAGE 15  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
 Calibrate_Get_CRC. . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
   crc. . . . . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0000H  1
   i. . . . . . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0001H  1
   j. . . . . . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0002H  1
 _Calibrate_Set_Flag. . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
   channel. . . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0000H  1
-C51 COMPILER V9.00   CALIBRATE                                                             06/20/2014 09:02:40 PAGE 15  
-
-NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
-====                                    =====   ======  ====    ======  ====
-
-
   flag . . . . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0001H  1
   true_crc . . . . . . . . . . . . . .  AUTO     XDATA  U_LONG   0002H  4
 Calibrate_Set_Default. . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
@@ -889,7 +895,7 @@ Calibrate_Set_Default. . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    867    ----
+   CODE SIZE        =    861    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----      45
    PDATA SIZE       =   ----    ----

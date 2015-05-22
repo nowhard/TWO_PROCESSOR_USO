@@ -6,7 +6,6 @@
 "proto_uso.obj",
 "channels.obj",
 "START_AD.obj",
-"frequency.obj",
 "timer0.obj",
 "timer2.obj",
 "i2c.obj",

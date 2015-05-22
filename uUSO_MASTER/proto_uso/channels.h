@@ -3,7 +3,7 @@
 #include "eeprom/eeprom.h"
 #include "preferences.h"
 //---------------------------------------
-#define CHANNEL_NUMBER	14//количество каналов
+#define CHANNEL_NUMBER	6//количество каналов
 //---------------------------каналы---------------------------------
 #define CHNL_ADC	0//канал ацп
 	#define CHNL_ADC_FIX_16	0
@@ -20,6 +20,25 @@
 	#define	 CHNL_FREQ_COUNT	4
 #define CHNL_UNKNOWN	0xF //канал не определен
 	#define CHNL_UNKNOWN_MOD	0
+
+
+enum
+{
+	CHNL_ADC_0=0,
+	CHNL_ADC_1,
+	CHNL_ADC_2,
+	CHNL_ADC_3,
+//	CHNL_ADC_4,
+//	CHNL_ADC_5,
+//	CHNL_ADC_6,
+//	CHNL_ADC_7,
+//	CHNL_FREQ_256_0,
+//	CHNL_FREQ_256_1,
+//	CHNL_FREQ_256_2,
+//	CHNL_DOL_ENC_0,
+	CHNL_FREQ_COUNT_T_0,
+	CHNL_FREQ_COUNT_T_1,
+};
 
 //------------------------------------------------------------------
 struct Channel

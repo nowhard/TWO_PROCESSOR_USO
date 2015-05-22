@@ -1,7 +1,6 @@
 #include "adc.h"
 //-------------------global variables-----------------------------------
 volatile struct ADC_Channels xdata adc_channels[ADC_CHANNELS_NUM];
-//#pragma OT(6,Speed)
 //-------------------------------------------
 void ADC_Initialize() //using 0
 {	
@@ -46,7 +45,7 @@ void ADC_ISR(void) interrupt 6 //using 1
 	static unsigned char current_channel;
 	static unsigned char current_buf_item; //элемент буфера усреднения
 
-	current_channel=ADC0CON2&0x7;
+	current_channel=ADC0CON2&ADC_CHANNEL_MASK;
 	current_buf_item=adc_channels[current_channel].adc_buf_counter;
 
 	adc_channels[current_channel].ADC_BUF_UN[current_buf_item].ADC_CHAR[0]=0x0;//получим результат
@@ -58,13 +57,12 @@ void ADC_ISR(void) interrupt 6 //using 1
 	adc_channels[current_channel].new_measuring=1;	 //новое измерение было
 		
 //	ADCMODE &= 0xDF; // 1101 1111
-	ADC0CON2=((current_channel+1)&0x7)|(ADC0CON2&0xF0); //инкремент аналогового входа 	
+	ADC0CON2=((current_channel+1)&ADC_CHANNEL_MASK)|(ADC0CON2&0xF0); //инкремент аналогового входа 	
 	ADC0CON1=(ADC0CON1&0xF8)|((channels[ADC0CON2&0x7].settings.set.state_byte_1^0x7)&0x7);//восстанавливаем усиление следующего канала
 	SF=channels[(ADC0CON2/*+1*/)&0x7].settings.set.state_byte_2;						 
 //	ADCMODE |= 0x20; //0010 0000 //ENABLE
 
 	RDY0=0;
-//	return;
 }
 //--------------------------------------------------
 void ADC_Set_Mode(unsigned char mode)	//using 0

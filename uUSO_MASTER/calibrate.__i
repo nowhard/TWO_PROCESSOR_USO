@@ -1,1 +1,0 @@
-"calibrate\calibrate.c" LARGE OPTIMIZE (6,SPEED) BROWSE ORDER NOAREGS DEBUG OBJECTEXTEND CODE SYMBOLS PRINT(.\calibrate.lst) OBJECT(calibrate.obj)

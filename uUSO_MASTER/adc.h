@@ -9,7 +9,8 @@
 #include <math.h>
 
 //-----------------------------------------------------------
-#define ADC_CHANNELS_NUM	8//количество аналоговых каналов контроллера
+#define ADC_CHANNELS_NUM	4//количество аналоговых каналов контроллера
+#define ADC_CHANNEL_MASK	0x3
 //#define ADC_MODE_ZEROCAL_INT 0x04 // 0000 0100
 //#define ADC_MODE_FULLCAL_INT 0x05 // 0000 0101
 //---------------------пределы измерения---------------------

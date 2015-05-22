@@ -1,4 +1,4 @@
-C51 COMPILER V9.00   TIMER0                                                                06/20/2014 09:02:40 PAGE 1   
+C51 COMPILER V9.00   TIMER0                                                                05/22/2015 09:20:44 PAGE 1   
 
 
 C51 COMPILER V9.00, COMPILATION OF MODULE TIMER0
@@ -26,7 +26,7 @@ line level    source
   16   1      }
   17          
   18          
-C51 COMPILER V9.00   TIMER0                                                                06/20/2014 09:02:40 PAGE 2   
+C51 COMPILER V9.00   TIMER0                                                                05/22/2015 09:20:44 PAGE 2   
 
 ASSEMBLY LISTING OF GENERATED OBJECT CODE
 
@@ -51,7 +51,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0010 22                RET     
              ; FUNCTION Timer0_Initialize (END)
 
-C51 COMPILER V9.00   TIMER0                                                                06/20/2014 09:02:40 PAGE 3   
+C51 COMPILER V9.00   TIMER0                                                                05/22/2015 09:20:44 PAGE 3   
 
 NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
 ====                                    =====   ======  ====    ======  ====

@@ -175,7 +175,7 @@
             <XDataHold>0</XDataHold>
             <UseOnchipRom>0</UseOnchipRom>
             <UseOnchipArithmetic>0</UseOnchipArithmetic>
-            <UseMultipleDPTR>1</UseMultipleDPTR>
+            <UseMultipleDPTR>0</UseMultipleDPTR>
             <UseOnchipXram>0</UseOnchipXram>
             <HadIRAM>1</HadIRAM>
             <HadXRAM>1</HadXRAM>
@@ -281,7 +281,7 @@
             <RegisterColoring>0</RegisterColoring>
             <VariablesInOrder>0</VariablesInOrder>
             <IntegerPromotion>1</IntegerPromotion>
-            <uAregs>0</uAregs>
+            <uAregs>1</uAregs>
             <UseInterruptVector>1</UseInterruptVector>
             <Fuzzy>3</Fuzzy>
             <Optimize>0</Optimize>
@@ -294,7 +294,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>.\modbus\include;.\modbus;.\port;.\modbus\ascii;.\modbus\rtu;..\uUSO_MASTER</IncludePath>
+              <IncludePath></IncludePath>
             </VariousControls>
           </C51>
           <Ax51>
@@ -412,46 +412,6 @@
               <FileName>adc.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\adc.c</FilePath>
-              <FileOption>
-                <CommonProperty>
-                  <UseCPPCompiler>2</UseCPPCompiler>
-                  <RVCTCodeConst>0</RVCTCodeConst>
-                  <RVCTZI>0</RVCTZI>
-                  <RVCTOtherData>0</RVCTOtherData>
-                  <ModuleSelection>0</ModuleSelection>
-                  <IncludeInBuild>0</IncludeInBuild>
-                  <AlwaysBuild>0</AlwaysBuild>
-                  <GenerateAssemblyFile>0</GenerateAssemblyFile>
-                  <AssembleAssemblyFile>0</AssembleAssemblyFile>
-                  <PublicsOnly>0</PublicsOnly>
-                  <StopOnExitCode>11</StopOnExitCode>
-                  <CustomArgument></CustomArgument>
-                  <IncludeLibraryModules></IncludeLibraryModules>
-                  <BankNo>65535</BankNo>
-                </CommonProperty>
-                <File51>
-                  <C51>
-                    <RegisterColoring>2</RegisterColoring>
-                    <VariablesInOrder>2</VariablesInOrder>
-                    <IntegerPromotion>2</IntegerPromotion>
-                    <uAregs>2</uAregs>
-                    <UseInterruptVector>2</UseInterruptVector>
-                    <Fuzzy>8</Fuzzy>
-                    <Optimize>10</Optimize>
-                    <WarningLevel>3</WarningLevel>
-                    <SizeSpeed>2</SizeSpeed>
-                    <ObjectExtend>2</ObjectExtend>
-                    <ACallAJmp>2</ACallAJmp>
-                    <InterruptVectorAddress>0</InterruptVectorAddress>
-                    <VariousControls>
-                      <MiscControls></MiscControls>
-                      <Define></Define>
-                      <Undefine></Undefine>
-                      <IncludePath></IncludePath>
-                    </VariousControls>
-                  </C51>
-                </File51>
-              </FileOption>
             </File>
             <File>
               <FileName>preferences.h</FileName>
@@ -462,46 +422,6 @@
               <FileName>eeprom.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\eeprom\eeprom.c</FilePath>
-              <FileOption>
-                <CommonProperty>
-                  <UseCPPCompiler>2</UseCPPCompiler>
-                  <RVCTCodeConst>0</RVCTCodeConst>
-                  <RVCTZI>0</RVCTZI>
-                  <RVCTOtherData>0</RVCTOtherData>
-                  <ModuleSelection>0</ModuleSelection>
-                  <IncludeInBuild>0</IncludeInBuild>
-                  <AlwaysBuild>0</AlwaysBuild>
-                  <GenerateAssemblyFile>0</GenerateAssemblyFile>
-                  <AssembleAssemblyFile>0</AssembleAssemblyFile>
-                  <PublicsOnly>0</PublicsOnly>
-                  <StopOnExitCode>11</StopOnExitCode>
-                  <CustomArgument></CustomArgument>
-                  <IncludeLibraryModules></IncludeLibraryModules>
-                  <BankNo>65535</BankNo>
-                </CommonProperty>
-                <File51>
-                  <C51>
-                    <RegisterColoring>2</RegisterColoring>
-                    <VariablesInOrder>2</VariablesInOrder>
-                    <IntegerPromotion>2</IntegerPromotion>
-                    <uAregs>2</uAregs>
-                    <UseInterruptVector>2</UseInterruptVector>
-                    <Fuzzy>8</Fuzzy>
-                    <Optimize>10</Optimize>
-                    <WarningLevel>3</WarningLevel>
-                    <SizeSpeed>2</SizeSpeed>
-                    <ObjectExtend>2</ObjectExtend>
-                    <ACallAJmp>2</ACallAJmp>
-                    <InterruptVectorAddress>0</InterruptVectorAddress>
-                    <VariousControls>
-                      <MiscControls></MiscControls>
-                      <Define></Define>
-                      <Undefine></Undefine>
-                      <IncludePath></IncludePath>
-                    </VariousControls>
-                  </C51>
-                </File51>
-              </FileOption>
             </File>
             <File>
               <FileName>watchdog.c</FileName>
@@ -512,91 +432,11 @@
               <FileName>proto_uso.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\proto_uso\proto_uso.c</FilePath>
-              <FileOption>
-                <CommonProperty>
-                  <UseCPPCompiler>2</UseCPPCompiler>
-                  <RVCTCodeConst>0</RVCTCodeConst>
-                  <RVCTZI>0</RVCTZI>
-                  <RVCTOtherData>0</RVCTOtherData>
-                  <ModuleSelection>0</ModuleSelection>
-                  <IncludeInBuild>0</IncludeInBuild>
-                  <AlwaysBuild>0</AlwaysBuild>
-                  <GenerateAssemblyFile>0</GenerateAssemblyFile>
-                  <AssembleAssemblyFile>0</AssembleAssemblyFile>
-                  <PublicsOnly>0</PublicsOnly>
-                  <StopOnExitCode>11</StopOnExitCode>
-                  <CustomArgument></CustomArgument>
-                  <IncludeLibraryModules></IncludeLibraryModules>
-                  <BankNo>65535</BankNo>
-                </CommonProperty>
-                <File51>
-                  <C51>
-                    <RegisterColoring>2</RegisterColoring>
-                    <VariablesInOrder>2</VariablesInOrder>
-                    <IntegerPromotion>2</IntegerPromotion>
-                    <uAregs>2</uAregs>
-                    <UseInterruptVector>2</UseInterruptVector>
-                    <Fuzzy>8</Fuzzy>
-                    <Optimize>10</Optimize>
-                    <WarningLevel>3</WarningLevel>
-                    <SizeSpeed>2</SizeSpeed>
-                    <ObjectExtend>2</ObjectExtend>
-                    <ACallAJmp>2</ACallAJmp>
-                    <InterruptVectorAddress>0</InterruptVectorAddress>
-                    <VariousControls>
-                      <MiscControls></MiscControls>
-                      <Define></Define>
-                      <Undefine></Undefine>
-                      <IncludePath></IncludePath>
-                    </VariousControls>
-                  </C51>
-                </File51>
-              </FileOption>
             </File>
             <File>
               <FileName>channels.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\proto_uso\channels.c</FilePath>
-              <FileOption>
-                <CommonProperty>
-                  <UseCPPCompiler>2</UseCPPCompiler>
-                  <RVCTCodeConst>0</RVCTCodeConst>
-                  <RVCTZI>0</RVCTZI>
-                  <RVCTOtherData>0</RVCTOtherData>
-                  <ModuleSelection>0</ModuleSelection>
-                  <IncludeInBuild>0</IncludeInBuild>
-                  <AlwaysBuild>0</AlwaysBuild>
-                  <GenerateAssemblyFile>0</GenerateAssemblyFile>
-                  <AssembleAssemblyFile>0</AssembleAssemblyFile>
-                  <PublicsOnly>0</PublicsOnly>
-                  <StopOnExitCode>11</StopOnExitCode>
-                  <CustomArgument></CustomArgument>
-                  <IncludeLibraryModules></IncludeLibraryModules>
-                  <BankNo>65535</BankNo>
-                </CommonProperty>
-                <File51>
-                  <C51>
-                    <RegisterColoring>2</RegisterColoring>
-                    <VariablesInOrder>2</VariablesInOrder>
-                    <IntegerPromotion>2</IntegerPromotion>
-                    <uAregs>2</uAregs>
-                    <UseInterruptVector>2</UseInterruptVector>
-                    <Fuzzy>8</Fuzzy>
-                    <Optimize>10</Optimize>
-                    <WarningLevel>3</WarningLevel>
-                    <SizeSpeed>2</SizeSpeed>
-                    <ObjectExtend>2</ObjectExtend>
-                    <ACallAJmp>2</ACallAJmp>
-                    <InterruptVectorAddress>0</InterruptVectorAddress>
-                    <VariousControls>
-                      <MiscControls></MiscControls>
-                      <Define></Define>
-                      <Undefine></Undefine>
-                      <IncludePath></IncludePath>
-                    </VariousControls>
-                  </C51>
-                </File51>
-              </FileOption>
             </File>
             <File>
               <FileName>START_AD.A51</FileName>
@@ -607,271 +447,31 @@
               <FileName>frequency.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\frequency.c</FilePath>
-              <FileOption>
-                <CommonProperty>
-                  <UseCPPCompiler>2</UseCPPCompiler>
-                  <RVCTCodeConst>0</RVCTCodeConst>
-                  <RVCTZI>0</RVCTZI>
-                  <RVCTOtherData>0</RVCTOtherData>
-                  <ModuleSelection>0</ModuleSelection>
-                  <IncludeInBuild>0</IncludeInBuild>
-                  <AlwaysBuild>0</AlwaysBuild>
-                  <GenerateAssemblyFile>0</GenerateAssemblyFile>
-                  <AssembleAssemblyFile>0</AssembleAssemblyFile>
-                  <PublicsOnly>0</PublicsOnly>
-                  <StopOnExitCode>11</StopOnExitCode>
-                  <CustomArgument></CustomArgument>
-                  <IncludeLibraryModules></IncludeLibraryModules>
-                  <BankNo>65535</BankNo>
-                </CommonProperty>
-                <File51>
-                  <C51>
-                    <RegisterColoring>2</RegisterColoring>
-                    <VariablesInOrder>2</VariablesInOrder>
-                    <IntegerPromotion>2</IntegerPromotion>
-                    <uAregs>2</uAregs>
-                    <UseInterruptVector>2</UseInterruptVector>
-                    <Fuzzy>8</Fuzzy>
-                    <Optimize>10</Optimize>
-                    <WarningLevel>3</WarningLevel>
-                    <SizeSpeed>2</SizeSpeed>
-                    <ObjectExtend>2</ObjectExtend>
-                    <ACallAJmp>2</ACallAJmp>
-                    <InterruptVectorAddress>0</InterruptVectorAddress>
-                    <VariousControls>
-                      <MiscControls></MiscControls>
-                      <Define></Define>
-                      <Undefine></Undefine>
-                      <IncludePath></IncludePath>
-                    </VariousControls>
-                  </C51>
-                </File51>
-              </FileOption>
             </File>
             <File>
               <FileName>timer0.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\timer0.c</FilePath>
-              <FileOption>
-                <CommonProperty>
-                  <UseCPPCompiler>2</UseCPPCompiler>
-                  <RVCTCodeConst>0</RVCTCodeConst>
-                  <RVCTZI>0</RVCTZI>
-                  <RVCTOtherData>0</RVCTOtherData>
-                  <ModuleSelection>0</ModuleSelection>
-                  <IncludeInBuild>0</IncludeInBuild>
-                  <AlwaysBuild>0</AlwaysBuild>
-                  <GenerateAssemblyFile>0</GenerateAssemblyFile>
-                  <AssembleAssemblyFile>0</AssembleAssemblyFile>
-                  <PublicsOnly>0</PublicsOnly>
-                  <StopOnExitCode>11</StopOnExitCode>
-                  <CustomArgument></CustomArgument>
-                  <IncludeLibraryModules></IncludeLibraryModules>
-                  <BankNo>65535</BankNo>
-                </CommonProperty>
-                <File51>
-                  <C51>
-                    <RegisterColoring>2</RegisterColoring>
-                    <VariablesInOrder>2</VariablesInOrder>
-                    <IntegerPromotion>2</IntegerPromotion>
-                    <uAregs>2</uAregs>
-                    <UseInterruptVector>2</UseInterruptVector>
-                    <Fuzzy>8</Fuzzy>
-                    <Optimize>10</Optimize>
-                    <WarningLevel>3</WarningLevel>
-                    <SizeSpeed>2</SizeSpeed>
-                    <ObjectExtend>2</ObjectExtend>
-                    <ACallAJmp>2</ACallAJmp>
-                    <InterruptVectorAddress>0</InterruptVectorAddress>
-                    <VariousControls>
-                      <MiscControls></MiscControls>
-                      <Define></Define>
-                      <Undefine></Undefine>
-                      <IncludePath></IncludePath>
-                    </VariousControls>
-                  </C51>
-                </File51>
-              </FileOption>
             </File>
             <File>
               <FileName>timer2.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\timer2.c</FilePath>
-              <FileOption>
-                <CommonProperty>
-                  <UseCPPCompiler>2</UseCPPCompiler>
-                  <RVCTCodeConst>0</RVCTCodeConst>
-                  <RVCTZI>0</RVCTZI>
-                  <RVCTOtherData>0</RVCTOtherData>
-                  <ModuleSelection>0</ModuleSelection>
-                  <IncludeInBuild>0</IncludeInBuild>
-                  <AlwaysBuild>0</AlwaysBuild>
-                  <GenerateAssemblyFile>0</GenerateAssemblyFile>
-                  <AssembleAssemblyFile>0</AssembleAssemblyFile>
-                  <PublicsOnly>0</PublicsOnly>
-                  <StopOnExitCode>11</StopOnExitCode>
-                  <CustomArgument></CustomArgument>
-                  <IncludeLibraryModules></IncludeLibraryModules>
-                  <BankNo>65535</BankNo>
-                </CommonProperty>
-                <File51>
-                  <C51>
-                    <RegisterColoring>2</RegisterColoring>
-                    <VariablesInOrder>2</VariablesInOrder>
-                    <IntegerPromotion>2</IntegerPromotion>
-                    <uAregs>2</uAregs>
-                    <UseInterruptVector>2</UseInterruptVector>
-                    <Fuzzy>8</Fuzzy>
-                    <Optimize>10</Optimize>
-                    <WarningLevel>3</WarningLevel>
-                    <SizeSpeed>2</SizeSpeed>
-                    <ObjectExtend>2</ObjectExtend>
-                    <ACallAJmp>2</ACallAJmp>
-                    <InterruptVectorAddress>0</InterruptVectorAddress>
-                    <VariousControls>
-                      <MiscControls></MiscControls>
-                      <Define></Define>
-                      <Undefine></Undefine>
-                      <IncludePath></IncludePath>
-                    </VariousControls>
-                  </C51>
-                </File51>
-              </FileOption>
             </File>
             <File>
               <FileName>i2c.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\i2c.c</FilePath>
-              <FileOption>
-                <CommonProperty>
-                  <UseCPPCompiler>2</UseCPPCompiler>
-                  <RVCTCodeConst>0</RVCTCodeConst>
-                  <RVCTZI>0</RVCTZI>
-                  <RVCTOtherData>0</RVCTOtherData>
-                  <ModuleSelection>0</ModuleSelection>
-                  <IncludeInBuild>0</IncludeInBuild>
-                  <AlwaysBuild>0</AlwaysBuild>
-                  <GenerateAssemblyFile>0</GenerateAssemblyFile>
-                  <AssembleAssemblyFile>0</AssembleAssemblyFile>
-                  <PublicsOnly>0</PublicsOnly>
-                  <StopOnExitCode>11</StopOnExitCode>
-                  <CustomArgument></CustomArgument>
-                  <IncludeLibraryModules></IncludeLibraryModules>
-                  <BankNo>65535</BankNo>
-                </CommonProperty>
-                <File51>
-                  <C51>
-                    <RegisterColoring>2</RegisterColoring>
-                    <VariablesInOrder>2</VariablesInOrder>
-                    <IntegerPromotion>2</IntegerPromotion>
-                    <uAregs>2</uAregs>
-                    <UseInterruptVector>2</UseInterruptVector>
-                    <Fuzzy>8</Fuzzy>
-                    <Optimize>10</Optimize>
-                    <WarningLevel>3</WarningLevel>
-                    <SizeSpeed>2</SizeSpeed>
-                    <ObjectExtend>2</ObjectExtend>
-                    <ACallAJmp>2</ACallAJmp>
-                    <InterruptVectorAddress>0</InterruptVectorAddress>
-                    <VariousControls>
-                      <MiscControls></MiscControls>
-                      <Define></Define>
-                      <Undefine></Undefine>
-                      <IncludePath></IncludePath>
-                    </VariousControls>
-                  </C51>
-                </File51>
-              </FileOption>
             </File>
             <File>
               <FileName>calibrate.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\calibrate\calibrate.c</FilePath>
-              <FileOption>
-                <CommonProperty>
-                  <UseCPPCompiler>2</UseCPPCompiler>
-                  <RVCTCodeConst>0</RVCTCodeConst>
-                  <RVCTZI>0</RVCTZI>
-                  <RVCTOtherData>0</RVCTOtherData>
-                  <ModuleSelection>0</ModuleSelection>
-                  <IncludeInBuild>0</IncludeInBuild>
-                  <AlwaysBuild>0</AlwaysBuild>
-                  <GenerateAssemblyFile>0</GenerateAssemblyFile>
-                  <AssembleAssemblyFile>0</AssembleAssemblyFile>
-                  <PublicsOnly>0</PublicsOnly>
-                  <StopOnExitCode>11</StopOnExitCode>
-                  <CustomArgument></CustomArgument>
-                  <IncludeLibraryModules></IncludeLibraryModules>
-                  <BankNo>65535</BankNo>
-                </CommonProperty>
-                <File51>
-                  <C51>
-                    <RegisterColoring>2</RegisterColoring>
-                    <VariablesInOrder>2</VariablesInOrder>
-                    <IntegerPromotion>2</IntegerPromotion>
-                    <uAregs>2</uAregs>
-                    <UseInterruptVector>2</UseInterruptVector>
-                    <Fuzzy>8</Fuzzy>
-                    <Optimize>10</Optimize>
-                    <WarningLevel>3</WarningLevel>
-                    <SizeSpeed>2</SizeSpeed>
-                    <ObjectExtend>2</ObjectExtend>
-                    <ACallAJmp>2</ACallAJmp>
-                    <InterruptVectorAddress>0</InterruptVectorAddress>
-                    <VariousControls>
-                      <MiscControls></MiscControls>
-                      <Define></Define>
-                      <Undefine></Undefine>
-                      <IncludePath></IncludePath>
-                    </VariousControls>
-                  </C51>
-                </File51>
-              </FileOption>
             </File>
             <File>
               <FileName>ulongsort.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\ulongsort.c</FilePath>
-              <FileOption>
-                <CommonProperty>
-                  <UseCPPCompiler>2</UseCPPCompiler>
-                  <RVCTCodeConst>0</RVCTCodeConst>
-                  <RVCTZI>0</RVCTZI>
-                  <RVCTOtherData>0</RVCTOtherData>
-                  <ModuleSelection>0</ModuleSelection>
-                  <IncludeInBuild>0</IncludeInBuild>
-                  <AlwaysBuild>0</AlwaysBuild>
-                  <GenerateAssemblyFile>0</GenerateAssemblyFile>
-                  <AssembleAssemblyFile>0</AssembleAssemblyFile>
-                  <PublicsOnly>0</PublicsOnly>
-                  <StopOnExitCode>11</StopOnExitCode>
-                  <CustomArgument></CustomArgument>
-                  <IncludeLibraryModules></IncludeLibraryModules>
-                  <BankNo>65535</BankNo>
-                </CommonProperty>
-                <File51>
-                  <C51>
-                    <RegisterColoring>2</RegisterColoring>
-                    <VariablesInOrder>2</VariablesInOrder>
-                    <IntegerPromotion>2</IntegerPromotion>
-                    <uAregs>2</uAregs>
-                    <UseInterruptVector>2</UseInterruptVector>
-                    <Fuzzy>8</Fuzzy>
-                    <Optimize>10</Optimize>
-                    <WarningLevel>3</WarningLevel>
-                    <SizeSpeed>2</SizeSpeed>
-                    <ObjectExtend>2</ObjectExtend>
-                    <ACallAJmp>2</ACallAJmp>
-                    <InterruptVectorAddress>0</InterruptVectorAddress>
-                    <VariousControls>
-                      <MiscControls></MiscControls>
-                      <Define></Define>
-                      <Undefine></Undefine>
-                      <IncludePath></IncludePath>
-                    </VariousControls>
-                  </C51>
-                </File51>
-              </FileOption>
             </File>
             <File>
               <FileName>pt.h</FileName>
@@ -892,46 +492,6 @@
               <FileName>timer1.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\timer1.c</FilePath>
-              <FileOption>
-                <CommonProperty>
-                  <UseCPPCompiler>2</UseCPPCompiler>
-                  <RVCTCodeConst>0</RVCTCodeConst>
-                  <RVCTZI>0</RVCTZI>
-                  <RVCTOtherData>0</RVCTOtherData>
-                  <ModuleSelection>0</ModuleSelection>
-                  <IncludeInBuild>0</IncludeInBuild>
-                  <AlwaysBuild>0</AlwaysBuild>
-                  <GenerateAssemblyFile>0</GenerateAssemblyFile>
-                  <AssembleAssemblyFile>0</AssembleAssemblyFile>
-                  <PublicsOnly>0</PublicsOnly>
-                  <StopOnExitCode>11</StopOnExitCode>
-                  <CustomArgument></CustomArgument>
-                  <IncludeLibraryModules></IncludeLibraryModules>
-                  <BankNo>65535</BankNo>
-                </CommonProperty>
-                <File51>
-                  <C51>
-                    <RegisterColoring>2</RegisterColoring>
-                    <VariablesInOrder>2</VariablesInOrder>
-                    <IntegerPromotion>2</IntegerPromotion>
-                    <uAregs>2</uAregs>
-                    <UseInterruptVector>2</UseInterruptVector>
-                    <Fuzzy>8</Fuzzy>
-                    <Optimize>10</Optimize>
-                    <WarningLevel>3</WarningLevel>
-                    <SizeSpeed>2</SizeSpeed>
-                    <ObjectExtend>2</ObjectExtend>
-                    <ACallAJmp>2</ACallAJmp>
-                    <InterruptVectorAddress>0</InterruptVectorAddress>
-                    <VariousControls>
-                      <MiscControls></MiscControls>
-                      <Define></Define>
-                      <Undefine></Undefine>
-                      <IncludePath></IncludePath>
-                    </VariousControls>
-                  </C51>
-                </File51>
-              </FileOption>
             </File>
             <File>
               <FileName>crc_table.h</FileName>
@@ -942,151 +502,6 @@
               <FileName>crc_table.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\crc_table.c</FilePath>
-              <FileOption>
-                <CommonProperty>
-                  <UseCPPCompiler>2</UseCPPCompiler>
-                  <RVCTCodeConst>0</RVCTCodeConst>
-                  <RVCTZI>0</RVCTZI>
-                  <RVCTOtherData>0</RVCTOtherData>
-                  <ModuleSelection>0</ModuleSelection>
-                  <IncludeInBuild>0</IncludeInBuild>
-                  <AlwaysBuild>0</AlwaysBuild>
-                  <GenerateAssemblyFile>0</GenerateAssemblyFile>
-                  <AssembleAssemblyFile>0</AssembleAssemblyFile>
-                  <PublicsOnly>0</PublicsOnly>
-                  <StopOnExitCode>11</StopOnExitCode>
-                  <CustomArgument></CustomArgument>
-                  <IncludeLibraryModules></IncludeLibraryModules>
-                  <BankNo>65535</BankNo>
-                </CommonProperty>
-                <File51>
-                  <C51>
-                    <RegisterColoring>2</RegisterColoring>
-                    <VariablesInOrder>2</VariablesInOrder>
-                    <IntegerPromotion>2</IntegerPromotion>
-                    <uAregs>2</uAregs>
-                    <UseInterruptVector>2</UseInterruptVector>
-                    <Fuzzy>8</Fuzzy>
-                    <Optimize>10</Optimize>
-                    <WarningLevel>3</WarningLevel>
-                    <SizeSpeed>2</SizeSpeed>
-                    <ObjectExtend>2</ObjectExtend>
-                    <ACallAJmp>2</ACallAJmp>
-                    <InterruptVectorAddress>0</InterruptVectorAddress>
-                    <VariousControls>
-                      <MiscControls></MiscControls>
-                      <Define></Define>
-                      <Undefine></Undefine>
-                      <IncludePath></IncludePath>
-                    </VariousControls>
-                  </C51>
-                </File51>
-              </FileOption>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>freemodbus</GroupName>
-          <Files>
-            <File>
-              <FileName>mb.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\modbus\mb.c</FilePath>
-            </File>
-            <File>
-              <FileName>mbascii.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\modbus\ascii\mbascii.c</FilePath>
-            </File>
-            <File>
-              <FileName>mbfunccoils.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\modbus\functions\mbfunccoils.c</FilePath>
-            </File>
-            <File>
-              <FileName>mbfuncdiag.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\modbus\functions\mbfuncdiag.c</FilePath>
-            </File>
-            <File>
-              <FileName>mbfuncdisc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\modbus\functions\mbfuncdisc.c</FilePath>
-            </File>
-            <File>
-              <FileName>mbfuncholding.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\modbus\functions\mbfuncholding.c</FilePath>
-            </File>
-            <File>
-              <FileName>mbfuncinput.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\modbus\functions\mbfuncinput.c</FilePath>
-            </File>
-            <File>
-              <FileName>mbfuncother.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\modbus\functions\mbfuncother.c</FilePath>
-            </File>
-            <File>
-              <FileName>mbutils.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\modbus\functions\mbutils.c</FilePath>
-            </File>
-            <File>
-              <FileName>mbcrc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\modbus\rtu\mbcrc.c</FilePath>
-            </File>
-            <File>
-              <FileName>mbrtu.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\modbus\rtu\mbrtu.c</FilePath>
-            </File>
-            <File>
-              <FileName>portevent.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\port\portevent.c</FilePath>
-            </File>
-            <File>
-              <FileName>portserial.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\port\portserial.c</FilePath>
-            </File>
-            <File>
-              <FileName>porttimer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\port\porttimer.c</FilePath>
-            </File>
-            <File>
-              <FileName>port.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\port\port.h</FilePath>
-            </File>
-            <File>
-              <FileName>mbconfig.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\modbus\include\mbconfig.h</FilePath>
-            </File>
-            <File>
-              <FileName>mbframe.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\modbus\include\mbframe.h</FilePath>
-            </File>
-            <File>
-              <FileName>mbfunc.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\modbus\include\mbfunc.h</FilePath>
-            </File>
-            <File>
-              <FileName>mbport.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\modbus\include\mbport.h</FilePath>
-            </File>
-            <File>
-              <FileName>mbproto.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\modbus\include\mbproto.h</FilePath>
             </File>
           </Files>
         </Group>

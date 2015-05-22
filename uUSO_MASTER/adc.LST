@@ -1,4 +1,4 @@
-C51 COMPILER V9.00   ADC                                                                   06/20/2014 09:02:39 PAGE 1   
+C51 COMPILER V9.00   ADC                                                                   05/22/2015 09:20:43 PAGE 1   
 
 
 C51 COMPILER V9.00, COMPILATION OF MODULE ADC
@@ -11,147 +11,145 @@ line level    source
    1          #include "adc.h"
    2          //-------------------global variables-----------------------------------
    3          volatile struct ADC_Channels xdata adc_channels[ADC_CHANNELS_NUM];
-   4          //#pragma OT(6,Speed)
-   5          //-------------------------------------------
-   6          void ADC_Initialize() //using 0
-   7          {       
-   8   1              ADCMODE&=0x0;
-   9   1              ADC0CON1&=0x0;  
-  10   1          ADC0CON2&=0x0;
-  11   1              //ADCMODE=0xB;
-  12   1      //      ADCMODE=0x3; //chop enable
-  13   1      
-  14   1      //      ADCMODE|=0x8;//CHOP DISABLE
-  15   1      
-  16   1          ADC0CON1|=BUF_BYPASS;
-  17   1              ADC0CON1|=ADC_UNIPOLAR;
-  18   1              ADC0CON1|=RN_2560;
-  19   1      
-  20   1              ADC0CON2&=0xF0;
-  21   1              ADC0CON2|=EXT_REF;//включим внешнюю опору
-  22   1      
-  23   1      //      ADCMODE=ADC0_ENABLE|ADC_0_INTERNAL_CAL;
-  24   1      //      while(!ADCSTAT&ADC_STATUS_CALIBRATE);
-  25   1      //      
-  26   1      //      ADCMODE=ADC0_ENABLE|ADC_FULL_INTERNAL_CAL;
-  27   1      //      while(!ADCSTAT&ADC_STATUS_CALIBRATE);
-  28   1      
-  29   1      //      ADCMODE&=0xF8;//power down adc
-  30   1      
-  31   1              ADC_Restore_Settings();
-  32   1              ADC_Set_Mode(ADC_CONTIN_CONV);
-  33   1      
-  34   1              ADC_Out_Freq(100);      
+   4          //-------------------------------------------
+   5          void ADC_Initialize() //using 0
+   6          {       
+   7   1              ADCMODE&=0x0;
+   8   1              ADC0CON1&=0x0;  
+   9   1          ADC0CON2&=0x0;
+  10   1              //ADCMODE=0xB;
+  11   1      //      ADCMODE=0x3; //chop enable
+  12   1      
+  13   1      //      ADCMODE|=0x8;//CHOP DISABLE
+  14   1      
+  15   1          ADC0CON1|=BUF_BYPASS;
+  16   1              ADC0CON1|=ADC_UNIPOLAR;
+  17   1              ADC0CON1|=RN_2560;
+  18   1      
+  19   1              ADC0CON2&=0xF0;
+  20   1              ADC0CON2|=EXT_REF;//включим внешнюю опору
+  21   1      
+  22   1      //      ADCMODE=ADC0_ENABLE|ADC_0_INTERNAL_CAL;
+  23   1      //      while(!ADCSTAT&ADC_STATUS_CALIBRATE);
+  24   1      //      
+  25   1      //      ADCMODE=ADC0_ENABLE|ADC_FULL_INTERNAL_CAL;
+  26   1      //      while(!ADCSTAT&ADC_STATUS_CALIBRATE);
+  27   1      
+  28   1      //      ADCMODE&=0xF8;//power down adc
+  29   1      
+  30   1              ADC_Restore_Settings();
+  31   1              ADC_Set_Mode(ADC_CONTIN_CONV);
+  32   1      
+  33   1              ADC_Out_Freq(100);      
+  34   1      
   35   1      
-  36   1      
-  37   1              EADC = 1;
-  38   1      
-  39   1              ADCMODE |= 0x20; //0010 0000 //ENABLE
-  40   1      
-  41   1              return;
-  42   1      }
-  43          //-------------------------------------------
-  44          void ADC_ISR(void) interrupt 6 //using 1
-  45          {
-  46   1              static unsigned char current_channel;
-  47   1              static unsigned char current_buf_item; //элемент буфера усреднени€
-  48   1      
-  49   1              current_channel=ADC0CON2&0x7;
-  50   1              current_buf_item=adc_channels[current_channel].adc_buf_counter;
-  51   1      
-  52   1              adc_channels[current_channel].ADC_BUF_UN[current_buf_item].ADC_CHAR[0]=0x0;//получим результат
-  53   1              adc_channels[current_channel].ADC_BUF_UN[current_buf_item].ADC_CHAR[1]=ADC0H;
-  54   1              adc_channels[current_channel].ADC_BUF_UN[current_buf_item].ADC_CHAR[2]=ADC0M;
-C51 COMPILER V9.00   ADC                                                                   06/20/2014 09:02:39 PAGE 2   
+  36   1              EADC = 1;
+  37   1      
+  38   1              ADCMODE |= 0x20; //0010 0000 //ENABLE
+  39   1      
+  40   1              return;
+  41   1      }
+  42          //-------------------------------------------
+  43          void ADC_ISR(void) interrupt 6 //using 1
+  44          {
+  45   1              static unsigned char current_channel;
+  46   1              static unsigned char current_buf_item; //элемент буфера усреднени€
+  47   1      
+  48   1              current_channel=ADC0CON2&ADC_CHANNEL_MASK;
+  49   1              current_buf_item=adc_channels[current_channel].adc_buf_counter;
+  50   1      
+  51   1              adc_channels[current_channel].ADC_BUF_UN[current_buf_item].ADC_CHAR[0]=0x0;//получим результат
+  52   1              adc_channels[current_channel].ADC_BUF_UN[current_buf_item].ADC_CHAR[1]=ADC0H;
+  53   1              adc_channels[current_channel].ADC_BUF_UN[current_buf_item].ADC_CHAR[2]=ADC0M;
+  54   1              adc_channels[current_channel].ADC_BUF_UN[current_buf_item].ADC_CHAR[3]=ADC0L; 
+C51 COMPILER V9.00   ADC                                                                   05/22/2015 09:20:43 PAGE 2   
 
-  55   1              adc_channels[current_channel].ADC_BUF_UN[current_buf_item].ADC_CHAR[3]=ADC0L; 
-  56   1      
-  57   1              adc_channels[current_channel].adc_buf_counter=((current_buf_item+1)&(ADC_BUF_SIZE-1));  //инкрементируем у
+  55   1      
+  56   1              adc_channels[current_channel].adc_buf_counter=((current_buf_item+1)&(ADC_BUF_SIZE-1));  //инкрементируем у
              -казатель усредн€ющего буфера текущего канала
-  58   1              adc_channels[current_channel].new_measuring=1;   //новое измерение было
-  59   1                      
-  60   1      //      ADCMODE &= 0xDF; // 1101 1111
-  61   1              ADC0CON2=((current_channel+1)&0x7)|(ADC0CON2&0xF0); //инкремент аналогового входа       
-  62   1              ADC0CON1=(ADC0CON1&0xF8)|((channels[ADC0CON2&0x7].settings.set.state_byte_1^0x7)&0x7);//восстанавливаем у
+  57   1              adc_channels[current_channel].new_measuring=1;   //новое измерение было
+  58   1                      
+  59   1      //      ADCMODE &= 0xDF; // 1101 1111
+  60   1              ADC0CON2=((current_channel+1)&ADC_CHANNEL_MASK)|(ADC0CON2&0xF0); //инкремент аналогового входа  
+  61   1              ADC0CON1=(ADC0CON1&0xF8)|((channels[ADC0CON2&0x7].settings.set.state_byte_1^0x7)&0x7);//восстанавливаем у
              -силение следующего канала
-  63   1              SF=channels[(ADC0CON2/*+1*/)&0x7].settings.set.state_byte_2;                                             
-  64   1      //      ADCMODE |= 0x20; //0010 0000 //ENABLE
-  65   1      
-  66   1              RDY0=0;
-  67   1      //      return;
-  68   1      }
-  69          //--------------------------------------------------
-  70          void ADC_Set_Mode(unsigned char mode)   //using 0
-  71          {
-  72   1              ADCMODE&=~0x7;
-  73   1              ADCMODE|=mode;
-  74   1              return;
-  75   1      }
-  76          //--------------------------------------------------
-  77          void ADC_Out_Freq(unsigned int freq)  // using 0
-  78          {
-  79   1              SF=(unsigned char)(32768/3/8/freq);               //частота выхода sinc3 фильтра (децимаци€)
-  80   1              return;
-  81   1      }
-  82          //--------------------------------------------------------------------------------------------------------
+  62   1              SF=channels[(ADC0CON2/*+1*/)&0x7].settings.set.state_byte_2;                                             
+  63   1      //      ADCMODE |= 0x20; //0010 0000 //ENABLE
+  64   1      
+  65   1              RDY0=0;
+  66   1      }
+  67          //--------------------------------------------------
+  68          void ADC_Set_Mode(unsigned char mode)   //using 0
+  69          {
+  70   1              ADCMODE&=~0x7;
+  71   1              ADCMODE|=mode;
+  72   1              return;
+  73   1      }
+  74          //--------------------------------------------------
+  75          void ADC_Out_Freq(unsigned int freq)  // using 0
+  76          {
+  77   1              SF=(unsigned char)(32768/3/8/freq);               //частота выхода sinc3 фильтра (децимаци€)
+  78   1              return;
+  79   1      }
+  80          //--------------------------------------------------------------------------------------------------------
              -----------
-  83          void ADC_Restore_Settings(void) //using 0//восстановление настроек ацп
-  84          {
-  85   1               unsigned char xdata i=0,j=0;
-  86   1              for(i=0;i<ADC_CHANNELS_NUM;i++)
-  87   1              {
-  88   2                      adc_channels[i].adc_buf_counter=0;
-  89   2                      adc_channels[i].buffered=BUF_ENABLE;
-  90   2                      adc_channels[i].unipolar=ADC_UNIPOLAR;
-  91   2                      adc_channels[i].new_measuring=0;
-  92   2                      
-  93   2                      for(j=0;j<ADC_BUF_SIZE;j++)//обнулим массивы значений ацп
-  94   2                      {
-  95   3                              adc_channels[i].ADC_BUF_UN[j].ADC_LONG=0x0;
-  96   3                      }       
-  97   2              }
-  98   1              return;
-  99   1      }
- 100           //-------------------------------------------------------------------------------------------------------
+  81          void ADC_Restore_Settings(void) //using 0//восстановление настроек ацп
+  82          {
+  83   1               unsigned char xdata i=0,j=0;
+  84   1              for(i=0;i<ADC_CHANNELS_NUM;i++)
+  85   1              {
+  86   2                      adc_channels[i].adc_buf_counter=0;
+  87   2                      adc_channels[i].buffered=BUF_ENABLE;
+  88   2                      adc_channels[i].unipolar=ADC_UNIPOLAR;
+  89   2                      adc_channels[i].new_measuring=0;
+  90   2                      
+  91   2                      for(j=0;j<ADC_BUF_SIZE;j++)//обнулим массивы значений ацп
+  92   2                      {
+  93   3                              adc_channels[i].ADC_BUF_UN[j].ADC_LONG=0x0;
+  94   3                      }       
+  95   2              }
+  96   1              return;
+  97   1      }
+  98           //-------------------------------------------------------------------------------------------------------
              ------------
-C51 COMPILER V9.00   ADC                                                                   06/20/2014 09:02:39 PAGE 3   
+C51 COMPILER V9.00   ADC                                                                   05/22/2015 09:20:43 PAGE 3   
 
 ASSEMBLY LISTING OF GENERATED OBJECT CODE
 
 
              ; FUNCTION ADC_Initialize (BEGIN)
+                                           ; SOURCE LINE # 5
                                            ; SOURCE LINE # 6
                                            ; SOURCE LINE # 7
-                                           ; SOURCE LINE # 8
 0000 75D100            MOV     ADCMODE,#00H
-                                           ; SOURCE LINE # 9
+                                           ; SOURCE LINE # 8
 0003 75D200            MOV     ADC0CON1,#00H
-                                           ; SOURCE LINE # 10
+                                           ; SOURCE LINE # 9
 0006 75E600            MOV     ADC0CON2,#00H
-                                           ; SOURCE LINE # 16
+                                           ; SOURCE LINE # 15
 0009 43D280            ORL     ADC0CON1,#080H
-                                           ; SOURCE LINE # 17
+                                           ; SOURCE LINE # 16
 000C 43D220            ORL     ADC0CON1,#020H
-                                           ; SOURCE LINE # 18
+                                           ; SOURCE LINE # 17
 000F 43D207            ORL     ADC0CON1,#07H
-                                           ; SOURCE LINE # 20
+                                           ; SOURCE LINE # 19
 0012 53E6F0            ANL     ADC0CON2,#0F0H
-                                           ; SOURCE LINE # 21
+                                           ; SOURCE LINE # 20
 0015 43E640            ORL     ADC0CON2,#040H
-                                           ; SOURCE LINE # 31
+                                           ; SOURCE LINE # 30
 0018 120000      R     LCALL   ADC_Restore_Settings
-                                           ; SOURCE LINE # 32
+                                           ; SOURCE LINE # 31
 001B 7F03              MOV     R7,#03H
 001D 120000      R     LCALL   _ADC_Set_Mode
-                                           ; SOURCE LINE # 34
+                                           ; SOURCE LINE # 33
 0020 7F64              MOV     R7,#064H
 0022 7E00              MOV     R6,#00H
 0024 120000      R     LCALL   _ADC_Out_Freq
-                                           ; SOURCE LINE # 37
+                                           ; SOURCE LINE # 36
 0027 D2AE              SETB    EADC
-                                           ; SOURCE LINE # 39
+                                           ; SOURCE LINE # 38
 0029 43D120            ORL     ADCMODE,#020H
-                                           ; SOURCE LINE # 42
+                                           ; SOURCE LINE # 41
 002C         ?C0001:
 002C 22                RET     
              ; FUNCTION ADC_Initialize (END)
@@ -166,211 +164,211 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 000B C0E0              PUSH    ACC
 000D EF                MOV     A,R7
 000E C0E0              PUSH    ACC
-                                           ; SOURCE LINE # 44
-                                           ; SOURCE LINE # 49
+                                           ; SOURCE LINE # 43
+                                           ; SOURCE LINE # 48
 0010 E5E6              MOV     A,ADC0CON2
-0012 5407              ANL     A,#07H
+0012 5403              ANL     A,#03H
 0014 900000      R     MOV     DPTR,#current_channel
 0017 F0                MOVX    @DPTR,A
-                                           ; SOURCE LINE # 50
+                                           ; SOURCE LINE # 49
 0018 E0                MOVX    A,@DPTR
 0019 FF                MOV     R7,A
 001A 75F026            MOV     B,#026H
 001D A4                MUL     AB
 001E 2400        R     ADD     A,#LOW adc_channels+020H
-C51 COMPILER V9.00   ADC                                                                   06/20/2014 09:02:39 PAGE 4   
+C51 COMPILER V9.00   ADC                                                                   05/22/2015 09:20:43 PAGE 4   
 
 0020 F582              MOV     DPL,A
-0022 E5F0              MOV     A,B
-0024 3400        R     ADDC    A,#HIGH adc_channels+020H
-0026 F583              MOV     DPH,A
-0028 E0                MOVX    A,@DPTR
-0029 900000      R     MOV     DPTR,#current_buf_item
-002C F0                MOVX    @DPTR,A
-                                           ; SOURCE LINE # 52
+0022 E4                CLR     A
+0023 3400        R     ADDC    A,#HIGH adc_channels+020H
+0025 F583              MOV     DPH,A
+0027 E0                MOVX    A,@DPTR
+0028 900000      R     MOV     DPTR,#current_buf_item
+002B F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 51
+002C EF                MOV     A,R7
 002D 75F026            MOV     B,#026H
-0030 EF                MOV     A,R7
-0031 A4                MUL     AB
-0032 2400        R     ADD     A,#LOW adc_channels
-0034 F582              MOV     DPL,A
-0036 E5F0              MOV     A,B
-0038 3400        R     ADDC    A,#HIGH adc_channels
-003A F583              MOV     DPH,A
-003C C083              PUSH    DPH
-003E C082              PUSH    DPL
-0040 900000      R     MOV     DPTR,#current_buf_item
-0043 E0                MOVX    A,@DPTR
-0044 FF                MOV     R7,A
-0045 D082              POP     DPL
-0047 D083              POP     DPH
-0049 75F004            MOV     B,#04H
-004C 120000      E     LCALL   ?C?OFFXADD
-004F E4                CLR     A
-0050 F0                MOVX    @DPTR,A
+0030 A4                MUL     AB
+0031 2400        R     ADD     A,#LOW adc_channels
+0033 F582              MOV     DPL,A
+0035 E4                CLR     A
+0036 3400        R     ADDC    A,#HIGH adc_channels
+0038 F583              MOV     DPH,A
+003A C083              PUSH    DPH
+003C C082              PUSH    DPL
+003E 900000      R     MOV     DPTR,#current_buf_item
+0041 E0                MOVX    A,@DPTR
+0042 FF                MOV     R7,A
+0043 D082              POP     DPL
+0045 D083              POP     DPH
+0047 75F004            MOV     B,#04H
+004A 120000      E     LCALL   ?C?OFFXADD
+004D E4                CLR     A
+004E F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 52
+004F 900000      R     MOV     DPTR,#current_channel
+0052 E0                MOVX    A,@DPTR
+0053 FE                MOV     R6,A
+0054 75F026            MOV     B,#026H
+0057 A4                MUL     AB
+0058 2400        R     ADD     A,#LOW adc_channels+01H
+005A F582              MOV     DPL,A
+005C E4                CLR     A
+005D 3400        R     ADDC    A,#HIGH adc_channels+01H
+005F F583              MOV     DPH,A
+0061 75F004            MOV     B,#04H
+0064 EF                MOV     A,R7
+0065 120000      E     LCALL   ?C?OFFXADD
+0068 E5DB              MOV     A,ADC0H
+006A F0                MOVX    @DPTR,A
                                            ; SOURCE LINE # 53
-0051 900000      R     MOV     DPTR,#current_channel
-0054 E0                MOVX    A,@DPTR
-0055 FE                MOV     R6,A
-0056 75F026            MOV     B,#026H
-0059 A4                MUL     AB
-005A 2400        R     ADD     A,#LOW adc_channels+01H
-005C F582              MOV     DPL,A
-005E E5F0              MOV     A,B
-0060 3400        R     ADDC    A,#HIGH adc_channels+01H
-0062 F583              MOV     DPH,A
-0064 75F004            MOV     B,#04H
-0067 EF                MOV     A,R7
-0068 120000      E     LCALL   ?C?OFFXADD
-006B E5DB              MOV     A,ADC0H
-006D F0                MOVX    @DPTR,A
+006B EE                MOV     A,R6
+006C 75F026            MOV     B,#026H
+006F A4                MUL     AB
+0070 2400        R     ADD     A,#LOW adc_channels+02H
+0072 F582              MOV     DPL,A
+0074 E4                CLR     A
+0075 3400        R     ADDC    A,#HIGH adc_channels+02H
+0077 F583              MOV     DPH,A
+0079 C083              PUSH    DPH
+007B C082              PUSH    DPL
+007D 900000      R     MOV     DPTR,#current_buf_item
+0080 E0                MOVX    A,@DPTR
+0081 FF                MOV     R7,A
+0082 D082              POP     DPL
+0084 D083              POP     DPH
+0086 75F004            MOV     B,#04H
+0089 120000      E     LCALL   ?C?OFFXADD
+008C E5DA              MOV     A,ADC0M
+C51 COMPILER V9.00   ADC                                                                   05/22/2015 09:20:43 PAGE 5   
+
+008E F0                MOVX    @DPTR,A
                                            ; SOURCE LINE # 54
-006E 75F026            MOV     B,#026H
-0071 EE                MOV     A,R6
-0072 A4                MUL     AB
-0073 2400        R     ADD     A,#LOW adc_channels+02H
-0075 F582              MOV     DPL,A
-0077 E5F0              MOV     A,B
-0079 3400        R     ADDC    A,#HIGH adc_channels+02H
-007B F583              MOV     DPH,A
-007D C083              PUSH    DPH
-007F C082              PUSH    DPL
-0081 900000      R     MOV     DPTR,#current_buf_item
-0084 E0                MOVX    A,@DPTR
-0085 FF                MOV     R7,A
-0086 D082              POP     DPL
-0088 D083              POP     DPH
-008A 75F004            MOV     B,#04H
-008D 120000      E     LCALL   ?C?OFFXADD
-0090 E5DA              MOV     A,ADC0M
-C51 COMPILER V9.00   ADC                                                                   06/20/2014 09:02:39 PAGE 5   
-
-0092 F0                MOVX    @DPTR,A
-                                           ; SOURCE LINE # 55
-0093 900000      R     MOV     DPTR,#current_channel
-0096 E0                MOVX    A,@DPTR
-0097 FE                MOV     R6,A
-0098 75F026            MOV     B,#026H
-009B A4                MUL     AB
-009C 2400        R     ADD     A,#LOW adc_channels+03H
-009E F582              MOV     DPL,A
-00A0 E5F0              MOV     A,B
-00A2 3400        R     ADDC    A,#HIGH adc_channels+03H
-00A4 F583              MOV     DPH,A
-00A6 75F004            MOV     B,#04H
-00A9 EF                MOV     A,R7
-00AA 120000      E     LCALL   ?C?OFFXADD
-00AD E5D9              MOV     A,ADC0L
-00AF F0                MOVX    @DPTR,A
+008F 900000      R     MOV     DPTR,#current_channel
+0092 E0                MOVX    A,@DPTR
+0093 FE                MOV     R6,A
+0094 75F026            MOV     B,#026H
+0097 A4                MUL     AB
+0098 2400        R     ADD     A,#LOW adc_channels+03H
+009A F582              MOV     DPL,A
+009C E4                CLR     A
+009D 3400        R     ADDC    A,#HIGH adc_channels+03H
+009F F583              MOV     DPH,A
+00A1 75F004            MOV     B,#04H
+00A4 EF                MOV     A,R7
+00A5 120000      E     LCALL   ?C?OFFXADD
+00A8 E5D9              MOV     A,ADC0L
+00AA F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 56
+00AB 900000      R     MOV     DPTR,#current_buf_item
+00AE E0                MOVX    A,@DPTR
+00AF 04                INC     A
+00B0 5407              ANL     A,#07H
+00B2 FF                MOV     R7,A
+00B3 EE                MOV     A,R6
+00B4 75F026            MOV     B,#026H
+00B7 A4                MUL     AB
+00B8 2400        R     ADD     A,#LOW adc_channels+020H
+00BA F582              MOV     DPL,A
+00BC E4                CLR     A
+00BD 3400        R     ADDC    A,#HIGH adc_channels+020H
+00BF F583              MOV     DPH,A
+00C1 EF                MOV     A,R7
+00C2 F0                MOVX    @DPTR,A
                                            ; SOURCE LINE # 57
-00B0 900000      R     MOV     DPTR,#current_buf_item
-00B3 E0                MOVX    A,@DPTR
-00B4 04                INC     A
-00B5 5407              ANL     A,#07H
-00B7 FF                MOV     R7,A
-00B8 75F026            MOV     B,#026H
-00BB EE                MOV     A,R6
-00BC A4                MUL     AB
-00BD 2400        R     ADD     A,#LOW adc_channels+020H
-00BF F582              MOV     DPL,A
-00C1 E5F0              MOV     A,B
-00C3 3400        R     ADDC    A,#HIGH adc_channels+020H
-00C5 F583              MOV     DPH,A
-00C7 EF                MOV     A,R7
-00C8 F0                MOVX    @DPTR,A
-                                           ; SOURCE LINE # 58
-00C9 900000      R     MOV     DPTR,#current_channel
-00CC E0                MOVX    A,@DPTR
-00CD FF                MOV     R7,A
-00CE 75F026            MOV     B,#026H
-00D1 A4                MUL     AB
-00D2 2400        R     ADD     A,#LOW adc_channels+025H
-00D4 F582              MOV     DPL,A
-00D6 E5F0              MOV     A,B
-00D8 3400        R     ADDC    A,#HIGH adc_channels+025H
-00DA F583              MOV     DPH,A
-00DC 7401              MOV     A,#01H
-00DE F0                MOVX    @DPTR,A
+00C3 900000      R     MOV     DPTR,#current_channel
+00C6 E0                MOVX    A,@DPTR
+00C7 FF                MOV     R7,A
+00C8 75F026            MOV     B,#026H
+00CB A4                MUL     AB
+00CC 2400        R     ADD     A,#LOW adc_channels+025H
+00CE F582              MOV     DPL,A
+00D0 E4                CLR     A
+00D1 3400        R     ADDC    A,#HIGH adc_channels+025H
+00D3 F583              MOV     DPH,A
+00D5 7401              MOV     A,#01H
+00D7 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 60
+00D8 EF                MOV     A,R7
+00D9 04                INC     A
+00DA 5403              ANL     A,#03H
+00DC FF                MOV     R7,A
+00DD E5E6              MOV     A,ADC0CON2
+00DF 54F0              ANL     A,#0F0H
+00E1 4F                ORL     A,R7
+00E2 F5E6              MOV     ADC0CON2,A
                                            ; SOURCE LINE # 61
-00DF EF                MOV     A,R7
-00E0 04                INC     A
-00E1 5407              ANL     A,#07H
-00E3 FF                MOV     R7,A
 00E4 E5E6              MOV     A,ADC0CON2
-00E6 54F0              ANL     A,#0F0H
-00E8 4F                ORL     A,R7
-00E9 F5E6              MOV     ADC0CON2,A
-                                           ; SOURCE LINE # 62
-00EB E5E6              MOV     A,ADC0CON2
-00ED 5407              ANL     A,#07H
-00EF 75F019            MOV     B,#019H
-00F2 A4                MUL     AB
-00F3 2400        E     ADD     A,#LOW channels+03H
-00F5 F582              MOV     DPL,A
-C51 COMPILER V9.00   ADC                                                                   06/20/2014 09:02:39 PAGE 6   
+00E6 5407              ANL     A,#07H
+00E8 75F019            MOV     B,#019H
+00EB A4                MUL     AB
+00EC 2400        E     ADD     A,#LOW channels+03H
+00EE F582              MOV     DPL,A
+C51 COMPILER V9.00   ADC                                                                   05/22/2015 09:20:43 PAGE 6   
 
-00F7 E5F0              MOV     A,B
-00F9 3400        E     ADDC    A,#HIGH channels+03H
-00FB F583              MOV     DPH,A
-00FD E0                MOVX    A,@DPTR
-00FE 6407              XRL     A,#07H
-0100 5407              ANL     A,#07H
-0102 FF                MOV     R7,A
-0103 E5D2              MOV     A,ADC0CON1
-0105 54F8              ANL     A,#0F8H
-0107 4F                ORL     A,R7
-0108 F5D2              MOV     ADC0CON1,A
-                                           ; SOURCE LINE # 63
-010A E5E6              MOV     A,ADC0CON2
-010C 5407              ANL     A,#07H
-010E 75F019            MOV     B,#019H
-0111 A4                MUL     AB
-0112 2400        E     ADD     A,#LOW channels+04H
-0114 F582              MOV     DPL,A
-0116 E5F0              MOV     A,B
-0118 3400        E     ADDC    A,#HIGH channels+04H
-011A F583              MOV     DPH,A
-011C E0                MOVX    A,@DPTR
-011D F5D4              MOV     SF,A
+00F0 E4                CLR     A
+00F1 3400        E     ADDC    A,#HIGH channels+03H
+00F3 F583              MOV     DPH,A
+00F5 E0                MOVX    A,@DPTR
+00F6 6407              XRL     A,#07H
+00F8 5407              ANL     A,#07H
+00FA FF                MOV     R7,A
+00FB E5D2              MOV     A,ADC0CON1
+00FD 54F8              ANL     A,#0F8H
+00FF 4F                ORL     A,R7
+0100 F5D2              MOV     ADC0CON1,A
+                                           ; SOURCE LINE # 62
+0102 E5E6              MOV     A,ADC0CON2
+0104 5407              ANL     A,#07H
+0106 75F019            MOV     B,#019H
+0109 A4                MUL     AB
+010A 2400        E     ADD     A,#LOW channels+04H
+010C F582              MOV     DPL,A
+010E E4                CLR     A
+010F 3400        E     ADDC    A,#HIGH channels+04H
+0111 F583              MOV     DPH,A
+0113 E0                MOVX    A,@DPTR
+0114 F5D4              MOV     SF,A
+                                           ; SOURCE LINE # 65
+0116 C2DF              CLR     RDY0
                                            ; SOURCE LINE # 66
-011F C2DF              CLR     RDY0
-                                           ; SOURCE LINE # 68
-0121 D0E0              POP     ACC
-0123 FF                MOV     R7,A
-0124 D0E0              POP     ACC
-0126 FE                MOV     R6,A
-0127 D0D0              POP     PSW
-0129 D082              POP     DPL
-012B D083              POP     DPH
-012D D0F0              POP     B
-012F D0E0              POP     ACC
-0131 32                RETI    
+0118 D0E0              POP     ACC
+011A FF                MOV     R7,A
+011B D0E0              POP     ACC
+011D FE                MOV     R6,A
+011E D0D0              POP     PSW
+0120 D082              POP     DPL
+0122 D083              POP     DPH
+0124 D0F0              POP     B
+0126 D0E0              POP     ACC
+0128 32                RETI    
              ; FUNCTION ADC_ISR (END)
 
              ; FUNCTION _ADC_Set_Mode (BEGIN)
-                                           ; SOURCE LINE # 70
+                                           ; SOURCE LINE # 68
 ;---- Variable 'mode' assigned to Register 'R7' ----
-                                           ; SOURCE LINE # 71
-                                           ; SOURCE LINE # 72
+                                           ; SOURCE LINE # 69
+                                           ; SOURCE LINE # 70
 0000 53D1F8            ANL     ADCMODE,#0F8H
-                                           ; SOURCE LINE # 73
+                                           ; SOURCE LINE # 71
 0003 EF                MOV     A,R7
 0004 42D1              ORL     ADCMODE,A
-                                           ; SOURCE LINE # 75
+                                           ; SOURCE LINE # 73
 0006         ?C0003:
 0006 22                RET     
              ; FUNCTION _ADC_Set_Mode (END)
 
              ; FUNCTION _ADC_Out_Freq (BEGIN)
-                                           ; SOURCE LINE # 77
+                                           ; SOURCE LINE # 75
 ;---- Variable 'freq' assigned to Register 'R6/R7' ----
-                                           ; SOURCE LINE # 78
-                                           ; SOURCE LINE # 79
+                                           ; SOURCE LINE # 76
+                                           ; SOURCE LINE # 77
 0000 CB                XCH     A,R3
 0001 EF                MOV     A,R7
 0002 CB                XCH     A,R3
 0003 CA                XCH     A,R2
 0004 EE                MOV     A,R6
-C51 COMPILER V9.00   ADC                                                                   06/20/2014 09:02:39 PAGE 7   
+C51 COMPILER V9.00   ADC                                                                   05/22/2015 09:20:43 PAGE 7   
 
 0005 CA                XCH     A,R2
 0006 E4                CLR     A
@@ -382,21 +380,21 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 000E FC                MOV     R4,A
 000F 120000      E     LCALL   ?C?SLDIV
 0012 8FD4              MOV     SF,R7
-                                           ; SOURCE LINE # 81
+                                           ; SOURCE LINE # 79
 0014         ?C0004:
 0014 22                RET     
              ; FUNCTION _ADC_Out_Freq (END)
 
              ; FUNCTION ADC_Restore_Settings (BEGIN)
+                                           ; SOURCE LINE # 81
+                                           ; SOURCE LINE # 82
                                            ; SOURCE LINE # 83
-                                           ; SOURCE LINE # 84
-                                           ; SOURCE LINE # 85
 0000 E4                CLR     A
 0001 900000      R     MOV     DPTR,#i
 0004 F0                MOVX    @DPTR,A
 0005 A3                INC     DPTR
 0006 F0                MOVX    @DPTR,A
-                                           ; SOURCE LINE # 86
+                                           ; SOURCE LINE # 84
 0007 900000      R     MOV     DPTR,#i
 000A F0                MOVX    @DPTR,A
 000B         ?C0005:
@@ -404,106 +402,106 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 000E E0                MOVX    A,@DPTR
 000F FF                MOV     R7,A
 0010 C3                CLR     C
-0011 9408              SUBB    A,#08H
+0011 9404              SUBB    A,#04H
 0013 4003              JC      $ + 5H
 0015 020000      R     LJMP    ?C0011
-                                           ; SOURCE LINE # 87
-                                           ; SOURCE LINE # 88
-0018 75F026            MOV     B,#026H
-001B EF                MOV     A,R7
+                                           ; SOURCE LINE # 85
+                                           ; SOURCE LINE # 86
+0018 EF                MOV     A,R7
+0019 75F026            MOV     B,#026H
 001C A4                MUL     AB
 001D 2400        R     ADD     A,#LOW adc_channels+020H
 001F F582              MOV     DPL,A
-0021 E5F0              MOV     A,B
-0023 3400        R     ADDC    A,#HIGH adc_channels+020H
-0025 F583              MOV     DPH,A
-0027 E4                CLR     A
-0028 F0                MOVX    @DPTR,A
-                                           ; SOURCE LINE # 89
+0021 E4                CLR     A
+0022 3400        R     ADDC    A,#HIGH adc_channels+020H
+0024 F583              MOV     DPH,A
+0026 E4                CLR     A
+0027 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 87
+0028 EF                MOV     A,R7
 0029 75F026            MOV     B,#026H
-002C EF                MOV     A,R7
-002D A4                MUL     AB
-002E 2400        R     ADD     A,#LOW adc_channels+023H
-0030 F582              MOV     DPL,A
-0032 E5F0              MOV     A,B
-0034 3400        R     ADDC    A,#HIGH adc_channels+023H
-0036 F583              MOV     DPH,A
-0038 E4                CLR     A
-0039 F0                MOVX    @DPTR,A
-                                           ; SOURCE LINE # 90
-003A 75F026            MOV     B,#026H
-003D EF                MOV     A,R7
-003E A4                MUL     AB
-C51 COMPILER V9.00   ADC                                                                   06/20/2014 09:02:39 PAGE 8   
+002C A4                MUL     AB
+002D 2400        R     ADD     A,#LOW adc_channels+023H
+002F F582              MOV     DPL,A
+0031 E4                CLR     A
+0032 3400        R     ADDC    A,#HIGH adc_channels+023H
+0034 F583              MOV     DPH,A
+0036 E4                CLR     A
+0037 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 88
+0038 EF                MOV     A,R7
+0039 75F026            MOV     B,#026H
+003C A4                MUL     AB
+C51 COMPILER V9.00   ADC                                                                   05/22/2015 09:20:43 PAGE 8   
 
-003F 2400        R     ADD     A,#LOW adc_channels+024H
-0041 F582              MOV     DPL,A
-0043 E5F0              MOV     A,B
-0045 3400        R     ADDC    A,#HIGH adc_channels+024H
-0047 F583              MOV     DPH,A
-0049 7420              MOV     A,#020H
-004B F0                MOVX    @DPTR,A
+003D 2400        R     ADD     A,#LOW adc_channels+024H
+003F F582              MOV     DPL,A
+0041 E4                CLR     A
+0042 3400        R     ADDC    A,#HIGH adc_channels+024H
+0044 F583              MOV     DPH,A
+0046 7420              MOV     A,#020H
+0048 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 89
+0049 EF                MOV     A,R7
+004A 75F026            MOV     B,#026H
+004D A4                MUL     AB
+004E 2400        R     ADD     A,#LOW adc_channels+025H
+0050 F582              MOV     DPL,A
+0052 E4                CLR     A
+0053 3400        R     ADDC    A,#HIGH adc_channels+025H
+0055 F583              MOV     DPH,A
+0057 E4                CLR     A
+0058 F0                MOVX    @DPTR,A
                                            ; SOURCE LINE # 91
-004C 75F026            MOV     B,#026H
-004F EF                MOV     A,R7
-0050 A4                MUL     AB
-0051 2400        R     ADD     A,#LOW adc_channels+025H
-0053 F582              MOV     DPL,A
-0055 E5F0              MOV     A,B
-0057 3400        R     ADDC    A,#HIGH adc_channels+025H
-0059 F583              MOV     DPH,A
-005B E4                CLR     A
+0059 900000      R     MOV     DPTR,#j
 005C F0                MOVX    @DPTR,A
-                                           ; SOURCE LINE # 93
+005D         ?C0008:
 005D 900000      R     MOV     DPTR,#j
-0060 F0                MOVX    @DPTR,A
-0061         ?C0008:
-0061 900000      R     MOV     DPTR,#j
-0064 E0                MOVX    A,@DPTR
-0065 FF                MOV     R7,A
-0066 C3                CLR     C
-0067 9408              SUBB    A,#08H
-0069 5028              JNC     ?C0007
+0060 E0                MOVX    A,@DPTR
+0061 FF                MOV     R7,A
+0062 C3                CLR     C
+0063 9408              SUBB    A,#08H
+0065 5027              JNC     ?C0007
+                                           ; SOURCE LINE # 92
+                                           ; SOURCE LINE # 93
+0067 900000      R     MOV     DPTR,#i
+006A E0                MOVX    A,@DPTR
+006B 75F026            MOV     B,#026H
+006E A4                MUL     AB
+006F 2400        R     ADD     A,#LOW adc_channels
+0071 F582              MOV     DPL,A
+0073 E4                CLR     A
+0074 3400        R     ADDC    A,#HIGH adc_channels
+0076 F583              MOV     DPH,A
+0078 75F004            MOV     B,#04H
+007B EF                MOV     A,R7
+007C 120000      E     LCALL   ?C?OFFXADD
+007F 120000      E     LCALL   ?C?LSTKXDATA
+0082 00                DB      00H
+0083 00                DB      00H
+0084 00                DB      00H
+0085 00                DB      00H
                                            ; SOURCE LINE # 94
+0086 900000      R     MOV     DPTR,#j
+0089 E0                MOVX    A,@DPTR
+008A 04                INC     A
+008B F0                MOVX    @DPTR,A
+008C 80CF              SJMP    ?C0008
                                            ; SOURCE LINE # 95
-006B 900000      R     MOV     DPTR,#i
-006E E0                MOVX    A,@DPTR
-006F 75F026            MOV     B,#026H
-0072 A4                MUL     AB
-0073 2400        R     ADD     A,#LOW adc_channels
-0075 F582              MOV     DPL,A
-0077 E5F0              MOV     A,B
-0079 3400        R     ADDC    A,#HIGH adc_channels
-007B F583              MOV     DPH,A
-007D 75F004            MOV     B,#04H
-0080 EF                MOV     A,R7
-0081 120000      E     LCALL   ?C?OFFXADD
-0084 120000      E     LCALL   ?C?LSTKXDATA
-0087 00                DB      00H
-0088 00                DB      00H
-0089 00                DB      00H
-008A 00                DB      00H
-                                           ; SOURCE LINE # 96
-008B 900000      R     MOV     DPTR,#j
-008E E0                MOVX    A,@DPTR
-008F 04                INC     A
-0090 F0                MOVX    @DPTR,A
-0091 80CE              SJMP    ?C0008
+008E         ?C0007:
+008E 900000      R     MOV     DPTR,#i
+0091 E0                MOVX    A,@DPTR
+0092 04                INC     A
+0093 F0                MOVX    @DPTR,A
+0094 020000      R     LJMP    ?C0005
                                            ; SOURCE LINE # 97
-0093         ?C0007:
-0093 900000      R     MOV     DPTR,#i
-0096 E0                MOVX    A,@DPTR
-0097 04                INC     A
-0098 F0                MOVX    @DPTR,A
-0099 020000      R     LJMP    ?C0005
-                                           ; SOURCE LINE # 99
-009C         ?C0011:
-C51 COMPILER V9.00   ADC                                                                   06/20/2014 09:02:39 PAGE 9   
+0097         ?C0011:
+C51 COMPILER V9.00   ADC                                                                   05/22/2015 09:20:43 PAGE 9   
 
-009C 22                RET     
+0097 22                RET     
              ; FUNCTION ADC_Restore_Settings (END)
 
-C51 COMPILER V9.00   ADC                                                                   06/20/2014 09:02:39 PAGE 10  
+C51 COMPILER V9.00   ADC                                                                   05/22/2015 09:20:43 PAGE 10  
 
 NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
 ====                                    =====   ======  ====    ======  ====
@@ -531,6 +529,12 @@ DCON . . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00E8H  1
 SPICON . . . . . . . . . . . . . . . .  SFR      DATA   U_CHAR   00F8H  1
 EADC . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00AEH  1
 RDY0 . . . . . . . . . . . . . . . . .  ABSBIT   -----  BIT      00DFH  1
+CHNL_ADC_0 . . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+CHNL_ADC_1 . . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+CHNL_ADC_2 . . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+CHNL_ADC_3 . . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+CHNL_FREQ_COUNT_T_0. . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
+CHNL_FREQ_COUNT_T_1. . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
 Channel. . . . . . . . . . . . . . . .  * TAG *  -----  STRUCT   -----  25
   number . . . . . . . . . . . . . . .  MEMBER   -----  U_CHAR   0000H  1
   settings . . . . . . . . . . . . . .  MEMBER   -----  UNION    0001H  4
@@ -544,7 +548,7 @@ pt . . . . . . . . . . . . . . . . . .  * TAG *  -----  STRUCT   -----  4
 RESET. . . . . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
 SET. . . . . . . . . . . . . . . . . .  E_CONST  -----  U_CHAR   -----  1
 size_t . . . . . . . . . . . . . . . .  TYPEDEF  -----  U_INT    -----  2
-adc_channels . . . . . . . . . . . . .  PUBLIC   XDATA  ARRAY    0002H  304
+adc_channels . . . . . . . . . . . . .  PUBLIC   XDATA  ARRAY    0002H  152
 ADC_Channels . . . . . . . . . . . . .  * TAG *  -----  STRUCT   -----  38
   ADC_BUF_UN . . . . . . . . . . . . .  MEMBER   -----  ARRAY    0000H  32
   adc_buf_counter. . . . . . . . . . .  MEMBER   -----  U_CHAR   0020H  1
@@ -560,19 +564,23 @@ ADC_ISR. . . . . . . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
 _ADC_Set_Mode. . . . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
   mode . . . . . . . . . . . . . . . .  * REG *  DATA   U_CHAR   0007H  1
 _ADC_Out_Freq. . . . . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
+C51 COMPILER V9.00   ADC                                                                   05/22/2015 09:20:43 PAGE 11  
+
+NAME                                    CLASS   MSPACE  TYPE    OFFSET  SIZE
+====                                    =====   ======  ====    ======  ====
+
+
   freq . . . . . . . . . . . . . . . .  * REG *  DATA   U_INT    0006H  2
 ADC_Restore_Settings . . . . . . . . .  PUBLIC   CODE   PROC     0000H  -----
   i. . . . . . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0000H  1
   j. . . . . . . . . . . . . . . . . .  AUTO     XDATA  U_CHAR   0001H  1
-channels . . . . . . . . . . . . . . .  EXTERN   XDATA  ARRAY    -----  350
+channels . . . . . . . . . . . . . . .  EXTERN   XDATA  ARRAY    -----  150
 
-
-C51 COMPILER V9.00   ADC                                                                   06/20/2014 09:02:39 PAGE 11  
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    536    ----
+   CODE SIZE        =    522    ----
    CONSTANT SIZE    =   ----    ----
-   XDATA SIZE       =    306       2
+   XDATA SIZE       =    154       2
    PDATA SIZE       =   ----    ----
    DATA SIZE        =   ----    ----
    IDATA SIZE       =   ----    ----
