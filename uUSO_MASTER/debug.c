@@ -45,7 +45,7 @@ void main(void) //using 0
 	Timer1_Initialize(); //таймер шедулера 200Гц	
 	ADC_Initialize();
 	UART_Init();
-	Frequency_Init();
+//	Frequency_Init();
 
 	WDT_Init(WDT_2000);//включить сторожевой таймер
 	I2C_Init();
