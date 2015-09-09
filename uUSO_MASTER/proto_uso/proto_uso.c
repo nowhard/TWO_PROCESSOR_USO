@@ -10,8 +10,8 @@
 sbit DE_RE=P3^5;
 
 //-----------------------------------------------------------------------------------
-volatile unsigned char xdata DEV_NAME[DEVICE_NAME_LENGTH_SYM] ="<<uUSO_2>>"; //имя устройства
-volatile unsigned char xdata NOTICE[DEVICE_DESC_MAX_LENGTH_SYM]="<-- GEOSPHERA_2012 -->";//примечание 	
+volatile unsigned char xdata DEV_NAME[DEVICE_NAME_LENGTH_SYM] ="<<SKC>>"; //имя устройства
+volatile unsigned char xdata NOTICE[DEVICE_DESC_MAX_LENGTH_SYM]="<-- GEOSPHERA_2015 -->";//примечание 	
 volatile unsigned char xdata VERSION[DEVICE_VER_LENGTH_SYM] ="\x30\x30\x30\x30\x31";	// версия программы ПЗУ	не больше 5 байт
 
 volatile unsigned char xdata ADRESS_DEV=0x1;
@@ -49,7 +49,6 @@ extern unsigned char idata i2c_buffer[6];
 extern unsigned char channel_number;//количество каналов
 
 //-----------------------------------------------------------------------------------
-//#pragma OT(0,Speed)
 void UART_ISR(void) interrupt 4 //using 1
 {	
 	EA=0;	//запрет прерывания
