@@ -1,0 +1,64 @@
+C51 COMPILER V9.53.0.0   DEBUG                                                             05/03/2018 17:36:17 PAGE 1   
+
+
+C51 COMPILER V9.53.0.0, COMPILATION OF MODULE DEBUG
+OBJECT MODULE PLACED IN debug.OBJ
+COMPILER INVOKED BY: C:\Program Files\Keil\C51\BIN\C51.EXE debug.c LARGE OPTIMIZE(9,SPEED) BROWSE ORDER NOAREGS MODAB2 D
+                    -EBUG OBJECTEXTEND TABS(2)
+
+line level    source
+
+   1          #include <ADuC845.h>
+   2          
+   3          #include "timer2.h"
+   4          
+   5          #include "preferences.h"
+   6          #include "rtos/timer1.h"
+   7          #include "watchdog.h"
+   8          
+   9          #include "dol.h"
+  10          #include "i2c_slave.h"
+  11          
+  12           //---------------------------------------
+  13          
+  14          void main(void) //using 0
+  15          {        
+  16   1        EA = 0;
+  17   1        
+  18   1        //CFG845=0x1;//enable xram
+  19   1        
+  20   1        PLLCON&=PLLCON_VAL;//настройка частоты процессора
+  21   1      //  ChannelsInit();//инициализация настроек каналов
+  22   1      
+  23   1        
+  24   1        Timer1_Initialize(); //
+  25   1        Timer2_Initialize();
+  26   1      
+  27   1        Dol_Init();
+  28   1      
+  29   1        WDT_Init(WDT_2000);//включить сторожевой таймер
+  30   1      
+  31   1        I2C_Slave_Init();
+  32   1        EA=1;
+  33   1      
+  34   1        while(1)
+  35   1        {   
+  36   2          Frequency_Handler();//обработчик измерения частоты
+  37   2          WDT_Clear();
+  38   2        }
+  39   1      }
+  40          //-----------------------------------------------------------------------------
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     32    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

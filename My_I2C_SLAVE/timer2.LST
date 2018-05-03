@@ -1,0 +1,166 @@
+C51 COMPILER V9.53.0.0   TIMER2                                                            05/03/2018 17:36:18 PAGE 1   
+
+
+C51 COMPILER V9.53.0.0, COMPILATION OF MODULE TIMER2
+OBJECT MODULE PLACED IN timer2.OBJ
+COMPILER INVOKED BY: C:\Program Files\Keil\C51\BIN\C51.EXE timer2.c LARGE OPTIMIZE(9,SPEED) BROWSE ORDER NOAREGS MODAB2 
+                    -DEBUG OBJECTEXTEND TABS(2)
+
+line level    source
+
+   1          #include "timer2.h"
+   2          //-------------------------------------------------------
+   3          #define Hz  10
+   4          
+   5          #define kol_izmer_data 3
+   6          #define kol_sec_sred 3
+   7          #define kol_sec_mgnov 1
+   8          #define Period_sred 200
+   9          #define Period_mgnov 100
+  10          
+  11          volatile unsigned long data temp_Hz_kanal_sred=0;
+  12          volatile unsigned long data temp_Hz_kanal_mgnov=0;
+  13          
+  14          volatile unsigned int idata sec_kanal_sred=0;
+  15          volatile unsigned int idata sec_kanal_mgnov=0;
+  16          volatile unsigned int idata cycl_kanal=0;
+  17          
+  18          volatile unsigned long idata Hz_data_sred=0;
+  19          volatile unsigned long idata Hz_data_mgnov=0;
+  20          
+  21          volatile unsigned int xdata period_kanal_sred=0;
+  22          volatile unsigned int xdata period_kanal_mgnov=0;
+  23          //volatile unsigned long xdata Hz_kanal_mgnov[kol_sec_mgnov][1000/Period_mgnov]={0};
+  24          volatile unsigned long xdata Hz_kanal_sred[kol_sec_sred][1000/Period_sred]={0};
+  25          
+  26          volatile unsigned long data sym_kanal_sred=0;
+  27          volatile unsigned long data sym_kanal_mgnov=0;
+  28          unsigned char poschet_intervalov=0; 
+  29          
+  30          volatile unsigned char handle_freq_flag=0;
+  31          //-------------------------------------------------------
+  32          void Timer2_Initialize(void) //using 0// инициализаци€ таймера  таймера дл€ скоростного частотомера
+  33          {
+  34   1          ET2 = 1;
+  35   1        PT2=0;//приоритет низкий
+  36   1        T2CON=0x00;       // таймер периода сбора частоты (0.01)
+  37   1        RCAP2H=TH2=0x86;//0xC3;//0x86;//0x0B; - дл€ 6,29 ћ√ц  //0x0A 
+  38   1        RCAP2L=TL2=0x07;//0x03;//0x07;//0xF0; - дл€ 6,29 ћ√ц   //0x3C 
+  39   1        TR2=1;
+  40   1        return;
+  41   1      }
+  42          //-------------------------------------------------------
+  43          void _TR2_ (void) interrupt 5
+  44          {
+  45   1      char i=0;
+  46   1      char j=0;
+  47   1      
+  48   1        TF2=0;
+  49   1        if(cycl_kanal<19)
+  50   1        {
+  51   2            cycl_kanal++;
+  52   2        }
+  53   1        else
+  54   1          {
+C51 COMPILER V9.53.0.0   TIMER2                                                            05/03/2018 17:36:18 PAGE 2   
+
+  55   2           temp_Hz_kanal_mgnov=((unsigned long)TH1*0x100)|TL1;
+  56   2           TH1=TL1=0;
+  57   2           handle_freq_flag=1;
+  58   2          }
+  59   1      } 
+  60          
+  61          //----------------------------------------------------------------------------------
+  62          void Frequency_Handler(void)//обработчик измерени€ частоты
+  63          {
+  64   1      
+  65   1          if(handle_freq_flag==0)
+  66   1          {
+  67   2            return;
+  68   2          }
+  69   1      
+  70   1          handle_freq_flag=0;
+  71   1      
+  72   1          poschet_intervalov++;
+  73   1        
+  74   1           
+  75   1          // temp_Hz_kanal_mgnov=((unsigned long)TH1*0x100)|TL1;
+  76   1           TH1=TL1=0;
+  77   1           temp_Hz_kanal_sred+=temp_Hz_kanal_mgnov;
+  78   1           Hz_data_mgnov+=temp_Hz_kanal_mgnov;//*=10;
+  79   1           
+  80   1           if(poschet_intervalov==2)
+  81   1           {
+  82   2             Hz_data_mgnov*=5;
+  83   2           // if(channels.transfer==0)  //если передачи нет
+  84   2          //  {
+  85   2              //channels.I2C_CHNL.channels.frequency=Hz_data_mgnov;//FloatToStrPC((void*)&Hz_data_mgnov);
+  86   2              channels.frequency_buf=Hz_data_mgnov;
+  87   2          //  }
+  88   2             Hz_data_mgnov=0;
+  89   2           }
+  90   1        
+  91   1        
+  92   1        
+  93   1        
+  94   1          if(poschet_intervalov==2) // вычисл€етс€ среднее значение частоты за 10 сек
+  95   1          {
+  96   2               poschet_intervalov=0;
+  97   2            
+  98   2                 if(sec_kanal_sred!=kol_sec_sred+1&&!(period_kanal_sred%(1000/Period_sred)))  
+  99   2               {
+ 100   3                  sec_kanal_sred++;
+ 101   3               }
+ 102   2        
+ 103   2               if(sec_kanal_sred==kol_sec_sred+1)
+ 104   2               {
+ 105   3                  sym_kanal_sred-=Hz_kanal_sred[period_kanal_sred/(1000/Period_sred)][period_kanal_sred%(1000/Period_
+             -sred)];
+ 106   3                  sym_kanal_sred+=temp_Hz_kanal_sred;
+ 107   3                  Hz_data_sred=(float)sym_kanal_sred/(float)kol_sec_sred;
+ 108   3      
+ 109   3                //  if(channels.transfer==0)  //если передачи нет
+ 110   3              //  {
+ 111   3                    //channels.I2C_CHNL.channels.mid_frequency=Hz_data_sred;//FloatToStrPC((void*)&Hz_data_sred);
+ 112   3                   channels.mid_frequency_buf=Hz_data_sred;
+ 113   3              //  }
+ 114   3               }
+ 115   2               else
+C51 COMPILER V9.53.0.0   TIMER2                                                            05/03/2018 17:36:18 PAGE 3   
+
+ 116   2               {
+ 117   3                    sym_kanal_sred=sym_kanal_sred+temp_Hz_kanal_sred;
+ 118   3               }
+ 119   2               
+ 120   2               Hz_kanal_sred[period_kanal_sred/(1000/Period_sred)][period_kanal_sred%(1000/Period_sred)]=temp_Hz_kan
+             -al_sred;
+ 121   2            
+ 122   2               if(period_kanal_sred<(kol_sec_sred*(1000/Period_sred))-1)  // подсчет периодов в 10 секундный интервал
+ 123   2               {
+ 124   3                  period_kanal_sred++;
+ 125   3               }
+ 126   2               else
+ 127   2               {
+ 128   3                  period_kanal_sred=0;
+ 129   3               }
+ 130   2        
+ 131   2               temp_Hz_kanal_sred=0;
+ 132   2        
+ 133   2          }
+ 134   1            cycl_kanal=0;
+ 135   1        return;
+ 136   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    646    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =     66       2
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     16    ----
+   IDATA SIZE       =     14    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,10 +1,10 @@
-C51 COMPILER V9.00   PROTO_USO                                                             04/24/2015 12:10:34 PAGE 1   
+C51 COMPILER V9.53.0.0   PROTO_USO                                                         05/03/2018 17:44:14 PAGE 1   
 
 
-C51 COMPILER V9.00, COMPILATION OF MODULE PROTO_USO
+C51 COMPILER V9.53.0.0, COMPILATION OF MODULE PROTO_USO
 OBJECT MODULE PLACED IN proto_uso.obj
 COMPILER INVOKED BY: C:\Program Files\Keil\C51\BIN\C51.EXE proto_uso\proto_uso.c LARGE OPTIMIZE(9,SPEED) BROWSE ORDER NO
-                    -AREGS MODAB2 DEBUG OBJECTEXTEND PRINT(.\proto_uso.lst) OBJECT(proto_uso.obj)
+                    -AREGS MODAB2 DEBUG OBJECTEXTEND PRINT(.\proto_uso.lst) TABS(2) OBJECT(proto_uso.obj)
 
 line level    source
 
@@ -14,42 +14,42 @@ line level    source
    4          #include <intrins.h>
    5          //-----------------------------------------------------------------------------------
    6            unsigned char code Crc8Table[256]={0x00, 0xBC, 0x01, 0xBD, 0x02, 0xBE, 0x03, 0xBF, 
-   7                                                                                   0x04, 0xB8, 0x05, 0xB9, 0x06, 0xBA, 0x07, 0xBB, 
-   8                                                                                   0x08, 0xB4, 0x09, 0xB5, 0x0A, 0xB6, 0x0B, 0xB7, 
-   9                                                                                   0x0C, 0xB0, 0x0D, 0xB1, 0x0E, 0xB2, 0x0F, 0xB3, 
-  10                                                                                   0x10, 0xAC, 0x11, 0xAD, 0x12, 0xAE, 0x13, 0xAF, 
-  11                                                                                   0x14, 0xA8, 0x15, 0xA9, 0x16, 0xAA, 0x17, 0xAB, 
-  12                                                                                   0x18, 0xA4, 0x19, 0xA5, 0x1A, 0xA6, 0x1B, 0xA7, 
-  13                                                                                   0x1C, 0xA0, 0x1D, 0xA1, 0x1E, 0xA2, 0x1F, 0xA3, 
-  14                                                                                   0x20, 0x9C, 0x21, 0x9D, 0x22, 0x9E, 0x23, 0x9F, 
-  15                                                                                   0x24, 0x98, 0x25, 0x99, 0x26, 0x9A, 0x27, 0x9B, 
-  16                                                                                   0x28, 0x94, 0x29, 0x95, 0x2A, 0x96, 0x2B, 0x97, 
-  17                                                                                   0x2C, 0x90, 0x2D, 0x91, 0x2E, 0x92, 0x2F, 0x93, 
-  18                                                                                   0x30, 0x8C, 0x31, 0x8D, 0x32, 0x8E, 0x33, 0x8F, 
-  19                                                                                   0x34, 0x88, 0x35, 0x89, 0x36, 0x8A, 0x37, 0x8B, 
-  20                                                                                   0x38, 0x84, 0x39, 0x85, 0x3A, 0x86, 0x3B, 0x87, 
-  21                                                                                   0x3C, 0x80, 0x3D, 0x81, 0x3E, 0x82, 0x3F, 0x83, 
-  22                                                                                   0x40, 0xFC, 0x41, 0xFD, 0x42, 0xFE, 0x43, 0xFF, 
-  23                                                                                   0x44, 0xF8, 0x45, 0xF9, 0x46, 0xFA, 0x47, 0xFB, 
-  24                                                                                   0x48, 0xF4, 0x49, 0xF5, 0x4A, 0xF6, 0x4B, 0xF7, 
-  25                                                                                   0x4C, 0xF0, 0x4D, 0xF1, 0x4E, 0xF2, 0x4F, 0xF3, 
-  26                                                                                   0x50, 0xEC, 0x51, 0xED, 0x52, 0xEE, 0x53, 0xEF, 
-  27                                                                                   0x54, 0xE8, 0x55, 0xE9, 0x56, 0xEA, 0x57, 0xEB, 
-  28                                                                                   0x58, 0xE4, 0x59, 0xE5, 0x5A, 0xE6, 0x5B, 0xE7, 
-  29                                                                                   0x5C, 0xE0, 0x5D, 0xE1, 0x5E, 0xE2, 0x5F, 0xE3, 
-  30                                                                                   0x60, 0xDC, 0x61, 0xDD, 0x62, 0xDE, 0x63, 0xDF, 
-  31                                                                                   0x64, 0xD8, 0x65, 0xD9, 0x66, 0xDA, 0x67, 0xDB, 
-  32                                                                                   0x68, 0xD4, 0x69, 0xD5, 0x6A, 0xD6, 0x6B, 0xD7, 
-  33                                                                                   0x6C, 0xD0, 0x6D, 0xD1, 0x6E, 0xD2, 0x6F, 0xD3, 
-  34                                                                                   0x70, 0xCC, 0x71, 0xCD, 0x72, 0xCE, 0x73, 0xCF, 
-  35                                                                                   0x74, 0xC8, 0x75, 0xC9, 0x76, 0xCA, 0x77, 0xCB, 
-  36                                                                                   0x78, 0xC4, 0x79, 0xC5, 0x7A, 0xC6, 0x7B, 0xC7, 
-  37                                                                                   0x7C, 0xC0, 0x7D, 0xC1, 0x7E, 0xC2, 0x7F, 0xC3};
+   7                             0x04, 0xB8, 0x05, 0xB9, 0x06, 0xBA, 0x07, 0xBB, 
+   8                             0x08, 0xB4, 0x09, 0xB5, 0x0A, 0xB6, 0x0B, 0xB7, 
+   9                             0x0C, 0xB0, 0x0D, 0xB1, 0x0E, 0xB2, 0x0F, 0xB3, 
+  10                             0x10, 0xAC, 0x11, 0xAD, 0x12, 0xAE, 0x13, 0xAF, 
+  11                             0x14, 0xA8, 0x15, 0xA9, 0x16, 0xAA, 0x17, 0xAB, 
+  12                             0x18, 0xA4, 0x19, 0xA5, 0x1A, 0xA6, 0x1B, 0xA7, 
+  13                             0x1C, 0xA0, 0x1D, 0xA1, 0x1E, 0xA2, 0x1F, 0xA3, 
+  14                             0x20, 0x9C, 0x21, 0x9D, 0x22, 0x9E, 0x23, 0x9F, 
+  15                             0x24, 0x98, 0x25, 0x99, 0x26, 0x9A, 0x27, 0x9B, 
+  16                             0x28, 0x94, 0x29, 0x95, 0x2A, 0x96, 0x2B, 0x97, 
+  17                             0x2C, 0x90, 0x2D, 0x91, 0x2E, 0x92, 0x2F, 0x93, 
+  18                             0x30, 0x8C, 0x31, 0x8D, 0x32, 0x8E, 0x33, 0x8F, 
+  19                             0x34, 0x88, 0x35, 0x89, 0x36, 0x8A, 0x37, 0x8B, 
+  20                             0x38, 0x84, 0x39, 0x85, 0x3A, 0x86, 0x3B, 0x87, 
+  21                             0x3C, 0x80, 0x3D, 0x81, 0x3E, 0x82, 0x3F, 0x83, 
+  22                             0x40, 0xFC, 0x41, 0xFD, 0x42, 0xFE, 0x43, 0xFF, 
+  23                             0x44, 0xF8, 0x45, 0xF9, 0x46, 0xFA, 0x47, 0xFB, 
+  24                             0x48, 0xF4, 0x49, 0xF5, 0x4A, 0xF6, 0x4B, 0xF7, 
+  25                             0x4C, 0xF0, 0x4D, 0xF1, 0x4E, 0xF2, 0x4F, 0xF3, 
+  26                             0x50, 0xEC, 0x51, 0xED, 0x52, 0xEE, 0x53, 0xEF, 
+  27                             0x54, 0xE8, 0x55, 0xE9, 0x56, 0xEA, 0x57, 0xEB, 
+  28                             0x58, 0xE4, 0x59, 0xE5, 0x5A, 0xE6, 0x5B, 0xE7, 
+  29                             0x5C, 0xE0, 0x5D, 0xE1, 0x5E, 0xE2, 0x5F, 0xE3, 
+  30                             0x60, 0xDC, 0x61, 0xDD, 0x62, 0xDE, 0x63, 0xDF, 
+  31                             0x64, 0xD8, 0x65, 0xD9, 0x66, 0xDA, 0x67, 0xDB, 
+  32                             0x68, 0xD4, 0x69, 0xD5, 0x6A, 0xD6, 0x6B, 0xD7, 
+  33                             0x6C, 0xD0, 0x6D, 0xD1, 0x6E, 0xD2, 0x6F, 0xD3, 
+  34                             0x70, 0xCC, 0x71, 0xCD, 0x72, 0xCE, 0x73, 0xCF, 
+  35                             0x74, 0xC8, 0x75, 0xC9, 0x76, 0xCA, 0x77, 0xCB, 
+  36                             0x78, 0xC4, 0x79, 0xC5, 0x7A, 0xC6, 0x7B, 0xC7, 
+  37                             0x7C, 0xC0, 0x7D, 0xC1, 0x7E, 0xC2, 0x7F, 0xC3};
   38          sbit DE_RE=P3^5;
   39          
   40          //-----------------------------------------------------------------------------------
   41          volatile unsigned char  DEV_NAME[DEVICE_NAME_LENGTH_SYM] ="<<uUSO_2>>"; //имя устройства
-  42          volatile unsigned char  NOTICE[DEVICE_DESC_MAX_LENGTH_SYM]="<-- GEOSPHERA_2012 -->";//примечание        
+  42          volatile unsigned char  NOTICE[DEVICE_DESC_MAX_LENGTH_SYM]="<-- GEOSPHERA_2012 -->";//примечание  
   43          volatile unsigned char  VERSION[DEVICE_VER_LENGTH_SYM] ="\x30\x30\x30\x30\x31"; // версия программы ПЗУ не
              - больше 5 байт
   44          
@@ -60,17 +60,17 @@ line level    source
   49          //volatile unsigned char xdata  PROTO_STATE;//счетчик состояний
   50          volatile unsigned char  RECIEVED=0;//принято
   51          volatile unsigned char  recieve_count;//счетчик приемного буфера
-  52          volatile unsigned char  transf_count;//счетчик передаваемых байтов         
+  52          volatile unsigned char  transf_count;//счетчик передаваемых байтов     
   53          volatile unsigned char  buf_len;//длина передаваемого буфера
-C51 COMPILER V9.00   PROTO_USO                                                             04/24/2015 12:10:34 PAGE 2   
+C51 COMPILER V9.53.0.0   PROTO_USO                                                         05/03/2018 17:44:14 PAGE 2   
 
   54          
   55          volatile unsigned char  CUT_OUT_NULL;//флаг-вырезаем 0 после 0xD7
   56          volatile unsigned char  frame_len=0;//длина кадра, которую вытаскиваем из шестого байта кадра
   57          //--------------------------------------------------------------------
   58          volatile unsigned char   RecieveBuf[MAX_LENGTH_REC_BUF]={0} ; //буфер принимаемых данных
-  59          //volatile unsigned char                *TransferBuf;
-  60          unsigned char                TransferBuf[MAX_LENGTH_TR_BUF] ; //буфер передаваемых данных
+  59          //volatile unsigned char      *TransferBuf;
+  60          unsigned char          TransferBuf[MAX_LENGTH_TR_BUF] ; //буфер передаваемых данных
   61          //--------------------------------------------------------------------
   62          volatile unsigned char  STATE_BYTE=0xC0;//байт состояния устройства
   63          volatile unsigned char  symbol=0xFF;//принятый символ
@@ -81,340 +81,340 @@ line level    source
   68          //-----------------------------------------------------------------------------------
   69          union //объединение для конвертирования char->long
   70          {
-  71                  float result_float;
-  72                  unsigned char result_char[4];
+  71            float result_float;
+  72            unsigned char result_char[4];
   73          }
   74          sym_8_to_float;
   75          extern unsigned char idata i2c_buffer[6];
   76          //-----------------------------------------------------------------------------------
   77          void UART_ISR(void) interrupt 4 //using 1
-  78          {       
-  79   1              EA=0;   //запрет прерывания
-  80   1              
-  81   1              if(RI)
-  82   1              {
-  83   2                      RI=0; 
+  78          { 
+  79   1        EA=0; //запрет прерывания
+  80   1        
+  81   1        if(RI)
+  82   1        {
+  83   2          RI=0; 
   84   2      //----------------------обрабатываем возможные ошибки длины кадра-------------
-  85   2                      if(recieve_count>MAX_LENGTH_REC_BUF)    //если посылка слишком длинная
-  86   2                      {
-  87   3                              PT_RESTART_OUT(pt_proto);  //внепроцессный рестарт
-  88   3                              return;
-  89   3                      } 
+  85   2          if(recieve_count>MAX_LENGTH_REC_BUF)  //если посылка слишком длинная
+  86   2          {
+  87   3            PT_RESTART_OUT(pt_proto);  //внепроцессный рестарт
+  88   3            return;
+  89   3          } 
   90   2      
   91   2      
-  92   2                      symbol=SBUF;
-  93   2                      switch(symbol)
-  94   2                      {
-  95   3                              case (char)(0xD7):
-  96   3                              {
-  97   4                                      RecieveBuf[recieve_count]=symbol;
-  98   4                                      recieve_count++;
-  99   4                                      CUT_OUT_NULL=1;          
- 100   4                              }
- 101   3                              break;
+  92   2          symbol=SBUF;
+  93   2          switch(symbol)
+  94   2          {
+  95   3            case (char)(0xD7):
+  96   3            {
+  97   4              RecieveBuf[recieve_count]=symbol;
+  98   4              recieve_count++;
+  99   4              CUT_OUT_NULL=1;    
+ 100   4            }
+ 101   3            break;
  102   3      
- 103   3                              case (char)(0x29):
- 104   3                              {
- 105   4                                      if(CUT_OUT_NULL==1)
- 106   4                                      {
- 107   5                                              RecieveBuf[0]=0x0;
- 108   5                                              RecieveBuf[1]=0xD7;
- 109   5                                              RecieveBuf[2]=0x29;
- 110   5                                              recieve_count=0x3;                      
- 111   5                                      }
- 112   4                                      else
- 113   4                                      {
- 114   5                                              RecieveBuf[recieve_count]=symbol;
- 115   5                                              recieve_count++;        
-C51 COMPILER V9.00   PROTO_USO                                                             04/24/2015 12:10:34 PAGE 3   
+ 103   3            case (char)(0x29):
+ 104   3            {
+ 105   4              if(CUT_OUT_NULL==1)
+ 106   4              {
+ 107   5                RecieveBuf[0]=0x0;
+ 108   5                RecieveBuf[1]=0xD7;
+ 109   5                RecieveBuf[2]=0x29;
+ 110   5                recieve_count=0x3;      
+ 111   5              }
+ 112   4              else
+ 113   4              {
+ 114   5                RecieveBuf[recieve_count]=symbol;
+ 115   5                recieve_count++;  
+C51 COMPILER V9.53.0.0   PROTO_USO                                                         05/03/2018 17:44:14 PAGE 3   
 
- 116   5                                      }
- 117   4                                      CUT_OUT_NULL=0;
- 118   4                              }
- 119   3                              break;
+ 116   5              }
+ 117   4              CUT_OUT_NULL=0;
+ 118   4            }
+ 119   3            break;
  120   3      
- 121   3                              case (char)(0x0):
- 122   3                              {
- 123   4                                      if(CUT_OUT_NULL==1)       //если после 0xD7-пропускаем
- 124   4                                      {
- 125   5                                              CUT_OUT_NULL=0;         
- 126   5                                      }
- 127   4                                      else
- 128   4                                      {
- 129   5                                              RecieveBuf[recieve_count]=symbol;
- 130   5                                              recieve_count++;        
- 131   5                                      }
- 132   4                              }
- 133   3                              break;
+ 121   3            case (char)(0x0):
+ 122   3            {
+ 123   4              if(CUT_OUT_NULL==1)   //если после 0xD7-пропускаем
+ 124   4              {
+ 125   5                CUT_OUT_NULL=0;   
+ 126   5              }
+ 127   4              else
+ 128   4              {
+ 129   5                RecieveBuf[recieve_count]=symbol;
+ 130   5                recieve_count++;  
+ 131   5              }
+ 132   4            }
+ 133   3            break;
  134   3      
- 135   3                              default :
- 136   3                              {
- 137   4                                      RecieveBuf[recieve_count]=symbol;
- 138   4                                      recieve_count++;
- 139   4                                      CUT_OUT_NULL=0;
- 140   4                                      
- 141   4                              }
- 142   3                      }
+ 135   3            default :
+ 136   3            {
+ 137   4              RecieveBuf[recieve_count]=symbol;
+ 138   4              recieve_count++;
+ 139   4              CUT_OUT_NULL=0;
+ 140   4              
+ 141   4            }
+ 142   3          }
  143   2      
- 144   2                 if(recieve_count>6)
- 145   2                 {
- 146   3                                if(recieve_count==6+frame_len)          // принимаем указанное в frame_len число байт данные, 6 значит чт
+ 144   2           if(recieve_count>6)
+ 145   2           {
+ 146   3                if(recieve_count==6+frame_len)    // принимаем указанное в frame_len число байт данные, 6 значит чт
              -о обмен идет с компом, надо ставаить 5 чтобы обмениваться с устройствами
- 147   3                                {
- 148   4                                              RECIEVED=1;//буфер принят
- 149   4                                              ES=0;
- 150   4                                              REN=0;  //recieve disable -запрещаем принимать в буфер  
- 151   4                                              CUT_OUT_NULL=0;                                                 
- 152   4                                }       
- 153   3                 }
- 154   2                 else
- 155   2                 {
- 156   3                                 if(recieve_count==6)
- 157   3                                 {     
- 158   4                                      frame_len=RecieveBuf[recieve_count-1];  // получаем длину данных после заголовка                                         
- 159   4                                 }                    
- 160   3                 }                                                                            
- 161   2              }
+ 147   3                {
+ 148   4                RECIEVED=1;//буфер принят
+ 149   4                  ES=0;
+ 150   4                  REN=0;  //recieve disable -запрещаем принимать в буфер  
+ 151   4                  CUT_OUT_NULL=0;               
+ 152   4              }   
+ 153   3           }
+ 154   2           else
+ 155   2           {
+ 156   3               if(recieve_count==6)
+ 157   3               {     
+ 158   4                    frame_len=RecieveBuf[recieve_count-1];  // получаем длину данных после заголовка           
+ 159   4               }        
+ 160   3           }                    
+ 161   2        }
  162   1      //----------------------------передача----------------------------------------------------------------
- 163   1              if(TI)
- 164   1              {
- 165   2                      TI=0;
- 166   2                       
- 167   2                      if(transf_count<buf_len)
- 168   2                      {
- 169   3                              if(transf_count<3)//передаем заголовок
- 170   3                              {
- 171   4                                      SBUF=TransferBuf[transf_count];                 
- 172   4                                      transf_count++;
- 173   4                              }
- 174   3                              else   //тело...   подставляем 0 после 0xD7
- 175   3                              {
- 176   4                                              if(CUT_OUT_NULL==0)
-C51 COMPILER V9.00   PROTO_USO                                                             04/24/2015 12:10:34 PAGE 4   
+ 163   1        if(TI)
+ 164   1        {
+ 165   2          TI=0;
+ 166   2           
+ 167   2          if(transf_count<buf_len)
+ 168   2          {
+ 169   3            if(transf_count<3)//передаем заголовок
+ 170   3            {
+ 171   4              SBUF=TransferBuf[transf_count];     
+ 172   4              transf_count++;
+ 173   4            }
+ 174   3            else   //тело...   подставляем 0 после 0xD7
+ 175   3            {
+ 176   4                if(CUT_OUT_NULL==0)
+C51 COMPILER V9.53.0.0   PROTO_USO                                                         05/03/2018 17:44:14 PAGE 4   
 
- 177   4                                              {
- 178   5                                                      if(TransferBuf[transf_count]==(unsigned char)0xD7)//проверим, это  ,0xD7 или другое
- 179   5                                                      {                       
- 180   6                                                              CUT_OUT_NULL=0x1;       
- 181   6                                                      }
- 182   5                                                      SBUF=TransferBuf[transf_count];                 
- 183   5                                                      transf_count++;
- 184   5                                              }
- 185   4                                              else
- 186   4                                              {
- 187   5                                                      SBUF=(unsigned char)0x0;
- 188   5                                                      CUT_OUT_NULL=0;         
- 189   5                                              }       
- 190   4                              }       
- 191   3                      }
- 192   2                      else
- 193   2                      {
- 194   3                              transf_count=0;         //обнуляем счетчик
- 195   3                              CUT_OUT_NULL=0;
- 196   3                              PT_RESTART_OUT(pt_proto);  //внепроцессный рестарт                      
- 197   3                      }                                          
- 198   2              }                       
- 199   1              EA=1;
- 200   1              return;
+ 177   4                {
+ 178   5                  if(TransferBuf[transf_count]==(unsigned char)0xD7)//проверим, это  ,0xD7 или другое
+ 179   5                  {     
+ 180   6                    CUT_OUT_NULL=0x1; 
+ 181   6                  }
+ 182   5                  SBUF=TransferBuf[transf_count];     
+ 183   5                  transf_count++;
+ 184   5                }
+ 185   4                else
+ 186   4                {
+ 187   5                  SBUF=(unsigned char)0x0;
+ 188   5                  CUT_OUT_NULL=0;   
+ 189   5                } 
+ 190   4            } 
+ 191   3          }
+ 192   2          else
+ 193   2          {
+ 194   3            transf_count=0;   //обнуляем счетчик
+ 195   3            CUT_OUT_NULL=0;
+ 196   3            PT_RESTART_OUT(pt_proto);  //внепроцессный рестарт      
+ 197   3          }            
+ 198   2        }     
+ 199   1        EA=1;
+ 200   1        return;
  201   1      }
  202          //------------------------------------------------------------------------------
  203          void Protocol_Init(void) //using 0
  204          {
- 205   1              unsigned char i=0;      
+ 205   1        unsigned char i=0;  
  206   1      
- 207   1              TI=0;
- 208   1              RI=0;
- 209   1              
- 210   1              //TransferBuf=&RecieveBuf[0];    //буфер ответа =буфер запроса
+ 207   1        TI=0;
+ 208   1        RI=0;
+ 209   1        
+ 210   1        //TransferBuf=&RecieveBuf[0];  //буфер ответа =буфер запроса
  211   1      
- 212   1              Restore_Dev_Address_Desc();
+ 212   1        Restore_Dev_Address_Desc();
  213   1      
  214   1      
- 215   1              recieve_count=0x0;//счетчик буфера приема
- 216   1              transf_count=0x0;//счетчик передаваемых байтов
- 217   1              buf_len=0x0;//длина передаваемого буфера
- 218   1              DE_RE=0;//линия на прием
- 219   1              CUT_OUT_NULL=0;
- 220   1              STATE_BYTE=0xC0;
+ 215   1        recieve_count=0x0;//счетчик буфера приема
+ 216   1        transf_count=0x0;//счетчик передаваемых байтов
+ 217   1        buf_len=0x0;//длина передаваемого буфера
+ 218   1        DE_RE=0;//линия на прием
+ 219   1        CUT_OUT_NULL=0;
+ 220   1        STATE_BYTE=0xC0;
  221   1      //-----------------------------//просмотр доступных каналов
  222   1         avaible_channels=0;
  223   1         for(i=0;i<CHANNEL_NUMBER;i++)
  224   1         {
- 225   2                      if(channels[i].number!=0xFF)
- 226   2                      {
- 227   3                              channels[i].number=avaible_channels;//автоматическая ренумерация каналов
- 228   3                              avaible_channels++;     
- 229   3                      }               
+ 225   2            if(channels[i].number!=0xFF)
+ 226   2          {
+ 227   3            channels[i].number=avaible_channels;//автоматическая ренумерация каналов
+ 228   3            avaible_channels++; 
+ 229   3          }   
  230   2         }
  231   1      //-----------------------------
  232   1      
- 233   1              PT_INIT(&pt_proto);
- 234   1              return;
+ 233   1        PT_INIT(&pt_proto);
+ 234   1        return;
  235   1      }
  236          //-----------------------------------------------------------------------------
  237          unsigned char Send_Info(void) //using 0    //посылка информации об устройстве
  238          {
-C51 COMPILER V9.00   PROTO_USO                                                             04/24/2015 12:10:34 PAGE 5   
+C51 COMPILER V9.53.0.0   PROTO_USO                                                         05/03/2018 17:44:14 PAGE 5   
 
- 239   1                  volatile unsigned char    i=0;
- 240   1                                                                                      
- 241   1                 //заголовок кадра---
- 242   1                 TransferBuf[0]=0x00;
- 243   1                 TransferBuf[1]=0xD7;
- 244   1                 TransferBuf[2]=0x29;
- 245   1                 //------------------
- 246   1                 TransferBuf[3]=ADRESS_DEV;  // адрес узла
- 247   1                 TransferBuf[4]=GET_DEV_INFO_RESP;  // код операции
- 248   1                 TransferBuf[6]=STATE_BYTE;
+ 239   1            volatile unsigned char    i=0;
+ 240   1                            
+ 241   1           //заголовок кадра---
+ 242   1           TransferBuf[0]=0x00;
+ 243   1           TransferBuf[1]=0xD7;
+ 244   1           TransferBuf[2]=0x29;
+ 245   1           //------------------
+ 246   1           TransferBuf[3]=ADRESS_DEV;  // адрес узла
+ 247   1           TransferBuf[4]=GET_DEV_INFO_RESP;  // код операции
+ 248   1           TransferBuf[6]=STATE_BYTE;
  249   1      
- 250   1                 for(i=0;i<20;i++)
- 251   1                 {                              // записываем наименование изделия
- 252   2                                 if(i<DEVICE_NAME_LENGTH_SYM)
- 253   2                                 {
- 254   3                                      TransferBuf[i+7]=DEV_NAME[i];
- 255   3                                 }
- 256   2                                 else
- 257   2                                 {
- 258   3                                              TransferBuf[i+7]=0x00;
- 259   3                                 }
- 260   2                      }
- 261   1              
- 262   1                 for(i=0;i<5;i++)                   // записываем версию ПЗУ
- 263   1                 {
- 264   2                     if(i<DEVICE_VER_LENGTH_SYM)
- 265   2                         {
- 266   3                               TransferBuf[i+27]=VERSION[i];
- 267   3                         }
- 268   2                 }
+ 250   1           for(i=0;i<20;i++)
+ 251   1           {          // записываем наименование изделия
+ 252   2               if(i<DEVICE_NAME_LENGTH_SYM)
+ 253   2               {
+ 254   3                  TransferBuf[i+7]=DEV_NAME[i];
+ 255   3               }
+ 256   2               else
+ 257   2               {
+ 258   3                  TransferBuf[i+7]=0x00;
+ 259   3               }
+ 260   2          }
+ 261   1        
+ 262   1           for(i=0;i<5;i++)                   // записываем версию ПЗУ
+ 263   1           {
+ 264   2               if(i<DEVICE_VER_LENGTH_SYM)
+ 265   2             {
+ 266   3                 TransferBuf[i+27]=VERSION[i];
+ 267   3             }
+ 268   2           }
  269   1      
- 270   1                 TransferBuf[32]=avaible_channels;               // количество каналов
+ 270   1           TransferBuf[32]=avaible_channels;       // количество каналов
  271   1      
- 272   1                 for(i=0;i<CHANNEL_NUMBER;i++)                                   // данные по каналу
+ 272   1           for(i=0;i<CHANNEL_NUMBER;i++)           // данные по каналу
  273   1             {
- 274   2                              if(channels[i].number!=0xFF)
- 275   2                              {
- 276   3                                      TransferBuf[channels[i].number*2+33]=((channels[i].settings.set.type)<<4)|channels[i].settings.set.mod
+ 274   2              if(channels[i].number!=0xFF)
+ 275   2            {
+ 276   3              TransferBuf[channels[i].number*2+33]=((channels[i].settings.set.type)<<4)|channels[i].settings.set.mod
              -ific; // байт данных
- 277   3                                      TransferBuf[channels[i].number*2+33+1]=0x00;    
- 278   3                              }                                               // резерв байт
- 279   2                 }
- 280   1                      
- 281   1                 for(i=0;i<dev_desc_len;i++)                                  // записываем примечание
- 282   1                 {
- 283   2                               TransferBuf[i+33+avaible_channels*2]=NOTICE[i];
- 284   2                 }
- 285   1                              
- 286   1                 TransferBuf[5]=28+avaible_channels*2+dev_desc_len;                   // подсчет длины данных 
- 287   1                 TransferBuf[33+avaible_channels*2+dev_desc_len]=CRC_Check(&TransferBuf[1],32+avaible_channels*2+dev_de
+ 277   3                TransferBuf[channels[i].number*2+33+1]=0x00;  
+ 278   3            }           // резерв байт
+ 279   2           }
+ 280   1            
+ 281   1           for(i=0;i<dev_desc_len;i++)          // записываем примечание
+ 282   1           {
+ 283   2             TransferBuf[i+33+avaible_channels*2]=NOTICE[i];
+ 284   2           }
+ 285   1            
+ 286   1           TransferBuf[5]=28+avaible_channels*2+dev_desc_len;     // подсчет длины данных 
+ 287   1           TransferBuf[33+avaible_channels*2+dev_desc_len]=CRC_Check(&TransferBuf[1],32+avaible_channels*2+dev_de
              -sc_len); // подсчет контрольной суммы
  288   1      
- 289   1              return (34+avaible_channels*2+dev_desc_len);
+ 289   1        return (34+avaible_channels*2+dev_desc_len);
  290   1      }
  291          //-----------------------------------------------------------------------------
  292          unsigned char Node_Full_Init(void) //using 0 //полная инициализация узла
  293          {
- 294   1              return 0;
+ 294   1        return 0;
  295   1      }
  296          //-----------------------------------------------------------------------------
  297          unsigned char Channel_List_Init(void) //using 0 //Инициализация списка каналов узла (без потери данных);
  298          {
-C51 COMPILER V9.00   PROTO_USO                                                             04/24/2015 12:10:34 PAGE 6   
+C51 COMPILER V9.53.0.0   PROTO_USO                                                         05/03/2018 17:44:14 PAGE 6   
 
- 299   1              return 0;
+ 299   1        return 0;
  300   1      }
  301          //-----------------------------------------------------------------------------
  302          unsigned char Channel_Get_Data(void) //using 0 //Выдать данные по каналам, согласно абсолютной нумерации;
  303          {
- 304   1              return 0;
+ 304   1        return 0;
  305   1      }
  306          //-----------------------------------------------------------------------------
  307          unsigned char  Channel_Set_Parameters(void) //using 0 //Установить параметры по каналам, согласно абсолютн
              -ой нумерации;
  308          {
  309   1             unsigned char xdata index=0, store_data=0,i=0, chn_index=0;
- 310   1               
- 311   1                 while(index<RecieveBuf[5]-1)                            // данные по каналам
- 312   1                    {
- 313   2                                      if(RecieveBuf[6+index]<avaible_channels)
- 314   2                                  {
- 315   3                                              switch((RecieveBuf[6+index+1]>>4)&0xF)
- 316   3                                              {
- 317   4                                                              case CHNL_ADC://АЦП
- 318   4                                                              {
- 319   5                                                                      
- 320   5                                                                      for(i=0;i<CHANNEL_NUMBER;i++)   //поиск соответствующего канала
- 321   5                                                                      {
- 322   6                                                                              if(channels[i].number==RecieveBuf[6+index])     
- 323   6                                                                              {
- 324   7                                                                                      chn_index=i;
- 325   7                                                                                      break;
- 326   7                                                                              }
- 327   6                                                                      }
- 328   5                                                                      
- 329   5                                                                      if((channels[chn_index].settings.set.modific!=RecieveBuf[6+index+1])||(channels[chn_index].setting
+ 310   1         
+ 311   1           while(index<RecieveBuf[5]-1)          // данные по каналам
+ 312   1              {
+ 313   2                if(RecieveBuf[6+index]<avaible_channels)
+ 314   2                {
+ 315   3                switch((RecieveBuf[6+index+1]>>4)&0xF)
+ 316   3                {
+ 317   4                    case CHNL_ADC://АЦП
+ 318   4                    {
+ 319   5                      
+ 320   5                      for(i=0;i<CHANNEL_NUMBER;i++) //поиск соответствующего канала
+ 321   5                      {
+ 322   6                        if(channels[i].number==RecieveBuf[6+index]) 
+ 323   6                        {
+ 324   7                          chn_index=i;
+ 325   7                          break;
+ 326   7                        }
+ 327   6                      }
+ 328   5                      
+ 329   5                      if((channels[chn_index].settings.set.modific!=RecieveBuf[6+index+1])||(channels[chn_index].setting
              -s.set.state_byte_1!=RecieveBuf[6+index+2]) || (channels[chn_index].settings.set.state_byte_2!=RecieveBuf[6+index+3]))
- 330   5                                                                      {  
- 331   6                                                                              channels[chn_index].settings.set.state_byte_1=RecieveBuf[6+index+2];
- 332   6                                                                              channels[chn_index].settings.set.state_byte_2=RecieveBuf[6+index+3];
- 333   6                                                                              channels[chn_index].settings.set.modific         =RecieveBuf[6+index+1]&0xF;
- 334   6                                                                              store_data=1;
- 335   6                                                                              
- 336   6                                                                      }
- 337   5                                                                      index++;
- 338   5                                                              }
- 339   4                                                              break;
+ 330   5                      {  
+ 331   6                        channels[chn_index].settings.set.state_byte_1=RecieveBuf[6+index+2];
+ 332   6                        channels[chn_index].settings.set.state_byte_2=RecieveBuf[6+index+3];
+ 333   6                        channels[chn_index].settings.set.modific   =RecieveBuf[6+index+1]&0xF;
+ 334   6                        store_data=1;
+ 335   6                        
+ 336   6                      }
+ 337   5                      index++;
+ 338   5                    }
+ 339   4                    break;
  340   4      
  341   4      
- 342   4                                                              default :
- 343   4                                                              {
- 344   5                                                                      _nop_();
- 345   5                                                              }                       
- 346   4                                              }
- 347   3                                              index=index+3;
- 348   3                                      }
- 349   2                                      else
- 350   2                                      {
- 351   3                                              return Request_Error(FR_UNATTENDED_CHANNEL);
- 352   3                                      }
- 353   2                        }
- 354   1                 if(store_data)
- 355   1                 {
- 356   2                              Store_Channels_Data();  //сохраним настройки каналов в ППЗУ
- 357   2                 }
+ 342   4                    default :
+ 343   4                    {
+ 344   5                      _nop_();
+ 345   5                    }     
+ 346   4                }
+ 347   3                index=index+3;
+ 348   3              }
+ 349   2              else
+ 350   2              {
+ 351   3                return Request_Error(FR_UNATTENDED_CHANNEL);
+ 352   3              }
+ 353   2            }
+ 354   1           if(store_data)
+ 355   1           {
+ 356   2              Store_Channels_Data();  //сохраним настройки каналов в ППЗУ
+ 357   2           }
  358   1      
-C51 COMPILER V9.00   PROTO_USO                                                             04/24/2015 12:10:34 PAGE 7   
+C51 COMPILER V9.53.0.0   PROTO_USO                                                         05/03/2018 17:44:14 PAGE 7   
 
- 359   1                 return Request_Error(FR_SUCCESFUL);
+ 359   1           return Request_Error(FR_SUCCESFUL);
  360   1      }
  361          //-----------------------------------------------------------------------------
  362          unsigned char Channel_Set_Order_Query(void) //using 0 //Задать последовательность опроса;
  363          {
- 364   1              return 0;
+ 364   1        return 0;
  365   1      }
  366          //-----------------------------------------------------------------------------
  367          unsigned char Channel_Get_Data_Order(void) //using 0 //Выдать данные по каналам, согласно последовательнос
              -ти опроса;
  368          {
- 369   1              return 0;
+ 369   1        return 0;
  370   1      }
  371          //-----------------------------------------------------------------------------
  372          unsigned char Channel_Set_State(void) //using 0 //Установить состояния по каналам, согласно абсолютной нум
              -ерации;
  373          {
- 374   1              return 0;
+ 374   1        return 0;
  375   1      }
  376          //-----------------------------------------------------------------------------
  377          unsigned char  Channel_Get_Data_Order_M2(void) //using 0 //Выдать данные по каналам, согласно последовател
              -ьности опроса;
  378          {
- 379   1              return 0;
+ 379   1        return 0;
  380   1      }
  381          //-----------------------------------------------------------------------------
  382          unsigned char Channel_Set_Reset_State_Flags(void) //using 0 //  Установка/Сброс флагов состояния 
  383          {
- 384   1              STATE_BYTE=0x40;
- 385   1              i2c_buffer[0]=0x12;//сбросим флаг инициализации ведомого
- 386   1              return  Request_Error(FR_SUCCESFUL);//ошибки нет, подтверждение
+ 384   1        STATE_BYTE=0x40;
+ 385   1        i2c_buffer[0]=0x12;//сбросим флаг инициализации ведомого
+ 386   1        return  Request_Error(FR_SUCCESFUL);//ошибки нет, подтверждение
  387   1      }
  388          //-----------------------------------------------------------------------------
  389          
@@ -431,205 +431,205 @@ line level    source
  399   1      
  400   1         index=7;//длина заголовка
  401   1       
- 402   1          for(i=0;i<CHANNEL_NUMBER;i++)                                  // данные по каналам
+ 402   1          for(i=0;i<CHANNEL_NUMBER;i++)          // данные по каналам
  403   1          {
  404   2      
- 405   2                      if(channels[i].number==0xFF)  //если канал отключен, пропустим
- 406   2                      {
- 407   3                              continue;
- 408   3                      }                 
+ 405   2          if(channels[i].number==0xFF)  //если канал отключен, пропустим
+ 406   2          {
+ 407   3            continue;
+ 408   3          }     
  409   2      
- 410   2                        TransferBuf[index++]=channels[i].number;
- 411   2                        TransferBuf[index++]=((channels[i].settings.set.type)<<4)|channels[i].settings.set.modific; // тип и м
+ 410   2            TransferBuf[index++]=channels[i].number;
+ 411   2            TransferBuf[index++]=((channels[i].settings.set.type)<<4)|channels[i].settings.set.modific; // тип и м
              -одификация канала
- 412   2                        
- 413   2                        switch(channels[i].settings.set.type)
- 414   2                          {
- 415   3                                       case CHNL_ADC:  //аналоговый канал
-C51 COMPILER V9.00   PROTO_USO                                                             04/24/2015 12:10:34 PAGE 8   
+ 412   2            
+ 413   2            switch(channels[i].settings.set.type)
+ 414   2              {
+ 415   3               case CHNL_ADC:  //аналоговый канал
+C51 COMPILER V9.53.0.0   PROTO_USO                                                         05/03/2018 17:44:14 PAGE 8   
 
- 416   3                                       {
- 417   4                                               switch(channels[i].settings.set.modific)
- 418   4                               {
- 419   5                                                        case CHNL_ADC_FIX_16:
- 420   5                                                        {
- 421   6                                                                      if(channels[i].calibrate.cal.calibrate==1)//калиброванный
- 422   6                                                                      {                                                
- 423   7                                                                                      TransferBuf[index++]=((unsigned char*)(&channels[i].channel_data_calibrate))[2];
- 424   7                                                                              TransferBuf[index++]=((unsigned char*)(&channels[i].channel_data_calibrate))[1];
- 425   7                                                                      }
- 426   6                                                                      else
- 427   6                                                                      {
- 428   7                                                                                      TransferBuf[index++]=((unsigned char*)(&channels[i].channel_data))[2];
- 429   7                                                                              TransferBuf[index++]=((unsigned char*)(&channels[i].channel_data))[1];  
- 430   7                                                                      } 
+ 416   3               {
+ 417   4                 switch(channels[i].settings.set.modific)
+ 418   4                         {
+ 419   5                    case CHNL_ADC_FIX_16:
+ 420   5                    {
+ 421   6                        if(channels[i].calibrate.cal.calibrate==1)//калиброванный
+ 422   6                      {            
+ 423   7                          TransferBuf[index++]=((unsigned char*)(&channels[i].channel_data_calibrate))[2];
+ 424   7                              TransferBuf[index++]=((unsigned char*)(&channels[i].channel_data_calibrate))[1];
+ 425   7                      }
+ 426   6                      else
+ 427   6                      {
+ 428   7                          TransferBuf[index++]=((unsigned char*)(&channels[i].channel_data))[2];
+ 429   7                              TransferBuf[index++]=((unsigned char*)(&channels[i].channel_data))[1];  
+ 430   7                      } 
  431   6      
- 432   6                                                                        
- 433   6                                                                       TransferBuf[index++]=channels[i].settings.set.state_byte_1;     // первый байт состояния канала
- 434   6                                               TransferBuf[index++]=channels[i].settings.set.state_byte_2;     // второй байт сос
+ 432   6                        
+ 433   6                       TransferBuf[index++]=channels[i].settings.set.state_byte_1;   // первый байт состояния канала
+ 434   6                                   TransferBuf[index++]=channels[i].settings.set.state_byte_2;   // второй байт сос
              -тояния канала
- 435   6                                                        }
- 436   5                                                        break; 
+ 435   6                    }
+ 436   5                    break; 
  437   5      
- 438   5                                                        case CHNL_ADC_FIX_24:
- 439   5                                                        {
- 440   6                                                              if(channels[i].calibrate.cal.calibrate==1)//калиброванный
- 441   6                                                                      {                                                                                                 
- 442   7                                                                                      TransferBuf[index++]=((unsigned char*)(&channels[i].channel_data_calibrate))[3];
- 443   7                                                                                      TransferBuf[index++]=((unsigned char*)(&channels[i].channel_data_calibrate))[2];
- 444   7                                                                              TransferBuf[index++]=((unsigned char*)(&channels[i].channel_data_calibrate))[1];
- 445   7                                                                      }
- 446   6                                                                      else
- 447   6                                                                      {                                                                        
- 448   7                                                                                      TransferBuf[index++]=((unsigned char*)(&channels[i].channel_data))[3];
- 449   7                                                                                      TransferBuf[index++]=((unsigned char*)(&channels[i].channel_data))[2];
- 450   7                                                                              TransferBuf[index++]=((unsigned char*)(&channels[i].channel_data))[1];  
- 451   7                                                                      } 
- 452   6                        
- 453   6                                                                        TransferBuf[index++]=channels[i].settings.set.state_byte_1;    // первый байт состояния канала
- 454   6                                                TransferBuf[index++]=channels[i].settings.set.state_byte_2;    // второй байт со
+ 438   5                    case CHNL_ADC_FIX_24:
+ 439   5                    {
+ 440   6                          if(channels[i].calibrate.cal.calibrate==1)//калиброванный
+ 441   6                      {                         
+ 442   7                          TransferBuf[index++]=((unsigned char*)(&channels[i].channel_data_calibrate))[3];
+ 443   7                          TransferBuf[index++]=((unsigned char*)(&channels[i].channel_data_calibrate))[2];
+ 444   7                              TransferBuf[index++]=((unsigned char*)(&channels[i].channel_data_calibrate))[1];
+ 445   7                      }
+ 446   6                      else
+ 447   6                      {                  
+ 448   7                          TransferBuf[index++]=((unsigned char*)(&channels[i].channel_data))[3];
+ 449   7                          TransferBuf[index++]=((unsigned char*)(&channels[i].channel_data))[2];
+ 450   7                              TransferBuf[index++]=((unsigned char*)(&channels[i].channel_data))[1];  
+ 451   7                      } 
+ 452   6            
+ 453   6                        TransferBuf[index++]=channels[i].settings.set.state_byte_1;  // первый байт состояния канала
+ 454   6                                    TransferBuf[index++]=channels[i].settings.set.state_byte_2;  // второй байт со
              -стояния канала
- 455   6                                                        }
- 456   5                                                        break;
- 457   5                                                }
- 458   4                                        }
- 459   3                                        break;
+ 455   6                    }
+ 456   5                    break;
+ 457   5                  }
+ 458   4                }
+ 459   3                break;
  460   3      
- 461   3                                      case CHNL_DOL:   //ДОЛ
- 462   3                                      {
- 463   4                                                switch(channels[i].settings.set.modific)
- 464   4                                            {   
- 465   5                                                                case CHNL_DOL_ENC:
- 466   5                                                                {
- 467   6                                                                                      TransferBuf[index++]=((unsigned char*)(&channels[i].channel_data))[3];
- 468   6                                                                                      TransferBuf[index++]=((unsigned char*)(&channels[i].channel_data))[2];
- 469   6                                                                              TransferBuf[index++]=((unsigned char*)(&channels[i].channel_data))[1];
- 470   6                                                                                      TransferBuf[index++]=((unsigned char*)(&channels[i].channel_data))[0];
- 471   6                                                                                  TransferBuf[index++]=channels[i].settings.set.state_byte_1;  // первый байт состояния канала
- 472   6                                                                }
- 473   5                                                                break; 
- 474   5                                                 }
- 475   4                                      }
-C51 COMPILER V9.00   PROTO_USO                                                             04/24/2015 12:10:34 PAGE 9   
+ 461   3              case CHNL_DOL:   //ДОЛ
+ 462   3              {
+ 463   4                  switch(channels[i].settings.set.modific)
+ 464   4                    {   
+ 465   5                      case CHNL_DOL_ENC:
+ 466   5                      {
+ 467   6                          TransferBuf[index++]=((unsigned char*)(&channels[i].channel_data))[3];
+ 468   6                          TransferBuf[index++]=((unsigned char*)(&channels[i].channel_data))[2];
+ 469   6                              TransferBuf[index++]=((unsigned char*)(&channels[i].channel_data))[1];
+ 470   6                          TransferBuf[index++]=((unsigned char*)(&channels[i].channel_data))[0];
+ 471   6                            TransferBuf[index++]=channels[i].settings.set.state_byte_1;  // первый байт состояния канала
+ 472   6                      }
+ 473   5                      break; 
+ 474   5                   }
+ 475   4              }
+C51 COMPILER V9.53.0.0   PROTO_USO                                                         05/03/2018 17:44:14 PAGE 9   
 
- 476   3                                      break;
+ 476   3              break;
  477   3      
- 478   3                                       case CHNL_FREQ: //частотный
- 479   3                                       { 
- 480   4                                                switch(channels[i].settings.set.modific)
- 481   4                                            {   
- 482   5                                                                
- 483   5                                                                case CHNL_FREQ_COUNT_T:
- 484   5                                                                {
- 485   6                                                                                      TransferBuf[index++]=((unsigned char*)(&channels[i].channel_data))[3];
- 486   6                                                                                      TransferBuf[index++]=((unsigned char*)(&channels[i].channel_data))[2];
- 487   6                                                                                  TransferBuf[index++]=channels[i].settings.set.state_byte_1;  // первый байт состояния канала
- 488   6                                                                }
- 489   5                                                                break;
+ 478   3               case CHNL_FREQ: //частотный
+ 479   3               { 
+ 480   4                  switch(channels[i].settings.set.modific)
+ 481   4                    {   
+ 482   5                      
+ 483   5                      case CHNL_FREQ_COUNT_T:
+ 484   5                      {
+ 485   6                          TransferBuf[index++]=((unsigned char*)(&channels[i].channel_data))[3];
+ 486   6                          TransferBuf[index++]=((unsigned char*)(&channels[i].channel_data))[2];
+ 487   6                            TransferBuf[index++]=channels[i].settings.set.state_byte_1;  // первый байт состояния канала
+ 488   6                      }
+ 489   5                      break;
  490   5      
- 491   5                                                                case CHNL_FREQ_256:
- 492   5                                                                {
- 493   6                                                                                      TransferBuf[index++]=((unsigned char*)(&channels[i].channel_data))[3];
- 494   6                                                                                      TransferBuf[index++]=((unsigned char*)(&channels[i].channel_data))[2];
- 495   6                                                                                  TransferBuf[index++]=channels[i].settings.set.state_byte_1;  // первый байт состояния канала
- 496   6                                                                }
- 497   5                                                                break; 
- 498   5                                                 }
- 499   4                                        }
- 500   3                                        break;                 
- 501   3                        }
- 502   2                 }
+ 491   5                      case CHNL_FREQ_256:
+ 492   5                      {
+ 493   6                          TransferBuf[index++]=((unsigned char*)(&channels[i].channel_data))[3];
+ 494   6                          TransferBuf[index++]=((unsigned char*)(&channels[i].channel_data))[2];
+ 495   6                            TransferBuf[index++]=channels[i].settings.set.state_byte_1;  // первый байт состояния канала
+ 496   6                      }
+ 497   5                      break; 
+ 498   5                   }
+ 499   4                }
+ 500   3                break;     
+ 501   3            }
+ 502   2           }
  503   1      
- 504   1                TransferBuf[5]=index+2-7;                                              // подсчет длины данных двойка это 1(байт статуса)+1(контрольная сумма
+ 504   1          TransferBuf[5]=index+2-7;              // подсчет длины данных двойка это 1(байт статуса)+1(контрольная сумма
              -)
- 505   1                TransferBuf[index]=CRC_Check(&TransferBuf[1],(unsigned int)(index)-1); // подсчет кс
- 506   1                return (unsigned char)(index+1);
+ 505   1          TransferBuf[index]=CRC_Check(&TransferBuf[1],(unsigned int)(index)-1); // подсчет кс
+ 506   1          return (unsigned char)(index+1);
  507   1      }
  508          //-----------------------------------------------------------------------------
  509          unsigned char Channel_Set_Calibrate(void)//установить верхнюю или нижнюю точку калибровки
  510          {
  511   1      
- 512   1              float K,C;      
+ 512   1        float K,C;  
  513   1      
- 514   1              sym_8_to_float.result_char[0]=RecieveBuf[11];
- 515   1              sym_8_to_float.result_char[1]=RecieveBuf[10];
- 516   1              sym_8_to_float.result_char[2]=RecieveBuf[9];
- 517   1              sym_8_to_float.result_char[3]=RecieveBuf[8];
+ 514   1        sym_8_to_float.result_char[0]=RecieveBuf[11];
+ 515   1        sym_8_to_float.result_char[1]=RecieveBuf[10];
+ 516   1        sym_8_to_float.result_char[2]=RecieveBuf[9];
+ 517   1        sym_8_to_float.result_char[3]=RecieveBuf[8];
  518   1      
- 519   1              K=sym_8_to_float.result_float;
+ 519   1          K=sym_8_to_float.result_float;
  520   1      
- 521   1              sym_8_to_float.result_char[0]=RecieveBuf[15];
- 522   1              sym_8_to_float.result_char[1]=RecieveBuf[14];
- 523   1              sym_8_to_float.result_char[2]=RecieveBuf[13];
- 524   1              sym_8_to_float.result_char[3]=RecieveBuf[12];
+ 521   1        sym_8_to_float.result_char[0]=RecieveBuf[15];
+ 522   1        sym_8_to_float.result_char[1]=RecieveBuf[14];
+ 523   1        sym_8_to_float.result_char[2]=RecieveBuf[13];
+ 524   1        sym_8_to_float.result_char[3]=RecieveBuf[12];
  525   1      
- 526   1              C=sym_8_to_float.result_float;
+ 526   1          C=sym_8_to_float.result_float;
  527   1      
- 528   1              switch(RecieveBuf[7])
- 529   1              {
- 530   2                      case 0:
- 531   2                      {
- 532   3                              Calibrate(RecieveBuf[6],K,C);   
- 533   3                      }
- 534   2                      break;
+ 528   1        switch(RecieveBuf[7])
+ 529   1        {
+ 530   2          case 0:
+ 531   2          {
+ 532   3            Calibrate(RecieveBuf[6],K,C); 
+ 533   3          }
+ 534   2          break;
  535   2      
- 536   2                      case 1:
-C51 COMPILER V9.00   PROTO_USO                                                             04/24/2015 12:10:34 PAGE 10  
+ 536   2          case 1:
+C51 COMPILER V9.53.0.0   PROTO_USO                                                         05/03/2018 17:44:14 PAGE 10  
 
- 537   2                      {
- 538   3                              channels[RecieveBuf[6]].calibrate.cal.calibrate=0;//установим/снимем флаг калибровки
- 539   3                              EEPROM_Write(&channels[RecieveBuf[6]].calibrate.serialize,3,ADC_CALIBRATE_ADDR+RecieveBuf[6]*3);
- 540   3                      }
- 541   2                      break;
+ 537   2          {
+ 538   3            channels[RecieveBuf[6]].calibrate.cal.calibrate=0;//установим/снимем флаг калибровки
+ 539   3            EEPROM_Write(&channels[RecieveBuf[6]].calibrate.serialize,3,ADC_CALIBRATE_ADDR+RecieveBuf[6]*3);
+ 540   3          }
+ 541   2          break;
  542   2      
- 543   2                      case 2:
- 544   2                      {
- 545   3                              channels[RecieveBuf[6]].calibrate.cal.calibrate=1;//установим/снимем флаг калибровки
- 546   3                              EEPROM_Write(&channels[RecieveBuf[6]].calibrate.serialize,3,ADC_CALIBRATE_ADDR+RecieveBuf[6]*3);        
- 547   3                      }
- 548   2                      break;
+ 543   2          case 2:
+ 544   2          {
+ 545   3            channels[RecieveBuf[6]].calibrate.cal.calibrate=1;//установим/снимем флаг калибровки
+ 546   3            EEPROM_Write(&channels[RecieveBuf[6]].calibrate.serialize,3,ADC_CALIBRATE_ADDR+RecieveBuf[6]*3);  
+ 547   3          }
+ 548   2          break;
  549   2      
- 550   2                      default :
- 551   2                      {
- 552   3                              _nop_();
- 553   3                      }
- 554   2                      break;
- 555   2              }
+ 550   2          default :
+ 551   2          {
+ 552   3            _nop_();
+ 553   3          }
+ 554   2          break;
+ 555   2        }
  556   1      
  557   1      
- 558   1              return  Request_Error(FR_SUCCESFUL);//ошибки нет, подтверждение 
+ 558   1        return  Request_Error(FR_SUCCESFUL);//ошибки нет, подтверждение 
  559   1      }
  560          //------------------------------------------------------------------------------
  561          unsigned char Channel_Set_Address_Desc(void)//установить новый адрес устройства, имя, описание, версию про
              -шивки и комментарий
  562          {
- 563   1              unsigned char  desc_len=0;
- 564   1              desc_len=RecieveBuf[5]-27;
+ 563   1        unsigned char  desc_len=0;
+ 564   1        desc_len=RecieveBuf[5]-27;
  565   1      
- 566   1              if(desc_len)
- 567   1              {       
- 568   2                      Store_Dev_Address_Desc(RecieveBuf[6],&RecieveBuf[7],&RecieveBuf[27],&RecieveBuf[32],desc_len);
- 569   2                      return    Request_Error(FR_SUCCESFUL);//ошибки нет, подтверждение
- 570   2              }
- 571   1              else
- 572   1              {
- 573   2                      return Request_Error(FR_COMMAND_STRUCT_ERROR);
- 574   2              }
- 575   1              return 0;
+ 566   1        if(desc_len)
+ 567   1        { 
+ 568   2            Store_Dev_Address_Desc(RecieveBuf[6],&RecieveBuf[7],&RecieveBuf[27],&RecieveBuf[32],desc_len);
+ 569   2          return    Request_Error(FR_SUCCESFUL);//ошибки нет, подтверждение
+ 570   2        }
+ 571   1        else
+ 572   1        {
+ 573   2          return Request_Error(FR_COMMAND_STRUCT_ERROR);
+ 574   2        }
+ 575   1        return 0;
  576   1      }
  577          //-----------------------------------------------------------------------------
- 578          unsigned char Request_Error(unsigned char error_code) //using 0 //      Ошибочный запрос/ответ;
+ 578          unsigned char Request_Error(unsigned char error_code) //using 0 //  Ошибочный запрос/ответ;
  579          {
- 580   1              TransferBuf[0]=0x00;TransferBuf[1]=0xD7;TransferBuf[2]=0x29;
+ 580   1        TransferBuf[0]=0x00;TransferBuf[1]=0xD7;TransferBuf[2]=0x29;
  581   1          TransferBuf[3]=ADRESS_DEV;  // адрес узла
  582   1          TransferBuf[7]=RecieveBuf[4]; // код сбойной команды
  583   1          TransferBuf[4]=0xFF;  // код операции
  584   1      
- 585   1              TransferBuf[6]=STATE_BYTE; // байт статуса узла
+ 585   1        TransferBuf[6]=STATE_BYTE; // байт статуса узла
  586   1          TransferBuf[8]=error_code;   
- 587   1          TransferBuf[5]=0x04;          // длина данных
+ 587   1          TransferBuf[5]=0x04;    // длина данных
  588   1          TransferBuf[9]=CRC_Check(TransferBuf,9);
- 589   1              return 10;
+ 589   1        return 10;
  590   1      }
  591          //-----------------------------------------------------------------------------
  592          void ProtoBufHandling(void) //using 0 //процесс обработки принятого запроса
@@ -637,92 +637,92 @@ line level    source
  594   1        switch(RecieveBuf[4])
  595   1        {
  596   2      //---------------------------------------
- 597   2              case GET_DEV_INFO_REQ:
-C51 COMPILER V9.00   PROTO_USO                                                             04/24/2015 12:10:34 PAGE 11  
+ 597   2          case GET_DEV_INFO_REQ:
+C51 COMPILER V9.53.0.0   PROTO_USO                                                         05/03/2018 17:44:14 PAGE 11  
 
- 598   2              {
- 599   3                      buf_len=Send_Info();    
- 600   3              }
- 601   2              break;
+ 598   2        {
+ 599   3          buf_len=Send_Info();  
+ 600   3        }
+ 601   2        break;
  602   2      //---------------------------------------
- 603   2              case NODE_FULL_INIT_REQ:
- 604   2              {
- 605   3                      buf_len=Node_Full_Init();
- 606   3              }
- 607   2              break;
+ 603   2          case NODE_FULL_INIT_REQ:
+ 604   2        {
+ 605   3          buf_len=Node_Full_Init();
+ 606   3        }
+ 607   2        break;
  608   2      //---------------------------------------
- 609   2              case CHANNEL_LIST_INIT_REQ:
- 610   2              {       
- 611   3                      buf_len=Channel_List_Init();    
- 612   3              }
- 613   2              break;
+ 609   2          case CHANNEL_LIST_INIT_REQ:
+ 610   2        { 
+ 611   3          buf_len=Channel_List_Init();  
+ 612   3        }
+ 613   2        break;
  614   2      //---------------------------------------
- 615   2              case CHANNEL_GET_DATA_REQ:
- 616   2              {
- 617   3                      buf_len=Channel_Get_Data();     
- 618   3              }
- 619   2              break;
- 620   2              //-----------------------------------
- 621   2              case CHANNEL_SET_PARAMETERS_REQ:
- 622   2              {
- 623   3                      buf_len=Channel_Set_Parameters();
- 624   3              }
- 625   2              break;
- 626   2              //-----------------------------------
- 627   2              case CHANNEL_SET_ORDER_QUERY_REQ:
- 628   2              {
- 629   3                      buf_len=Channel_Set_Order_Query();
- 630   3              }
- 631   2              break;
+ 615   2        case CHANNEL_GET_DATA_REQ:
+ 616   2        {
+ 617   3          buf_len=Channel_Get_Data(); 
+ 618   3        }
+ 619   2        break;
+ 620   2        //-----------------------------------
+ 621   2        case CHANNEL_SET_PARAMETERS_REQ:
+ 622   2        {
+ 623   3          buf_len=Channel_Set_Parameters();
+ 624   3        }
+ 625   2        break;
+ 626   2        //-----------------------------------
+ 627   2        case CHANNEL_SET_ORDER_QUERY_REQ:
+ 628   2        {
+ 629   3          buf_len=Channel_Set_Order_Query();
+ 630   3        }
+ 631   2        break;
  632   2      //----------------------------------------
- 633   2              case CHANNEL_GET_DATA_ORDER_REQ:
- 634   2              {
- 635   3                       buf_len=Channel_Get_Data_Order();
- 636   3              }
- 637   2              break;
+ 633   2        case CHANNEL_GET_DATA_ORDER_REQ:
+ 634   2        {
+ 635   3           buf_len=Channel_Get_Data_Order();
+ 636   3        }
+ 637   2        break;
  638   2      //----------------------------------------
- 639   2              case CHANNEL_SET_STATE_REQ:
- 640   2              {
- 641   3                       buf_len=Channel_Set_State();
- 642   3              }
- 643   2              break;
+ 639   2        case CHANNEL_SET_STATE_REQ:
+ 640   2        {
+ 641   3           buf_len=Channel_Set_State();
+ 642   3        }
+ 643   2        break;
  644   2      //----------------------------------------
- 645   2              case CHANNEL_GET_DATA_ORDER_M2_REQ:
- 646   2              {
- 647   3                       buf_len=Channel_Get_Data_Order_M2();
- 648   3              }
- 649   2              break;
+ 645   2        case CHANNEL_GET_DATA_ORDER_M2_REQ:
+ 646   2        {
+ 647   3           buf_len=Channel_Get_Data_Order_M2();
+ 648   3        }
+ 649   2        break;
  650   2      //------------------------------------------
- 651   2              case CHANNEL_SET_RESET_STATE_FLAGS_REQ:
- 652   2              {
- 653   3                      buf_len=Channel_Set_Reset_State_Flags();
- 654   3              }
- 655   2              break;
+ 651   2        case CHANNEL_SET_RESET_STATE_FLAGS_REQ:
+ 652   2        {
+ 653   3          buf_len=Channel_Set_Reset_State_Flags();
+ 654   3        }
+ 655   2        break;
  656   2      //------------------------------------------
- 657   2              case CHANNEL_ALL_GET_DATA_REQ:
- 658   2              {
- 659   3                       buf_len=Channel_All_Get_Data();
-C51 COMPILER V9.00   PROTO_USO                                                             04/24/2015 12:10:34 PAGE 12  
+ 657   2        case CHANNEL_ALL_GET_DATA_REQ:
+ 658   2        {
+ 659   3           buf_len=Channel_All_Get_Data();
+C51 COMPILER V9.53.0.0   PROTO_USO                                                         05/03/2018 17:44:14 PAGE 12  
 
- 660   3              }
- 661   2              break;
+ 660   3        }
+ 661   2        break;
  662   2      //------------------------------------------
- 663   2              case CHANNEL_SET_ADDRESS_DESC:
- 664   2              {
- 665   3                       buf_len=Channel_Set_Address_Desc();
- 666   3              }
- 667   2              break;
+ 663   2        case CHANNEL_SET_ADDRESS_DESC:
+ 664   2        {
+ 665   3           buf_len=Channel_Set_Address_Desc();
+ 666   3        }
+ 667   2        break;
  668   2      //------------------------------------------
- 669   2              case CHANNEL_SET_CALIBRATE:
- 670   2              {
- 671   3                       buf_len=Channel_Set_Calibrate();
- 672   3              }
- 673   2              break;
+ 669   2        case CHANNEL_SET_CALIBRATE:
+ 670   2        {
+ 671   3           buf_len=Channel_Set_Calibrate();
+ 672   3        }
+ 673   2        break;
  674   2      //------------------------------------------
  675   2          default:
- 676   2              {
- 677   3                 buf_len=Request_Error(FR_COMMAND_NOT_EXIST);
- 678   3          }                                                              
+ 676   2        {
+ 677   3           buf_len=Request_Error(FR_COMMAND_NOT_EXIST);
+ 678   3          }                  
  679   2        }
  680   1      
  681   1        return;
@@ -738,47 +738,47 @@ line level    source
  691   3        while(1) 
  692   3        {
  693   4        //----------restart------------
- 694   4                      recieve_count=0x0;//??
- 695   4                      REN=1;//recieve enqble
- 696   4                      DE_RE=0;//линия на прием
- 697   4                      ES=1;
+ 694   4          recieve_count=0x0;//??
+ 695   4          REN=1;//recieve enqble
+ 696   4          DE_RE=0;//линия на прием
+ 697   4          ES=1;
  698   4        //-----------------------------
- 699   4                 PT_WAIT_UNTIL(pt,RECIEVED); //ждем команды на старт
- 700   4                 RECIEVED=0;
- 701   4                      
- 702   4                      if(RecieveBuf[3]!=ADRESS_DEV)//если адрес совпал          
- 703   4                      {
- 704   5                              PT_RESTART(pt);//если адрес не сошолся-перезапустим протокол                    
- 705   5                      }       
- 706   4                                      
- 707   4                  CRC=RecieveBuf[recieve_count-1];
- 708   4                                      
- 709   4                      if(CRC_Check(&RecieveBuf,(recieve_count-CRC_LEN))!=CRC)
- 710   4                      {
- 711   5                              PT_RESTART(pt);//если CRC не сошлось-перезапустим протокол       
- 712   5                      }
- 713   4                      PT_YIELD(pt);//дадим другим процессам время
+ 699   4           PT_WAIT_UNTIL(pt,RECIEVED); //ждем команды на старт
+ 700   4           RECIEVED=0;
+ 701   4          
+ 702   4          if(RecieveBuf[3]!=ADRESS_DEV)//если адрес совпал    
+ 703   4          {
+ 704   5            PT_RESTART(pt);//если адрес не сошолся-перезапустим протокол      
+ 705   5          } 
+ 706   4              
+ 707   4            CRC=RecieveBuf[recieve_count-1];
+ 708   4              
+ 709   4          if(CRC_Check(&RecieveBuf,(recieve_count-CRC_LEN))!=CRC)
+ 710   4          {
+ 711   5            PT_RESTART(pt);//если CRC не сошлось-перезапустим протокол   
+ 712   5          }
+ 713   4          PT_YIELD(pt);//дадим другим процессам время
  714   4        //-----------------------------
- 715   4                      ProtoBufHandling();//процедура обработки сообщения      
- 716   4                      if(buf_len==0)//если в буфере пусто
- 717   4                      {
- 718   5                              PT_RESTART(pt);//перезапустим протокол  
- 719   5                      }
- 720   4                      else
- 721   4                      {
-C51 COMPILER V9.00   PROTO_USO                                                             04/24/2015 12:10:34 PAGE 13  
+ 715   4            ProtoBufHandling();//процедура обработки сообщения  
+ 716   4          if(buf_len==0)//если в буфере пусто
+ 717   4          {
+ 718   5            PT_RESTART(pt);//перезапустим протокол  
+ 719   5          }
+ 720   4          else
+ 721   4          {
+C51 COMPILER V9.53.0.0   PROTO_USO                                                         05/03/2018 17:44:14 PAGE 13  
 
- 722   5                              DE_RE=1; //переключаем RS485 в режим передачи
- 723   5                                                              
- 724   5                              REN=0;  //запрет приема-только передача
- 725   5                              transf_count=0;
- 726   5                              CUT_OUT_NULL=0;
- 727   5                              SBUF=TransferBuf[transf_count];//передача байта, остальным займется автомат
- 728   5                              transf_count++;//инкрементируем счетчик переданных
- 729   5                              ES=1; //включим прерывание уарт 
+ 722   5            DE_RE=1; //переключаем RS485 в режим передачи
+ 723   5                    
+ 724   5            REN=0;  //запрет приема-только передача
+ 725   5            transf_count=0;
+ 726   5            CUT_OUT_NULL=0;
+ 727   5            SBUF=TransferBuf[transf_count];//передача байта, остальным займется автомат
+ 728   5            transf_count++;//инкрементируем счетчик переданных
+ 729   5            ES=1; //включим прерывание уарт 
  730   5      
- 731   5                              PT_DELAY(pt,10);                        
- 732   5                      }
+ 731   5            PT_DELAY(pt,10);      
+ 732   5          }
  733   4        //-----------------------------
  734   4        }
  735   3      
@@ -800,60 +800,60 @@ line level    source
              -хранить в ППЗУ новый адрес устройства, имя, версию, описание
  751          {
  752   1      //небезопасная
- 753   1              
- 754   1              unsigned int blocks=0;//здесь будет количество блоков, нужных дя сохранения комментария
- 755   1              
- 756   1              EEPROM_Write(&addr,1,DEVICE_ADDR_EEPROM);        //1 блок
- 757   1              EEPROM_Write(name,DEVICE_NAME_LENGTH,DEVICE_NAME_EEPROM); //5 блоков
- 758   1              memcpy(DEV_NAME,name,DEVICE_NAME_LENGTH_SYM);//копируем полученное имя в буфер
+ 753   1        
+ 754   1        unsigned int blocks=0;//здесь будет количество блоков, нужных дя сохранения комментария
+ 755   1        
+ 756   1        EEPROM_Write(&addr,1,DEVICE_ADDR_EEPROM);  //1 блок
+ 757   1        EEPROM_Write(name,DEVICE_NAME_LENGTH,DEVICE_NAME_EEPROM); //5 блоков
+ 758   1        memcpy(DEV_NAME,name,DEVICE_NAME_LENGTH_SYM);//копируем полученное имя в буфер
  759   1      
- 760   1              EEPROM_Write(ver,DEVICE_VER_LENGTH,DEVICE_VER_EEPROM);          //2 блока
- 761   1              memcpy(VERSION,ver,DEVICE_VER_LENGTH_SYM);//копируем версию в буфер
+ 760   1        EEPROM_Write(ver,DEVICE_VER_LENGTH,DEVICE_VER_EEPROM);    //2 блока
+ 761   1        memcpy(VERSION,ver,DEVICE_VER_LENGTH_SYM);//копируем версию в буфер
  762   1      
- 763   1              blocks=desc_len>>2;//в блоке 4 байта, делим на 4
- 764   1              if(desc_len&0xFC)//если есть остаток, то берем еще один блок
- 765   1                      blocks++;
- 766   1              
- 767   1              if(blocks>DEVICE_DESC_MAX_LENGTH) //ограничение на количество блоков для комментария
- 768   1                      blocks=DEVICE_DESC_MAX_LENGTH;
+ 763   1        blocks=desc_len>>2;//в блоке 4 байта, делим на 4
+ 764   1        if(desc_len&0xFC)//если есть остаток, то берем еще один блок
+ 765   1          blocks++;
+ 766   1        
+ 767   1        if(blocks>DEVICE_DESC_MAX_LENGTH) //ограничение на количество блоков для комментария
+ 768   1          blocks=DEVICE_DESC_MAX_LENGTH;
  769   1      
- 770   1              EEPROM_Write(desc,(unsigned int)blocks,DEVICE_DESC_EEPROM);
- 771   1              dev_desc_len=desc_len;
- 772   1              EEPROM_Write(&desc_len,1,DEVICE_DESC_LEN_EEPROM);//сохраним длину комментария
- 773   1              
- 774   1              memcpy(NOTICE,desc,desc_len);//копируем описание в буфер
- 775   1              
- 776   1              return;
+ 770   1        EEPROM_Write(desc,(unsigned int)blocks,DEVICE_DESC_EEPROM);
+ 771   1        dev_desc_len=desc_len;
+ 772   1        EEPROM_Write(&desc_len,1,DEVICE_DESC_LEN_EEPROM);//сохраним длину комментария
+ 773   1        
+ 774   1        memcpy(NOTICE,desc,desc_len);//копируем описание в буфер
+ 775   1        
+ 776   1        return;
  777   1      }
  778          //-----------------------------------------------------------------------------------------------
  779          void Restore_Dev_Address_Desc(void)//восстановить из ппзу адрес и информацию об устройстве
  780          {
- 781   1              unsigned int blocks=0;//здесь будет количество блоков, нужных дя сохранения комментария
- 782   1              
-C51 COMPILER V9.00   PROTO_USO                                                             04/24/2015 12:10:34 PAGE 14  
+ 781   1        unsigned int blocks=0;//здесь будет количество блоков, нужных дя сохранения комментария
+ 782   1        
+C51 COMPILER V9.53.0.0   PROTO_USO                                                         05/03/2018 17:44:14 PAGE 14  
 
- 783   1              EEPROM_Read(&ADRESS_DEV,1,DEVICE_ADDR_EEPROM);   //1 блок восстанавливаем адрес из ППЗУ
+ 783   1        EEPROM_Read(&ADRESS_DEV,1,DEVICE_ADDR_EEPROM);   //1 блок восстанавливаем адрес из ППЗУ
  784   1      
- 785   1              if(ADRESS_DEV<1 || ADRESS_DEV>15)
- 786   1                      ADRESS_DEV=1; 
+ 785   1        if(ADRESS_DEV<1 || ADRESS_DEV>15)
+ 786   1          ADRESS_DEV=1; 
  787   1      
- 788   1              EEPROM_Read(DEV_NAME,DEVICE_NAME_LENGTH,DEVICE_NAME_EEPROM); //5 блоков
+ 788   1        EEPROM_Read(DEV_NAME,DEVICE_NAME_LENGTH,DEVICE_NAME_EEPROM); //5 блоков
  789   1          EEPROM_Read(VERSION,DEVICE_VER_LENGTH,DEVICE_VER_EEPROM);
  790   1      
- 791   1              EEPROM_Read(&dev_desc_len,1,DEVICE_DESC_LEN_EEPROM);//длина описания устройства в байтах
+ 791   1        EEPROM_Read(&dev_desc_len,1,DEVICE_DESC_LEN_EEPROM);//длина описания устройства в байтах
  792   1      
- 793   1              if(dev_desc_len>DEVICE_DESC_MAX_LENGTH_SYM)
- 794   1                      dev_desc_len=DEVICE_DESC_MAX_LENGTH_SYM;
+ 793   1        if(dev_desc_len>DEVICE_DESC_MAX_LENGTH_SYM)
+ 794   1          dev_desc_len=DEVICE_DESC_MAX_LENGTH_SYM;
  795   1      
- 796   1              blocks=dev_desc_len>>2;//в блоке 4 байта, делим на 4
- 797   1              if(dev_desc_len&0xFC)//если есть остаток, то берем еще один блок
- 798   1                      blocks++;
+ 796   1        blocks=dev_desc_len>>2;//в блоке 4 байта, делим на 4
+ 797   1        if(dev_desc_len&0xFC)//если есть остаток, то берем еще один блок
+ 798   1          blocks++;
  799   1      
- 800   1              if(blocks>DEVICE_DESC_MAX_LENGTH) //ограничение на количество блоков для комментария     ???
- 801   1                      blocks=DEVICE_DESC_MAX_LENGTH;
+ 800   1        if(blocks>DEVICE_DESC_MAX_LENGTH) //ограничение на количество блоков для комментария   ???
+ 801   1          blocks=DEVICE_DESC_MAX_LENGTH;
  802   1      
- 803   1              EEPROM_Read(NOTICE,(unsigned int)blocks,DEVICE_DESC_EEPROM);
- 804   1              return;
+ 803   1        EEPROM_Read(NOTICE,(unsigned int)blocks,DEVICE_DESC_EEPROM);
+ 804   1        return;
  805   1      }
  806          //-----------------------------------------------------------------------------------------------
 

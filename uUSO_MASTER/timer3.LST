@@ -1,10 +1,10 @@
-C51 COMPILER V9.00   TIMER3                                                                04/24/2015 12:10:34 PAGE 1   
+C51 COMPILER V9.53.0.0   TIMER3                                                            05/03/2018 17:44:14 PAGE 1   
 
 
-C51 COMPILER V9.00, COMPILATION OF MODULE TIMER3
+C51 COMPILER V9.53.0.0, COMPILATION OF MODULE TIMER3
 OBJECT MODULE PLACED IN timer3.OBJ
 COMPILER INVOKED BY: C:\Program Files\Keil\C51\BIN\C51.EXE timer3.c LARGE OPTIMIZE(9,SPEED) BROWSE ORDER NOAREGS MODAB2 
-                    -DEBUG OBJECTEXTEND
+                    -DEBUG OBJECTEXTEND TABS(2)
 
 line level    source
 
@@ -12,16 +12,16 @@ line level    source
    2          //------------------------------
    3          void UART_Init(void) //using 0
    4          { 
-   5   1                              //Configure UART
+   5   1                //Configure UART
    6   1          T3CON = T3CON_VAL;
    7   1      
    8   1          T3FD = T3FD_VAL;
    9   1          SCON =0x52; //0x53;
-  10   1              ES=1;
-  11   1              TI=0;
-  12   1              RI=0;
-  13   1              PS=1; //наивысший приоритет у UART      возможно вызывает ошибки
-  14   1              return;
+  10   1        ES=1;
+  11   1        TI=0;
+  12   1        RI=0;
+  13   1        PS=1; //наивысший приоритет у UART  возможно вызывает ошибки
+  14   1        return;
   15   1      }
 
 

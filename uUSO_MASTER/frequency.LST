@@ -1,24 +1,24 @@
-C51 COMPILER V9.00   FREQUENCY                                                             04/24/2015 12:10:36 PAGE 1   
+C51 COMPILER V9.53.0.0   FREQUENCY                                                         05/03/2018 17:44:14 PAGE 1   
 
 
-C51 COMPILER V9.00, COMPILATION OF MODULE FREQUENCY
+C51 COMPILER V9.53.0.0, COMPILATION OF MODULE FREQUENCY
 OBJECT MODULE PLACED IN frequency.OBJ
 COMPILER INVOKED BY: C:\Program Files\Keil\C51\BIN\C51.EXE frequency.c LARGE OPTIMIZE(9,SPEED) BROWSE ORDER NOAREGS MODA
-                    -B2 DEBUG OBJECTEXTEND
+                    -B2 DEBUG OBJECTEXTEND TABS(2)
 
 line level    source
 
    1          #include "frequency.h"
    2          
-   3          #define FREQ_CHANNELS   3
+   3          #define FREQ_CHANNELS 3
    4          
    5          
-   6          #define FRAME_TIME_1    511  //границы кадров захвата
-   7          #define FRAME_TIME_2    1023
-   8          #define FRAME_TIME_3    1535
-   9          #define FRAME_TIME_4    2047
+   6          #define FRAME_TIME_1  511  //границы кадров захвата
+   7          #define FRAME_TIME_2  1023
+   8          #define FRAME_TIME_3  1535
+   9          #define FRAME_TIME_4  2047
   10          
-  11          #define SHEAR                   9         //рассчитывается из максимума кадра захвата, как Nбит-2
+  11          #define SHEAR     9   //рассчитывается из максимума кадра захвата, как Nбит-2
   12          
   13          # define CLI_EXT  EX1=0; EX0=0; ET0=0;
   14          # define STI_EXT  EX1=1; EX0=1; ET0=1;
@@ -37,197 +37,197 @@ line level    source
   26          //--------------------------------------------------------
   27          void Frequency_Init(void) //инициализация частотных каналов
   28          {
-  29   1              Timer0_Initialize();
-  30   1              Timer2_Initialize();
-  31   1              EX1=1;//включаем внешние прерывания
-  32   1              EX0=1;
-  33   1              IT0=1;
-  34   1              IT1=1;
-  35   1              frequency[FRQ_CHNL_1].time_counter=0;
-  36   1              return;
+  29   1        Timer0_Initialize();
+  30   1        Timer2_Initialize();
+  31   1        EX1=1;//включаем внешние прерывания
+  32   1        EX0=1;
+  33   1        IT0=1;
+  34   1        IT1=1;
+  35   1        frequency[FRQ_CHNL_1].time_counter=0;
+  36   1        return;
   37   1      }
   38          //--------------------------------------------------------
   39          void INT0_ISR(void) interrupt 0 //using 3//обработчик внешнего прерывания 0
   40          {
-  41   1              unsigned char cnt;
-  42   1              cnt=(frequency[FRQ_CHNL_1].time_counter>>SHEAR)&0x3;
-  43   1              frequency[FRQ_CHNL_1].frame[cnt].event_counter++;
-  44   1              frequency[FRQ_CHNL_1].frame[cnt].timestamp=frequency[FRQ_CHNL_1].time_counter;
-  45   1              return;
+  41   1        unsigned char cnt;
+  42   1        cnt=(frequency[FRQ_CHNL_1].time_counter>>SHEAR)&0x3;
+  43   1        frequency[FRQ_CHNL_1].frame[cnt].event_counter++;
+  44   1        frequency[FRQ_CHNL_1].frame[cnt].timestamp=frequency[FRQ_CHNL_1].time_counter;
+  45   1        return;
   46   1      }
   47          //--------------------------------------------------------
   48          void INT1_ISR(void) interrupt 2 //using 3//обработчик внешнего прерывания 1
   49          {
-  50   1              unsigned char cnt;
-  51   1              cnt=(frequency[FRQ_CHNL_1].time_counter>>SHEAR)&0x3;
-  52   1              frequency[FRQ_CHNL_2].frame[cnt].event_counter++;
-  53   1              frequency[FRQ_CHNL_2].frame[cnt].timestamp=frequency[FRQ_CHNL_1].time_counter;
-C51 COMPILER V9.00   FREQUENCY                                                             04/24/2015 12:10:36 PAGE 2   
+  50   1        unsigned char cnt;
+  51   1        cnt=(frequency[FRQ_CHNL_1].time_counter>>SHEAR)&0x3;
+  52   1        frequency[FRQ_CHNL_2].frame[cnt].event_counter++;
+  53   1        frequency[FRQ_CHNL_2].frame[cnt].timestamp=frequency[FRQ_CHNL_1].time_counter;
+C51 COMPILER V9.53.0.0   FREQUENCY                                                         05/03/2018 17:44:14 PAGE 2   
 
-  54   1              return;
+  54   1        return;
   55   1      }
   56          //--------------------------------------------------------
   57          void INT2_ISR(void) interrupt 1 //using 3//обработчик внешнего прерывания 2-использует внешний вход таймер
              -а T0
   58          {
-  59   1              unsigned char cnt;
-  60   1                      
-  61   1              TH0=0xFF;
-  62   1              TL0=0xFF;
+  59   1        unsigned char cnt;
+  60   1          
+  61   1        TH0=0xFF;
+  62   1        TL0=0xFF;
   63   1      
-  64   1              cnt=(frequency[FRQ_CHNL_1].time_counter>>SHEAR)&0x3;
+  64   1        cnt=(frequency[FRQ_CHNL_1].time_counter>>SHEAR)&0x3;
   65   1      
-  66   1              frequency[FRQ_CHNL_3].frame[cnt].event_counter++;
-  67   1              frequency[FRQ_CHNL_3].frame[cnt].timestamp=frequency[FRQ_CHNL_1].time_counter;
-  68   1              return;
+  66   1        frequency[FRQ_CHNL_3].frame[cnt].event_counter++;
+  67   1        frequency[FRQ_CHNL_3].frame[cnt].timestamp=frequency[FRQ_CHNL_1].time_counter;
+  68   1        return;
   69   1      }
   70          //--------------------------------------------------------
   71          void Timer2_ISR(void) interrupt 5 //using 3//обработчик прерывания счетного таймера частоты
   72          {
-  73   1              TF2 = 0;
-  74   1      //      TH2=0xE7;
-  75   1      //      TL2=0xFF;
+  73   1        TF2 = 0;
+  74   1      //  TH2=0xE7;
+  75   1      //  TL2=0xFF;
   76   1      
   77   1      
   78   1      
-  79   1              switch(frequency[FRQ_CHNL_1].time_counter)
-  80   1              {
-  81   2                      case FRAME_TIME_1:
-  82   2                      {
-  83   3                              frequency[FRQ_CHNL_1].frame[0].time_copy=frequency[FRQ_CHNL_1].frame[0].timestamp+FRAME_TIME_4-frequenc
+  79   1        switch(frequency[FRQ_CHNL_1].time_counter)
+  80   1        {
+  81   2          case FRAME_TIME_1:
+  82   2          {
+  83   3            frequency[FRQ_CHNL_1].frame[0].time_copy=frequency[FRQ_CHNL_1].frame[0].timestamp+FRAME_TIME_4-frequenc
              -y[FRQ_CHNL_1].frame[3].timestamp;
-  84   3                              frequency[FRQ_CHNL_1].frame[0].event_copy=frequency[FRQ_CHNL_1].frame[0].event_counter; 
+  84   3            frequency[FRQ_CHNL_1].frame[0].event_copy=frequency[FRQ_CHNL_1].frame[0].event_counter; 
   85   3      
   86   3      
-  87   3                              frequency[FRQ_CHNL_1].frame[3].event_counter=0;
-  88   3                              //---------------------------------------
-  89   3                              frequency[FRQ_CHNL_2].frame[0].time_copy=frequency[FRQ_CHNL_2].frame[0].timestamp+FRAME_TIME_4-frequenc
+  87   3            frequency[FRQ_CHNL_1].frame[3].event_counter=0;
+  88   3            //---------------------------------------
+  89   3            frequency[FRQ_CHNL_2].frame[0].time_copy=frequency[FRQ_CHNL_2].frame[0].timestamp+FRAME_TIME_4-frequenc
              -y[FRQ_CHNL_2].frame[3].timestamp;
-  90   3                              frequency[FRQ_CHNL_2].frame[0].event_copy=frequency[FRQ_CHNL_2].frame[0].event_counter; 
+  90   3            frequency[FRQ_CHNL_2].frame[0].event_copy=frequency[FRQ_CHNL_2].frame[0].event_counter; 
   91   3      
   92   3      
-  93   3                              frequency[FRQ_CHNL_2].frame[3].event_counter=0;
+  93   3            frequency[FRQ_CHNL_2].frame[3].event_counter=0;
   94   3      
-  95   3                              //---------------------------------------
-  96   3                              frequency[FRQ_CHNL_3].frame[0].time_copy=frequency[FRQ_CHNL_3].frame[0].timestamp+FRAME_TIME_4-frequenc
+  95   3            //---------------------------------------
+  96   3            frequency[FRQ_CHNL_3].frame[0].time_copy=frequency[FRQ_CHNL_3].frame[0].timestamp+FRAME_TIME_4-frequenc
              -y[FRQ_CHNL_3].frame[3].timestamp;
-  97   3                              frequency[FRQ_CHNL_3].frame[0].event_copy=frequency[FRQ_CHNL_3].frame[0].event_counter; 
+  97   3            frequency[FRQ_CHNL_3].frame[0].event_copy=frequency[FRQ_CHNL_3].frame[0].event_counter; 
   98   3      
   99   3      
- 100   3                              frequency[FRQ_CHNL_3].frame[3].event_counter=0;
+ 100   3            frequency[FRQ_CHNL_3].frame[3].event_counter=0;
  101   3      
- 102   3                      }
- 103   2                      break;
+ 102   3          }
+ 103   2          break;
  104   2      
- 105   2                      case FRAME_TIME_2:
- 106   2                      {
- 107   3                              frequency[FRQ_CHNL_1].frame[1].time_copy=frequency[FRQ_CHNL_1].frame[1].timestamp-frequency[FRQ_CHNL_1]
+ 105   2          case FRAME_TIME_2:
+ 106   2          {
+ 107   3            frequency[FRQ_CHNL_1].frame[1].time_copy=frequency[FRQ_CHNL_1].frame[1].timestamp-frequency[FRQ_CHNL_1]
              -.frame[0].timestamp;
- 108   3                              frequency[FRQ_CHNL_1].frame[1].event_copy=frequency[FRQ_CHNL_1].frame[1].event_counter; 
+ 108   3            frequency[FRQ_CHNL_1].frame[1].event_copy=frequency[FRQ_CHNL_1].frame[1].event_counter; 
  109   3      
- 110   3                              frequency[FRQ_CHNL_1].frame[0].event_counter=0;
-C51 COMPILER V9.00   FREQUENCY                                                             04/24/2015 12:10:36 PAGE 3   
+ 110   3            frequency[FRQ_CHNL_1].frame[0].event_counter=0;
+C51 COMPILER V9.53.0.0   FREQUENCY                                                         05/03/2018 17:44:14 PAGE 3   
 
- 111   3                              //----------------------------------------------
- 112   3                              frequency[FRQ_CHNL_2].frame[1].time_copy=frequency[FRQ_CHNL_2].frame[1].timestamp-frequency[FRQ_CHNL_2]
+ 111   3            //----------------------------------------------
+ 112   3            frequency[FRQ_CHNL_2].frame[1].time_copy=frequency[FRQ_CHNL_2].frame[1].timestamp-frequency[FRQ_CHNL_2]
              -.frame[0].timestamp;
- 113   3                              frequency[FRQ_CHNL_2].frame[1].event_copy=frequency[FRQ_CHNL_2].frame[1].event_counter; 
+ 113   3            frequency[FRQ_CHNL_2].frame[1].event_copy=frequency[FRQ_CHNL_2].frame[1].event_counter; 
  114   3      
- 115   3                              frequency[FRQ_CHNL_2].frame[0].event_counter=0;
- 116   3                              //----------------------------------------------
- 117   3                              frequency[FRQ_CHNL_3].frame[1].time_copy=frequency[FRQ_CHNL_3].frame[1].timestamp-frequency[FRQ_CHNL_3]
+ 115   3            frequency[FRQ_CHNL_2].frame[0].event_counter=0;
+ 116   3            //----------------------------------------------
+ 117   3            frequency[FRQ_CHNL_3].frame[1].time_copy=frequency[FRQ_CHNL_3].frame[1].timestamp-frequency[FRQ_CHNL_3]
              -.frame[0].timestamp;
- 118   3                              frequency[FRQ_CHNL_3].frame[1].event_copy=frequency[FRQ_CHNL_3].frame[1].event_counter; 
+ 118   3            frequency[FRQ_CHNL_3].frame[1].event_copy=frequency[FRQ_CHNL_3].frame[1].event_counter; 
  119   3      
- 120   3                              frequency[FRQ_CHNL_3].frame[0].event_counter=0;
- 121   3                      }
- 122   2                      break;
+ 120   3            frequency[FRQ_CHNL_3].frame[0].event_counter=0;
+ 121   3          }
+ 122   2          break;
  123   2      
- 124   2                      case FRAME_TIME_3:
- 125   2                      {
- 126   3                              frequency[FRQ_CHNL_1].frame[2].time_copy=frequency[FRQ_CHNL_1].frame[2].timestamp-frequency[FRQ_CHNL_1]
+ 124   2          case FRAME_TIME_3:
+ 125   2          {
+ 126   3            frequency[FRQ_CHNL_1].frame[2].time_copy=frequency[FRQ_CHNL_1].frame[2].timestamp-frequency[FRQ_CHNL_1]
              -.frame[1].timestamp;
- 127   3                              frequency[FRQ_CHNL_1].frame[2].event_copy=frequency[FRQ_CHNL_1].frame[2].event_counter; 
+ 127   3            frequency[FRQ_CHNL_1].frame[2].event_copy=frequency[FRQ_CHNL_1].frame[2].event_counter; 
  128   3      
- 129   3                              frequency[FRQ_CHNL_1].frame[1].event_counter=0;
- 130   3                              //----------------------------------------------------
- 131   3                              frequency[FRQ_CHNL_2].frame[2].time_copy=frequency[FRQ_CHNL_2].frame[2].timestamp-frequency[FRQ_CHNL_2]
+ 129   3            frequency[FRQ_CHNL_1].frame[1].event_counter=0;
+ 130   3            //----------------------------------------------------
+ 131   3            frequency[FRQ_CHNL_2].frame[2].time_copy=frequency[FRQ_CHNL_2].frame[2].timestamp-frequency[FRQ_CHNL_2]
              -.frame[1].timestamp;
- 132   3                              frequency[FRQ_CHNL_2].frame[2].event_copy=frequency[FRQ_CHNL_2].frame[2].event_counter; 
+ 132   3            frequency[FRQ_CHNL_2].frame[2].event_copy=frequency[FRQ_CHNL_2].frame[2].event_counter; 
  133   3      
- 134   3                              frequency[FRQ_CHNL_2].frame[1].event_counter=0;
- 135   3                              //---------------------------------------------------
- 136   3                              frequency[FRQ_CHNL_3].frame[2].time_copy=frequency[FRQ_CHNL_3].frame[2].timestamp-frequency[FRQ_CHNL_3]
+ 134   3            frequency[FRQ_CHNL_2].frame[1].event_counter=0;
+ 135   3            //---------------------------------------------------
+ 136   3            frequency[FRQ_CHNL_3].frame[2].time_copy=frequency[FRQ_CHNL_3].frame[2].timestamp-frequency[FRQ_CHNL_3]
              -.frame[1].timestamp;
- 137   3                              frequency[FRQ_CHNL_3].frame[2].event_copy=frequency[FRQ_CHNL_3].frame[2].event_counter; 
+ 137   3            frequency[FRQ_CHNL_3].frame[2].event_copy=frequency[FRQ_CHNL_3].frame[2].event_counter; 
  138   3      
- 139   3                              frequency[FRQ_CHNL_3].frame[1].event_counter=0;
- 140   3                      }
- 141   2                      break;
+ 139   3            frequency[FRQ_CHNL_3].frame[1].event_counter=0;
+ 140   3          }
+ 141   2          break;
  142   2      
- 143   2                      case FRAME_TIME_4:
- 144   2                      {
- 145   3                              frequency[FRQ_CHNL_1].frame[3].time_copy=frequency[FRQ_CHNL_1].frame[3].timestamp-frequency[FRQ_CHNL_1]
+ 143   2          case FRAME_TIME_4:
+ 144   2          {
+ 145   3            frequency[FRQ_CHNL_1].frame[3].time_copy=frequency[FRQ_CHNL_1].frame[3].timestamp-frequency[FRQ_CHNL_1]
              -.frame[2].timestamp;
- 146   3                              frequency[FRQ_CHNL_1].frame[3].event_copy=frequency[FRQ_CHNL_1].frame[3].event_counter; 
+ 146   3            frequency[FRQ_CHNL_1].frame[3].event_copy=frequency[FRQ_CHNL_1].frame[3].event_counter; 
  147   3      
- 148   3                              frequency[FRQ_CHNL_1].frame[2].event_counter=0; 
- 149   3                              //-----------------------------------------------------
- 150   3                              frequency[FRQ_CHNL_2].frame[3].time_copy=frequency[FRQ_CHNL_2].frame[3].timestamp-frequency[FRQ_CHNL_2]
+ 148   3            frequency[FRQ_CHNL_1].frame[2].event_counter=0; 
+ 149   3            //-----------------------------------------------------
+ 150   3            frequency[FRQ_CHNL_2].frame[3].time_copy=frequency[FRQ_CHNL_2].frame[3].timestamp-frequency[FRQ_CHNL_2]
              -.frame[2].timestamp;
- 151   3                              frequency[FRQ_CHNL_2].frame[3].event_copy=frequency[FRQ_CHNL_2].frame[3].event_counter; 
+ 151   3            frequency[FRQ_CHNL_2].frame[3].event_copy=frequency[FRQ_CHNL_2].frame[3].event_counter; 
  152   3      
- 153   3                              frequency[FRQ_CHNL_2].frame[2].event_counter=0;
- 154   3                              //----------------------------------------------------
- 155   3                              frequency[FRQ_CHNL_3].frame[3].time_copy=frequency[FRQ_CHNL_3].frame[3].timestamp-frequency[FRQ_CHNL_3]
+ 153   3            frequency[FRQ_CHNL_2].frame[2].event_counter=0;
+ 154   3            //----------------------------------------------------
+ 155   3            frequency[FRQ_CHNL_3].frame[3].time_copy=frequency[FRQ_CHNL_3].frame[3].timestamp-frequency[FRQ_CHNL_3]
              -.frame[2].timestamp;
- 156   3                              frequency[FRQ_CHNL_3].frame[3].event_copy=frequency[FRQ_CHNL_3].frame[3].event_counter; 
+ 156   3            frequency[FRQ_CHNL_3].frame[3].event_copy=frequency[FRQ_CHNL_3].frame[3].event_counter; 
  157   3      
- 158   3                              frequency[FRQ_CHNL_3].frame[2].event_counter=0;
- 159   3                              
- 160   3                              frequency[FRQ_CHNL_1].time_counter=0;
- 161   3                      }
- 162   2                      break;
- 163   2              }
+ 158   3            frequency[FRQ_CHNL_3].frame[2].event_counter=0;
+ 159   3            
+ 160   3            frequency[FRQ_CHNL_1].time_counter=0;
+ 161   3          }
+ 162   2          break;
+ 163   2        }
  164   1      
-C51 COMPILER V9.00   FREQUENCY                                                             04/24/2015 12:10:36 PAGE 4   
+C51 COMPILER V9.53.0.0   FREQUENCY                                                         05/03/2018 17:44:14 PAGE 4   
 
- 165   1              frequency[FRQ_CHNL_1].time_counter++;
- 166   1              frequency[FRQ_CHNL_1].time_counter&=FRAME_TIME_4;
+ 165   1        frequency[FRQ_CHNL_1].time_counter++;
+ 166   1        frequency[FRQ_CHNL_1].time_counter&=FRAME_TIME_4;
  167   1      
- 168   1              return;
+ 168   1        return;
  169   1      }
  170          //------------------------------------------------------------
  171            PT_THREAD(Frequency_Measure_Process(struct pt *pt))
  172           { 
- 173   1              static unsigned char frq_chnl=0;
- 174   1              static unsigned long temp_freq=0; 
+ 173   1        static unsigned char frq_chnl=0;
+ 174   1        static unsigned long temp_freq=0; 
  175   1         PT_BEGIN(pt);
  176   3      
  177   3        while(1) 
  178   3        {
- 179   4                      PT_DELAY(pt,40);
- 180   4                      temp_freq=(((unsigned long)frequency[frq_chnl].frame[0].event_copy+(unsigned long)frequency[frq_chnl].fr
+ 179   4          PT_DELAY(pt,40);
+ 180   4          temp_freq=(((unsigned long)frequency[frq_chnl].frame[0].event_copy+(unsigned long)frequency[frq_chnl].fr
              -ame[1].event_copy+(unsigned long)frequency[frq_chnl].frame[2].event_copy+(unsigned long)frequency[frq_chnl].frame[3].eve
              -nt_copy)<<18)/((frequency[frq_chnl].frame[0].time_copy+frequency[frq_chnl].frame[1].time_copy+frequency[frq_chnl].frame[
              -2].time_copy+frequency[frq_chnl].frame[3].time_copy));
  181   4      
- 182   4                      PT_YIELD(pt);//дадим другим процессам время
- 183   4                      if(temp_freq<=0xFFFF)
- 184   4                      {
- 185   5                              channels[8+frq_chnl].channel_data=temp_freq;
- 186   5                      }
- 187   4                      else
- 188   4                      {
- 189   5                              channels[8+frq_chnl].channel_data=0xFFFF;
- 190   5                      }
- 191   4              
- 192   4              
- 193   4                      frq_chnl++;
- 194   4                      if(frq_chnl>=3)
- 195   4                      {
- 196   5                              frq_chnl=0;
- 197   5                      } 
+ 182   4          PT_YIELD(pt);//дадим другим процессам время
+ 183   4          if(temp_freq<=0xFFFF)
+ 184   4          {
+ 185   5            channels[8+frq_chnl].channel_data=temp_freq;
+ 186   5          }
+ 187   4          else
+ 188   4          {
+ 189   5            channels[8+frq_chnl].channel_data=0xFFFF;
+ 190   5          }
+ 191   4        
+ 192   4        
+ 193   4          frq_chnl++;
+ 194   4          if(frq_chnl>=3)
+ 195   4          {
+ 196   5            frq_chnl=0;
+ 197   5          } 
  198   4      
  199   4        }
  200   3        PT_END(pt);

@@ -1,10 +1,10 @@
-C51 COMPILER V9.00   ADC                                                                   04/24/2015 12:10:34 PAGE 1   
+C51 COMPILER V9.53.0.0   ADC                                                               05/03/2018 17:44:14 PAGE 1   
 
 
-C51 COMPILER V9.00, COMPILATION OF MODULE ADC
+C51 COMPILER V9.53.0.0, COMPILATION OF MODULE ADC
 OBJECT MODULE PLACED IN adc.OBJ
 COMPILER INVOKED BY: C:\Program Files\Keil\C51\BIN\C51.EXE adc.c LARGE OPTIMIZE(9,SPEED) BROWSE ORDER NOAREGS MODAB2 DEB
-                    -UG OBJECTEXTEND
+                    -UG OBJECTEXTEND TABS(2)
 
 line level    source
 
@@ -13,91 +13,91 @@ line level    source
    3          volatile struct ADC_Channels xdata adc_channels[ADC_CHANNELS_NUM];
    4          //-------------------------------------------
    5          void ADC_Initialize() //using 0
-   6          {       
-   7   1              ADCMODE&=0x0;
-   8   1              ADC0CON1&=0x0;  
+   6          { 
+   7   1        ADCMODE&=0x0;
+   8   1        ADC0CON1&=0x0;  
    9   1          ADC0CON2&=0x0;
-  10   1              //ADCMODE=0xB;
-  11   1      //      ADCMODE=0x3; //chop enable
+  10   1        //ADCMODE=0xB;
+  11   1      //  ADCMODE=0x3; //chop enable
   12   1      
-  13   1      //      ADCMODE|=0x8;//CHOP DISABLE
+  13   1      //  ADCMODE|=0x8;//CHOP DISABLE
   14   1      
   15   1          ADC0CON1|=BUF_BYPASS;
-  16   1              ADC0CON1|=ADC_UNIPOLAR;
-  17   1              ADC0CON1|=RN_2560;
+  16   1        ADC0CON1|=ADC_UNIPOLAR;
+  17   1        ADC0CON1|=RN_2560;
   18   1      
   19   1      
-  20   1              ADC_Restore_Settings();
-  21   1              ADC_Set_Mode(ADC_CONTIN_CONV);
+  20   1        ADC_Restore_Settings();
+  21   1        ADC_Set_Mode(ADC_CONTIN_CONV);
   22   1      
-  23   1              ADC_Out_Freq(100);      
+  23   1        ADC_Out_Freq(100);  
   24   1      
-  25   1              ADC0CON2&=0xF0;
-  26   1              ADC0CON2|=EXT_REF;//включим внешнюю опору
-  27   1              EADC = 1;
+  25   1        ADC0CON2&=0xF0;
+  26   1        ADC0CON2|=EXT_REF;//включим внешнюю опору
+  27   1        EADC = 1;
   28   1      
-  29   1              ADCMODE |= 0x20; //0010 0000 //ENABLE
+  29   1        ADCMODE |= 0x20; //0010 0000 //ENABLE
   30   1      
-  31   1              return;
+  31   1        return;
   32   1      }
   33          //-------------------------------------------
   34          void ADC_ISR(void) interrupt 6 //using 1
   35          {
-  36   1              adc_channels[ADC0CON2&0x7].ADC_BUF_UN[adc_channels[ADC0CON2&0x7].adc_buf_counter].ADC_CHAR[0]=0x0;//получ
+  36   1        adc_channels[ADC0CON2&0x7].ADC_BUF_UN[adc_channels[ADC0CON2&0x7].adc_buf_counter].ADC_CHAR[0]=0x0;//получ
              -им результат
-  37   1              adc_channels[ADC0CON2&0x7].ADC_BUF_UN[adc_channels[ADC0CON2&0x7].adc_buf_counter].ADC_CHAR[1]=ADC0H;
-  38   1              adc_channels[ADC0CON2&0x7].ADC_BUF_UN[adc_channels[ADC0CON2&0x7].adc_buf_counter].ADC_CHAR[2]=ADC0M;
-  39   1              adc_channels[ADC0CON2&0x7].ADC_BUF_UN[adc_channels[ADC0CON2&0x7].adc_buf_counter].ADC_CHAR[3]=ADC0L; 
+  37   1        adc_channels[ADC0CON2&0x7].ADC_BUF_UN[adc_channels[ADC0CON2&0x7].adc_buf_counter].ADC_CHAR[1]=ADC0H;
+  38   1        adc_channels[ADC0CON2&0x7].ADC_BUF_UN[adc_channels[ADC0CON2&0x7].adc_buf_counter].ADC_CHAR[2]=ADC0M;
+  39   1        adc_channels[ADC0CON2&0x7].ADC_BUF_UN[adc_channels[ADC0CON2&0x7].adc_buf_counter].ADC_CHAR[3]=ADC0L; 
   40   1      
-  41   1              adc_channels[ADC0CON2&0x7].adc_buf_counter=(adc_channels[ADC0CON2&0x7].adc_buf_counter+1)&(ADC_BUF_SIZE-1
-             -);        //инкрементируем указатель усредн€ющего буфера текущего канала
-  42   1              adc_channels[ADC0CON2&0x7].new_measuring=1;      //новое измерение было
-  43   1                      
-  44   1              ADCMODE &= 0xDF; // 1101 1111
+  41   1        adc_channels[ADC0CON2&0x7].adc_buf_counter=(adc_channels[ADC0CON2&0x7].adc_buf_counter+1)&(ADC_BUF_SIZE-1
+             -);  //инкрементируем указатель усредн€ющего буфера текущего канала
+  42   1        adc_channels[ADC0CON2&0x7].new_measuring=1;  //новое измерение было
+  43   1          
+  44   1        ADCMODE &= 0xDF; // 1101 1111
   45   1      
-  46   1              ADC0CON2=((ADC0CON2+1)&0x7)|(ADC0CON2&0xF0); //инкремент аналогового входа 
+  46   1        ADC0CON2=((ADC0CON2+1)&0x7)|(ADC0CON2&0xF0); //инкремент аналогового входа 
   47   1      
-  48   1              while(channels[ADC0CON2&0x7].number==0xFF)      //если канал не используетс€
-  49   1              {
-  50   2                      ADC0CON2=((ADC0CON2+1)&0x7)|(ADC0CON2&0xF0); //инкремент аналогового входа      
-  51   2              }
+  48   1        while(channels[ADC0CON2&0x7].number==0xFF)  //если канал не используетс€
+  49   1        {
+  50   2          ADC0CON2=((ADC0CON2+1)&0x7)|(ADC0CON2&0xF0); //инкремент аналогового входа  
+  51   2        }
   52   1      
-C51 COMPILER V9.00   ADC                                                                   04/24/2015 12:10:34 PAGE 2   
+C51 COMPILER V9.53.0.0   ADC                                                               05/03/2018 17:44:14 PAGE 2   
 
-  53   1              ADC0CON1=(ADC0CON1&0xF8)|((channels[ADC0CON2&0x7].settings.set.state_byte_1^0x7)&0x7);//восстанавливаем у
+  53   1        ADC0CON1=(ADC0CON1&0xF8)|((channels[ADC0CON2&0x7].settings.set.state_byte_1^0x7)&0x7);//восстанавливаем у
              -силение следующего канала
-  54   1              SF=channels[(ADC0CON2/*+1*/)&0x7].settings.set.state_byte_2;                                             
-  55   1              ADCMODE |= 0x20; //0010 0000 //ENABLE
+  54   1        SF=channels[(ADC0CON2/*+1*/)&0x7].settings.set.state_byte_2;             
+  55   1        ADCMODE |= 0x20; //0010 0000 //ENABLE
   56   1      
-  57   1              RDY0=0;
-  58   1      //      return;
+  57   1        RDY0=0;
+  58   1      //  return;
   59   1      }
   60          //--------------------------------------------------
-  61          void ADC_Set_Mode(unsigned char mode)   //using 0
+  61          void ADC_Set_Mode(unsigned char mode) //using 0
   62          {
-  63   1              ADCMODE&=~0x7;
-  64   1              ADCMODE|=mode;
-  65   1              return;
+  63   1        ADCMODE&=~0x7;
+  64   1        ADCMODE|=mode;
+  65   1        return;
   66   1      }
   67          //--------------------------------------------------
   68          void ADC_Out_Freq(unsigned int freq)  // using 0
   69          {
-  70   1              SF=(unsigned char)(32768/3/8/freq);               //частота выхода sinc3 фильтра (децимаци€)
-  71   1              return;
+  70   1        SF=(unsigned char)(32768/3/8/freq);     //частота выхода sinc3 фильтра (децимаци€)
+  71   1        return;
   72   1      }
   73          //--------------------------------------------------------------------------------------------------------
              -----------
   74          void ADC_Restore_Settings(void) //using 0//восстановление настроек ацп
   75          {
-  76   1               unsigned char xdata i=0;
-  77   1              for(i=0;i<ADC_CHANNELS_NUM;i++)
-  78   1              {
-  79   2                      adc_channels[i].adc_buf_counter=0;
-  80   2                      adc_channels[i].buffered=BUF_ENABLE;
-  81   2                      adc_channels[i].unipolar=ADC_UNIPOLAR;
-  82   2                      adc_channels[i].new_measuring=0;        
-  83   2              }
-  84   1              return;
+  76   1         unsigned char xdata i=0;
+  77   1        for(i=0;i<ADC_CHANNELS_NUM;i++)
+  78   1        {
+  79   2          adc_channels[i].adc_buf_counter=0;
+  80   2          adc_channels[i].buffered=BUF_ENABLE;
+  81   2          adc_channels[i].unipolar=ADC_UNIPOLAR;
+  82   2          adc_channels[i].new_measuring=0;  
+  83   2        }
+  84   1        return;
   85   1      }
   86           //-------------------------------------------------------------------------------------------------------
              ------------
